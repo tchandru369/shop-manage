@@ -1,0 +1,21 @@
+@GetMapping("/getImage/{imageName}")
+public ResponseEntity<byte[]> getImage(@PathVariable String imageName) {
+    // Assuming the image data is stored in the database
+    byte[] imageData = merchantSetService.getImageBytes(imageName);
+
+    if (imageData != null) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // or MediaType.IMAGE_PNG based on the type
+                .body(imageData);
+    } else {
+        throw new RuntimeException("Image not found: " + imageName);
+    }
+}
+
+
+by using these api how we can made to get in angular to view the image
+
+
+
+
+my app-password : xdgl ayna eqym dgem
