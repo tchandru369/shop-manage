@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alphine
+FROM openjdk:8-jdk-alphine
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
