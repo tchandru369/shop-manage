@@ -88,7 +88,7 @@ public class WebSecurityConfig implements WebMvcConfigurer{
         .allowCredentials(true);// If you need to include credentials
         
         registry.addMapping("/services/v1/customer/**")// Adjust the mapping as necessary
-        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.appo") // Your Angular app's origin
+        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app") // Your Angular app's origin
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
         .allowCredentials(true);
     }
