@@ -52,7 +52,7 @@ public class PdfService {
 		
 		
 		try {
-			ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
+			ClassPathResource resource = new ClassPathResource("/app/JasperFile/Invoice_Table_Based.jasper");
 
 	        
 
