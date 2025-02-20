@@ -52,7 +52,7 @@ public class PdfService {
 		
 		
 		try {
-			ClassPathResource resource = new ClassPathResource("/app/JasperFile/Invoice_Table_Based.jasper");
+			//ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
 
 	        
 
@@ -85,7 +85,10 @@ public class PdfService {
 		    System.out.println(pdfProductList.get(1).getProductName());
 
 			try {
-		    String jasperFilePath = resource.getFile().getAbsolutePath();
+//		    String jasperFilePath = resource.getFile().getAbsolutePath();
+//		    System.out.println(jasperFilePath);
+				String jasperFilePath = "/app/JasperFile/Invoice_Table_Based.jasper";
+				//JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePath);
 
 			JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath); 
 			
