@@ -52,6 +52,12 @@ public class BillingEntity {
 	private String billingTotalPrice;
 	@Column(name="billing_total_price_tax")
 	private String billingTotalPriceTax;
+	@Column(name = "billing_due_price")
+	private String billingDuePrice;
+	@Column(name = "billing_amt_paid")
+	private String billingAmtPaid;
+	@Column(name = "billing_due_flag")
+	private String billingDueFlag;
 	
 	@OneToMany
 	@JoinColumn(name = "billing_id")
@@ -93,7 +99,18 @@ public class BillingEntity {
 	public void setBillingNo(String billingNo) {
 		this.billingNo = billingNo;
 	}
-
+	public String getBillingAmtPaid() {
+		return billingAmtPaid;
+	}
+	public void setBillingAmtPaid(String billingAmtPaid) {
+		this.billingAmtPaid = billingAmtPaid;
+	}
+	public String getBillingDueFlag() {
+		return billingDueFlag;
+	}
+	public void setBillingDueFlag(String billingDueFlag) {
+		this.billingDueFlag = billingDueFlag;
+	}
 
 	public void setBilling_id(int billing_id) {
 		this.billing_id = billing_id;
@@ -166,5 +183,12 @@ public class BillingEntity {
 
 	public void setProductDetails(List<ProductDetails> productDetails) {
 		this.productDetails = productDetails;
+	}
+	
+	public String getBillingDuePrice() {
+		return billingDuePrice;
+	}
+	public void setBillingDuePrice(String billingDuePrice) {
+		this.billingDuePrice = billingDuePrice;
 	}
 }

@@ -31,7 +31,7 @@ public class CustomerService {
         long nanoTime = System.nanoTime();
         long uniqueNumber = nanoTime % 10_000_000;
         customerDetails.setCustomerUniqueNo(String.valueOf(uniqueNumber));
-        customerDetails.setCustomerType("B");
+        customerDetails.setCustomerType("N");
         String defaultPassword = "customer@123";
         customerDetails.setCustomerPassword(passwordEncoder.encode(defaultPassword));
 		return customerRepository.save(customerDetails);

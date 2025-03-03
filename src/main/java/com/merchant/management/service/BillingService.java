@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.message.SimpleMessage;
@@ -16,10 +17,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.merchant.management.dto.BillingHistoryRes;
 import com.merchant.management.dto.PdfProductDetails;
 import com.merchant.management.entity.BillingEntity;
 import com.merchant.management.entity.BillingEntityRes;
+import com.merchant.management.entity.BillingHistory;
 import com.merchant.management.entity.ProductDetails;
+import com.merchant.management.repository.BillingHistoryRepo;
 import com.merchant.management.repository.BillingRepository;
 import com.merchant.management.repository.CustomerRepository;
 import com.merchant.management.repository.ProductRepository;
@@ -33,6 +37,9 @@ public class BillingService {
 	
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private BillingHistoryRepo billingHistoryRepo;
 	
 	@Autowired
 	private JavaMailSender mailSender;
@@ -50,6 +57,7 @@ public class BillingService {
 	}
 	
 	public ResponseEntity billingService(BillingEntity billingEntity) {
+		BillingHistory billingHistory = new BillingHistory();
 		BillingEntityRes billingResponse = new BillingEntityRes();
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         billingEntity.setBillingDateTime(timestamp.toString());
@@ -59,6 +67,11 @@ public class BillingService {
         LocalTime currentTime = LocalTime.now();
         billingEntity.setBillingTime(currentTime.toString());
         List<ProductDetails> productDetails = billingEntity.getProductDetails();
+        if(!billingEntity.getBillingDuePrice().equals("0")) {
+        	billingEntity.setBillingDueFlag("1");
+        }else {
+        	billingEntity.setBillingDueFlag("0");
+        }
        
         for(int i=0;i<productDetails.size();i++) {
         	int productQuantity = 0;
@@ -72,6 +85,7 @@ public class BillingService {
         	String strPrdQty = Integer.toString(productQuantity);
         	productRepository.updateProductQty(productOwner, productName, strPrdQty);
         }
+        
         pdfService.generateBillPdf(billingEntity, productDetails);
         //emailService.sendEmail(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner());
 		 billingRepository.save(billingEntity);
@@ -100,5 +114,24 @@ public class BillingService {
 		
 		 
 	 }
+	
+	public List<BillingHistoryRes> getBillHistoryDetails(String email){
+		
+		List<BillingHistoryRes> billingHistResList = new ArrayList<BillingHistoryRes>();
+		List<BillingHistory> billingHistory = billingHistoryRepo.getBillingHistoryDetails(email);
+		for(int i=0;i<billingHistory.size();i++) {
+			BillingHistoryRes billingHistRes = new BillingHistoryRes();
+			billingHistRes.setCustInvoiceDateRes(billingHistory.get(i).getCustInvoiceDate());
+			billingHistRes.setCustDueAmtRes(billingHistory.get(i).getCustDueAmt());
+			billingHistRes.setCustEmailIdRes(billingHistory.get(i).getCutEmailId());
+			billingHistRes.setCustFullPaidFlgRes(billingHistory.get(i).getCustFullyPaidFlg());
+			billingHistRes.setCustInvoiceIdRes(billingHistory.get(i).getCustInvoiceId());
+			billingHistRes.setCustPaidAmtRes(billingHistory.get(i).getCustPaidAmt());
+			billingHistRes.setCustPhnNoRes(billingHistory.get(i).getCustPhnNo());
+			billingHistRes.setCustTotalAmtRes(billingHistory.get(i).getCustTotalAmt());
+			billingHistResList.add(billingHistRes);
+		}
+		return billingHistResList;
+	}
 
 }

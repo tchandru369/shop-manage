@@ -18,8 +18,10 @@ import org.springframework.stereotype.Service;
 import com.merchant.management.dto.PdfDetails;
 import com.merchant.management.dto.PdfProductDetails;
 import com.merchant.management.entity.BillingEntity;
+import com.merchant.management.entity.BillingHistory;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.ProductDetails;
+import com.merchant.management.repository.BillingHistoryRepo;
 import com.merchant.management.repository.MerchantRepository;
 
 import net.sf.jasperreports.engine.JRException;
@@ -37,6 +39,9 @@ public class PdfService {
 	private MerchantRepository merchantRepository;
 	
 	@Autowired
+	private BillingHistoryRepo billingHistoryRepo;
+	
+	@Autowired
 	private EmailService emailService;
 	
 	@Value("${billreport.path}")
@@ -52,10 +57,10 @@ public class PdfService {
 		
 		
 		try {
-			//ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
+			ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
 
 	        
-
+            BillingHistory billingHistory = new BillingHistory();
 			MerchantDetails ownerDetails = new MerchantDetails();
 			List<PdfProductDetails> pdfProductList = new ArrayList<PdfProductDetails>();
 			List<PdfDetails> pdfDetailsList = new ArrayList<PdfDetails>();
@@ -83,11 +88,28 @@ public class PdfService {
 		    }
 		    System.out.println(pdfProductList.get(0).getProductName());
 		    System.out.println(pdfProductList.get(1).getProductName());
+		    
+		    billingHistory.setCutEmailId(pdfDetails.getCustomerEmail());
+		    billingHistory.setCustShopEmailId(pdfDetails.getOwnerEmail());
+		    billingHistory.setCustInvoiceId(pdfDetails.getInvoiceNumber());
+		    billingHistory.setCustPhnNo(pdfDetails.getCustomerPhNo());
+		    billingHistory.setCustTotalAmt(billingEntity.getBillingTotalPrice());
+		    billingHistory.setCustInvoiceDate(billingEntity.getBillingDate());
+		    billingHistory.setCustPaidAmt(billingEntity.getBillingAmtPaid());
+		    billingHistory.setCustDueAmt(billingEntity.getBillingDuePrice());
+		    
+		    if(billingEntity.getBillingDueFlag().equals("1")) {
+		    	billingHistory.setCustFullyPaidFlg("0");
+		    }else {
+		    	billingHistory.setCustFullyPaidFlg("1");
+		    }
+		    
+		    billingHistoryRepo.save(billingHistory);
 
 			try {
-//		    String jasperFilePath = resource.getFile().getAbsolutePath();
+		    String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-				String jasperFilePath = "/app/JasperFile/Invoice_Table_Based.jasper";
+				//String jasperFilePath = "/app/JasperFile/Invoice_Table_Based.jasper";
 				//JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePath);
 
 			JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath); 
