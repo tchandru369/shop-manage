@@ -1,6 +1,7 @@
 package com.merchant.management.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +18,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -66,7 +68,7 @@ public class PdfService {
 		
 		
 		try {
-			ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
+			//ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
 
 	        
             BillingHistory billingHistory = new BillingHistory();
@@ -116,12 +118,18 @@ public class PdfService {
 		    billingHistoryRepo.save(billingHistory);
 
 			try {
-		    String jasperFilePath = resource.getFile().getAbsolutePath();
+		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
 				//String jasperFilePath = "/app/JasperFile/Invoice_Table_Based.jasper";
 				//JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePath);
+		    
+		    byte[] jasperFileBytes = downloadFileFromGCS("crypto-moon-450715-c2.appspot.com", "Invoice_Table_Based.jasper");
 
-			JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath); 
+	        // Step 2: Load the JasperReport from the byte array
+	        ByteArrayInputStream jasperInputStream = new ByteArrayInputStream(jasperFileBytes);
+	        JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperInputStream);
+
+			//JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath); 
 			
 			JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(pdfDetailsList);
 			
@@ -171,5 +179,22 @@ public class PdfService {
         }
 
         System.out.println("File uploaded to GCS: " + bucketName + "/" + pdfFileName);
+    }
+	
+	private byte[] downloadFileFromGCS(String bucketName, String fileName) throws IOException {
+        // Initialize the Storage client
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        
+        // Get the blob (file) from Cloud Storage
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        Blob blob = storage.get(blobId);
+        
+        // Check if the file exists
+        if (blob == null) {
+            throw new IOException("File not found in GCS: " + fileName);
+        }
+
+        // Download the file as a byte array
+        return blob.getContent();
     }
 }
