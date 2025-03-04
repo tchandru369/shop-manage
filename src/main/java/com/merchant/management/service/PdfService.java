@@ -1,5 +1,7 @@
 package com.merchant.management.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -15,6 +17,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.merchant.management.dto.PdfDetails;
 import com.merchant.management.dto.PdfProductDetails;
 import com.merchant.management.entity.BillingEntity;
@@ -40,6 +46,9 @@ public class PdfService {
 	
 	@Autowired
 	private BillingHistoryRepo billingHistoryRepo;
+	
+	@Autowired
+	private Storage storage;
 	
 	@Autowired
 	private EmailService emailService;
@@ -124,13 +133,17 @@ public class PdfService {
 			
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,datasource);
 			
+			byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+			
+	        uploadPdfToGCS(pdfBytes, "crypto-moon-450715-c2.appspot.com", pdfDetailsList.get(0).getInvoiceNumber() + ".pdf");
+
 			String pdfName = pdfDetails.getInvoiceNumber()+".pdf";
-			String finalPdfPath = exprotFilePath+pdfName;
-			JasperExportManager.exportReportToPdfFile(jasperPrint,finalPdfPath);
+//			String finalPdfPath = exprotFilePath+pdfName;
+//			JasperExportManager.exportReportToPdfFile(jasperPrint,finalPdfPath);
 			
 			System.out.println("Billing Report Generated Successfully......");
             
-			emailService.sendEmail(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(),pdfName,finalPdfPath);
+			emailService.sendEmailDup(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(),pdfName);
 			} 
 			catch(Exception e) {
 		    	 System.out.println(e.getMessage());
@@ -143,4 +156,20 @@ public class PdfService {
        return CompletableFuture.completedFuture(null);
 	    
 	}
+	
+	private void uploadPdfToGCS(byte[] pdfBytes, String bucketName, String pdfFileName) throws Exception {
+        // Create the Google Cloud Storage client
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        
+        // Create a BlobId and BlobInfo for the file
+        BlobId blobId = BlobId.of(bucketName, pdfFileName); // The path within your bucket
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        
+        // Upload the file to Google Cloud Storage
+        try (InputStream inputStream = new ByteArrayInputStream(pdfBytes)) {
+            storage.create(blobInfo, inputStream);
+        }
+
+        System.out.println("File uploaded to GCS: " + bucketName + "/" + pdfFileName);
+    }
 }
