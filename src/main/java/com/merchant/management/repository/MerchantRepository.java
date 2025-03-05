@@ -21,6 +21,7 @@ import com.merchant.management.entity.MerchantDetails;
 import jakarta.persistence.Id;
 
 @Repository
+@EnableJpaRepositories
 public interface MerchantRepository extends JpaRepository<MerchantDetails, Long> {
 	
 	 

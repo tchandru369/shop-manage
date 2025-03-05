@@ -40,6 +40,11 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.google.cloud.sql</groupId>
+			<artifactId>postgres-socket-factory</artifactId>
+			<version>1.23.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
 		</dependency>
@@ -71,13 +76,13 @@
 			<artifactId>spring-cloud-gcp-starter-storage</artifactId>
 			<version>6.0.1</version>
 		</dependency>
-		 <dependency>
+		 <!--<dependency>
            <groupId>com.google.cloud</groupId>
            <artifactId>spring-cloud-gcp-dependencies</artifactId>
            <version>4.0.0</version>
            <type>pom</type>
            <scope>import</scope>
-       </dependency>
+       </dependency>-->
       <!-- <dependency>
     <groupId>com.google.cloud</groupId>
     <artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId> 
@@ -145,11 +150,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.cloud.sql</groupId>
-			<artifactId>postgres-socket-factory</artifactId>
-			<version>1.23.0</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>

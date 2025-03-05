@@ -59,8 +59,9 @@ public class PdfService {
 	private String exprotFilePath;
 	
 	
-	public PdfService(MerchantRepository merchantRepository) {
+	public PdfService(MerchantRepository merchantRepository,Storage storage) {
 		this.merchantRepository = merchantRepository;
+		this.storage = storage;
 	}
 	
 	@Async
