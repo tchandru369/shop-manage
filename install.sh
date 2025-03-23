@@ -1,0 +1,2 @@
+kubectl create secret generic cloudsql-user-credentials --from-literal=username=manage-user --from-literal=password=ThanikaThanisEye
+kubectl create secret generic cloudsql-proxy-credentials --from-file=credentials.json=../key.json

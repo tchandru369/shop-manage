@@ -1,0 +1,29 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels: 
+    app: proxy
+  name: proxy-app
+spec:
+  selector:
+    matchLabels:
+      app: proxy-app 
+  template: 
+    metadata: 
+      labels: 
+        app: proxy-app
+    spec: 
+      containers:                         
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command: ["/cloud_sql_proxy", "-instances=crypto-moon-450715-c2:asia-south1:management-db-container=tcp:5432", "-credential_file=/secrets/cloudsql/credentials.json"]
+          volumeMounts:
+            - name: secrets-volume
+              mountPath: /secrets/cloudsql
+              readOnly: true
+      volumes:
+        - name: secrets-volume
+          secret:
+            secretName: cloudsql-proxy-credentials
+---

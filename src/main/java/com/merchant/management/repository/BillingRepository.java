@@ -8,7 +8,6 @@ import com.merchant.management.entity.BillingEntity;
 
 
 @Repository
-@EnableJpaRepositories
 public interface BillingRepository extends JpaRepository<BillingEntity, Integer>{
 
 }
