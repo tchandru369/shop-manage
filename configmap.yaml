@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgresqldb
+  name: postgresdb
 data:
   connection-name: crypto-moon-450715-c2:asia-south1:management-db-container=tcp:5432
   project-id: crypto-moon-450715-c2

@@ -4,7 +4,7 @@ spring:
             namespace: default
             enabled: true
             fail-fast: false
-            profile: dev, cloud, postgresql
+            profile: dev, cloud, postgres
             label: master
         kubernetes:
             reload:
@@ -23,6 +23,6 @@ spring:
             project-id: ${PROJECT_ID}
             sql:
                 enabled: true
-                database-type: postgresql
+                database-type: postgres
                 database-name: management
                 instance-connection-name: ${CONNECTION_NAME} 
