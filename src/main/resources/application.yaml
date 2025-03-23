@@ -7,8 +7,8 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     url: jdbc:postgresql://127.0.0.1:5432/management?createDatabaseIfNotExist=true
-    password: ${SECRETS_PASSWORD}
-    username: ${SECRETS_USER}
+    password: ThanikaThanisEye
+    username: manage-user
     schema: classpath:/schema.sql
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
