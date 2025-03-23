@@ -5,7 +5,7 @@ COPY pom.xml /app/
 COPY src /app/src/
 
 RUN apt-get update && apt-get install -y maven  # Install Maven manually
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests && ls -al /app/target 
 
 # Use OpenJDK 17 for the final image as well
 FROM openjdk:17-slim
