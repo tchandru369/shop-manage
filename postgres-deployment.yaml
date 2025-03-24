@@ -51,6 +51,13 @@ spec:
         app: postgres
         tier: database
     spec:
+      initContainers:  # Add the initContainers section here
+        - name: init-db
+          image: busybox
+          command: ["/bin/sh", "-c", "rm -rf /var/lib/postgresql/data/*"]
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-persistance-storage
       containers:
         - name: postgres
           image: postgres
