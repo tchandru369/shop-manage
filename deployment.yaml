@@ -6,13 +6,12 @@ metadata:
     name: backend-service-k8s
 spec:
   ports:
-    - nodePort: 30163
-      port: 8080
+    - port: 8080
       targetPort: 8080
       protocol: TCP
   selector:
     app: backend-service-k8s
-  type: NodePort
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
