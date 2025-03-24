@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: backend-service-k8s
-          image: backend-service-k8s:1.0
+          image: gcr.io/crypto-moon-450715-c2/management-app:latest
           ports:
             - containerPort: 8080
           env:
