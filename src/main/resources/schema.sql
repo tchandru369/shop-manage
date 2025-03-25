@@ -1,3 +1,3 @@
-create database IF NOT EXISTS management;
+create database IF NOT EXISTS managementdb;
 
-USE management; 
+USE managementdb; 

@@ -1,3 +1,5 @@
+server:
+  port: 8083
 spring:
   application:
     name: management-app
@@ -9,9 +11,9 @@ spring:
     hikari:
       connection-timeout: 20000
       maximum-pool-size: 5
-    url: jdbc:postgresql://${RDS_HOSTNAME:127.0.0.1}:${RDS_PORT:5432}/${RDS_DB_NAME:management}?createDatabaseIfNotExist=true
-    username: ${SECRETS_PASSWORD:ThanikaThanisEye}
-    password: ${SECRETS_USER:postgres}
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}?createDatabaseIfNotExist=true
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     schema: classpath:/schema.sql
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
