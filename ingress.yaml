@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend-service-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Enable SSL redirect if needed
+spec:
+  rules:
+  - host: 35.200.191.65
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service-k8s
+            port:
+              number: 8083
+  tls:
+  - hosts:
+    - 35.200.191.65
+    secretName: my-tls-secret 
