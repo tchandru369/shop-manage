@@ -15,6 +15,9 @@ spec:
       containers:
         - name: backend-service-k8s
           image: gcr.io/crypto-moon-450715-c2/management-app:latest
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /app/storage
           ports:
             - containerPort: 8080
           env:
@@ -31,13 +34,17 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  key: postgres_user
                   name: postgres-credentials
+                  key: postgres_user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
                   key: postgres_password
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: my-pvc
 ---
 apiVersion: v1
 kind: Service
