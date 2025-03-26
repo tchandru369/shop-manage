@@ -6,7 +6,7 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteaOnce
+    - ReadWriteMany
   hostPath: 
     path : src/main/resources
 ---
@@ -16,7 +16,7 @@ metadata:
   name: my-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi
