@@ -8,7 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce  
   hostPath: 
-    path : src/main/resources
+    path : /home/tchandru369/shop-manage/src/main/resources
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
