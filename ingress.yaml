@@ -15,7 +15,7 @@ spec:
           service:
             name: backend-service-k8s
             port:
-              number: 8083
+              number: 8080
   tls:
   - hosts:
     - merchant.corporation.com
