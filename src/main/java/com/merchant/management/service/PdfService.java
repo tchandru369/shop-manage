@@ -125,8 +125,8 @@ public class PdfService {
 			try {
 		    String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-				String jasperFilePath1 = "/home/tchandru369/shop-manage/src/main/resources/JasperFile/Invoice_Table_Based.jasper";
-				//JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePath);
+				//String jasperFilePath1 = "/src/main/resources/JasperFile/Invoice_Table_Based.jasper";
+				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePath);
 		    
 		    //byte[] jasperFileBytes = downloadFileFromGCS("crypto-moon-450715-c2.appspot.com", "Invoice_Table_Based.jasper");
 
@@ -134,7 +134,7 @@ public class PdfService {
 //	        ByteArrayInputStream jasperInputStream = new ByteArrayInputStream(jasperFileBytes);
 //	        JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperInputStream);
 
-			JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath1); 
+			//JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath1); 
 			
 			JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(pdfDetailsList);
 			
@@ -151,12 +151,12 @@ public class PdfService {
 	        //uploadPdfToGCS(pdfBytes, "crypto-moon-450715-c2.appspot.com", pdfDetailsList.get(0).getInvoiceNumber() + ".pdf");
 
 			String pdfName = pdfDetails.getInvoiceNumber()+".pdf";
-			String finalPdfPath = exprotFilePath+pdfName;
-			JasperExportManager.exportReportToPdfFile(jasperPrint,finalPdfPath);
+//			String finalPdfPath = exprotFilePath+pdfName;
+//			JasperExportManager.exportReportToPdfFile(jasperPrint,finalPdfPath);
 			
 			System.out.println("Billing Report Generated Successfully......");
             
-			emailService.sendEmail(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(), pdfName, finalPdfPath);
+			emailService.sendEmail1(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(), pdfName, pdfBytes);
 			//emailService.sendEmailDup(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(),pdfName);
 			} 
 			catch(Exception e) {
