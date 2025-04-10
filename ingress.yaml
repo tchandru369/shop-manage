@@ -1,12 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: backend-service-ingress
+  name: backend-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Enable SSL redirect if needed
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  tls:
+  - hosts:
+    - 34-118-231-106.nip.io
+    secretName: tls-secret
   rules:
-  - host: merchant.corporation.com
+  - host: 34-118-231-106.nip.io
     http:
       paths:
       - path: /
@@ -16,7 +21,3 @@ spec:
             name: backend-service-k8s
             port:
               number: 8080
-  tls:
-  - hosts:
-    - merchant.corporation.com
-    secretName: my-tls-secret 
