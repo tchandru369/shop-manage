@@ -1,8 +1,11 @@
 FROM openjdk:17-slim as BUILD
 
 WORKDIR /app
+COPY src ./src
 
-RUN mvn clean package -DskipTests
+RUN apt-get update && apt-get install -y maven
+
+RUN mvn clean package 
 
 # Runtime stage with smaller JDK image
 FROM openjdk:17-slim
