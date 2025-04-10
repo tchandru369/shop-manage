@@ -8,10 +8,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - 34-118-231-106.nip.io
+    - 35-200-217-136.nip.io
     secretName: tls-secret
   rules:
-  - host: 34-118-231-106.nip.io
+  - host: 35-200-217-136.nip.io
     http:
       paths:
       - path: /
