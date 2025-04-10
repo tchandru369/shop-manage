@@ -14,6 +14,13 @@ spec:
   - host: 35-200-217-136.nip.io
     http:
       paths:
+      - path: /.well-known/acme-challenge/*
+        pathType: Prefix
+        backend:
+          service:
+            name: cm-acme-http-solver
+            port:
+              name: http # Make sure this is the correct port name used by the solver service
       - path: /
         pathType: Prefix
         backend:
