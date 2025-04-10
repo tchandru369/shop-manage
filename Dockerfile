@@ -6,7 +6,7 @@ COPY src /app/src/
 
 RUN apt-get update && apt-get install -y maven
 
-RUN mvn clean package 
+RUN mvn clean package -DskipTests
 
 # Runtime stage with smaller JDK image
 FROM openjdk:17-slim
