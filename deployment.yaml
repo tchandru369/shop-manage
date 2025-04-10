@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend-service-k8s
-          image: gcr.io/scenic-rampart-456316-u1/management-app:v1
+          image: gcr.io/scenic-rampart-456316-u1/management-app:latest
           volumeMounts:
             - name: storage-volume
               mountPath: /app/storage
