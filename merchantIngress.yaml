@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: merchant-api-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/managed-certificates: merchant-api-cert
+spec:
+  rules:
+    - host: 35-200-217-136.nip.io
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service-k8s
+                port:
+                  number: 8080
+          - path: /services
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service-k8s
+                port:
+                  number: 8080

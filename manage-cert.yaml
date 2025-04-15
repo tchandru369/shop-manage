@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: merchant-api-cert
+spec:
+  domains:
+    - 35-200-217-136.nip.io
