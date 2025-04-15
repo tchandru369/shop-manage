@@ -3,9 +3,9 @@ kind: Ingress
 metadata:
   name: merchant-api-ingress
   annotations:
-    kubernetes.io/ingress.class: "gce"
     networking.gke.io/managed-certificates: merchant-api-cert
 spec:
+  ingressClassName: gce
   rules:
     - host: 35-200-217-136.nip.io
       http:
