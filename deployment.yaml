@@ -53,10 +53,10 @@ metadata:
   labels:
     name: backend-service-k8s
 spec:
-  ports:
-    - port: 8080
-      targetPort: 8080
-      protocol: TCP
+  type: NodePort  # Changed from LoadBalancer
   selector:
     app: backend-service-k8s
-  type: LoadBalancer
+  ports:
+    - port: 8080           # Port exposed by the service
+      targetPort: 8080     # Port on the pod
+      protocol: TCP
