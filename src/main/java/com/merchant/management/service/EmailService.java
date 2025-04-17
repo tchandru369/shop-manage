@@ -82,6 +82,7 @@ public class EmailService {
     public CompletableFuture<Void> sendEmail1(String customerEmail, String productOwner,String fileName,byte[] pdfBytes) {
         // Simulate email sending process (e.g., calling an email service)
         try {
+        	System.out.println("Inside Email service...................");
         	 LocalDate currentDate = LocalDate.now();
  	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
  	        String formattedDate = currentDate.format(formatter);
