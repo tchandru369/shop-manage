@@ -68,27 +68,27 @@ public class WebSecurityConfig implements WebMvcConfigurer{
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/v1/auth/**")// Adjust the mapping as necessary
-                .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app") // Your Angular app's origin
+                .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app","http://34.47.241.192") // Your Angular app's origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
                 .allowCredentials(true); // If you need to include credentials
         
         registry.addMapping("/services/v1/products/**")// Adjust the mapping as necessary
-        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app") // Your Angular app's origin
+        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app","http://34.47.241.192") // Your Angular app's origin
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
         .allowCredentials(true);
         
         registry.addMapping("/services/v1/merchant/**")// Adjust the mapping as necessary
-        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app") // Your Angular app's origin
+        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app","http://34.47.241.192") // Your Angular app's origin
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
         .allowCredentials(true);
         
         registry.addMapping("/services/v1/billing/**")// Adjust the mapping as necessary
-        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app") // Your Angular app's origin
+        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app","http://34.47.241.192") // Your Angular app's origin
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
         .allowCredentials(true);// If you need to include credentials
         
         registry.addMapping("/services/v1/customer/**")// Adjust the mapping as necessary
-        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app") // Your Angular app's origin
+        .allowedOrigins("http://localhost:4200","https://merchant-angular-app-983146727685.asia-south1.run.app","http://34.47.241.192") // Your Angular app's origin
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
         .allowCredentials(true);
     }
