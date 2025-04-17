@@ -73,7 +73,7 @@ public class PdfService {
 		
 		
 		try {
-			ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
+			//ClassPathResource resource = new ClassPathResource("JasperFile/Invoice_Table_Based.jasper");
 
 	        
             BillingHistory billingHistory = new BillingHistory();
@@ -123,10 +123,10 @@ public class PdfService {
 		    billingHistoryRepo.save(billingHistory);
 
 			try {
-		    String jasperFilePath = resource.getFile().getAbsolutePath();
+		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-				//String jasperFilePath1 = "/src/main/resources/JasperFile/Invoice_Table_Based.jasper";
-				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePath);
+		    String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
+		    JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePaths);
 		    
 		    //byte[] jasperFileBytes = downloadFileFromGCS("crypto-moon-450715-c2.appspot.com", "Invoice_Table_Based.jasper");
 
