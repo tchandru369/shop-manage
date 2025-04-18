@@ -94,6 +94,7 @@ public class PdfService {
 		    pdfDetails.setInvoiceNumber("INV"+billingEntity.getBillingNo());
 		    pdfDetails.setDiscountAmount(billingEntity.getBillingTotalPriceTax());
 		    pdfDetailsList.add(pdfDetails);
+		    System.out.println("PDf details has been added to list");
 		    for(int i=0;i<productDetails.size();i++) {
 				PdfProductDetails pdfProduct = new PdfProductDetails();
 		    	pdfProduct.setProductName(productDetails.get(i).getProductName());
@@ -102,9 +103,7 @@ public class PdfService {
 		    	pdfProduct.setProductQuantity(Integer.parseInt(productDetails.get(i).getProductQuantity()));
 		    	pdfProductList.add(pdfProduct);
 		    }
-		    System.out.println(pdfProductList.get(0).getProductName());
-		    System.out.println(pdfProductList.get(1).getProductName());
-		    
+		    System.out.println(pdfProductList.get(0).getProductName());		    
 		    billingHistory.setCutEmailId(pdfDetails.getCustomerEmail());
 		    billingHistory.setCustShopEmailId(pdfDetails.getOwnerEmail());
 		    billingHistory.setCustInvoiceId(pdfDetails.getInvoiceNumber());
@@ -119,13 +118,14 @@ public class PdfService {
 		    }else {
 		    	billingHistory.setCustFullyPaidFlg("1");
 		    }
-		    
+		    System.out.println("billing history entity has been added......"); 
 		    billingHistoryRepo.save(billingHistory);
 
 			try {
 		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-		    String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
+		    String jasperFilePaths = "app/resources/JasperFile/Invoice_Table_Based.jasper";
+				//String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
 		    JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePaths);
 		    
