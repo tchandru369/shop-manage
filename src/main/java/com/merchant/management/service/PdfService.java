@@ -1,6 +1,7 @@
 package com.merchant.management.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -124,9 +125,11 @@ public class PdfService {
 			try {
 		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-		    String jasperFilePaths = "app/resources/JasperFile/Invoice_Table_Based.jasper";
+		    String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
 				//String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
+		    File jasperFile = new File(jasperFilePaths);
+		    System.out.println("Jasper file exists: " + jasperFile.exists() + " | Path: " + jasperFile.getAbsolutePath());
 		    JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePaths);
 		    
 		    //byte[] jasperFileBytes = downloadFileFromGCS("crypto-moon-450715-c2.appspot.com", "Invoice_Table_Based.jasper");
