@@ -69,7 +69,7 @@ public class PdfService {
 		this.merchantRepository = merchantRepository;
 	}
 	
-	@Async
+	@Async("taskExecutor")
 	public CompletableFuture<Void> generateBillPdf(BillingEntity billingEntity,List<ProductDetails> productDetails) {
 		
 		

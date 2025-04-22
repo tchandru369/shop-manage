@@ -78,7 +78,7 @@ public class EmailService {
     }
 	
 	
-	@Async
+	@Async("taskExecutor")
     public CompletableFuture<Void> sendEmail1(String customerEmail, String productOwner,String fileName,byte[] pdfBytes) {
         // Simulate email sending process (e.g., calling an email service)
         try {
