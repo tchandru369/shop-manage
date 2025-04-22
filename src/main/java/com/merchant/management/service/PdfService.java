@@ -149,6 +149,10 @@ public class PdfService {
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
 			parameters.put("TABLE_DATA_SOURCE", tableDataSource);
+			
+			System.out.println("Product list size: " + pdfProductList.size());
+			System.out.println("Detail list size: " + pdfDetailsList.size());
+			System.out.println("Parameter keys: " + parameters.keySet());
 		    System.out.println("Before jasperprint Loading");
 
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,datasource);
