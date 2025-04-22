@@ -130,8 +130,10 @@ public class PdfService {
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
 		    File jasperFile = new File(jasperFilePaths);
 		    System.out.println("Jasper file exists: " + jasperFile.exists() + " | Path: " + jasperFile.getAbsolutePath());
+		    System.out.println("Before jasperReport Loading");
 		    JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(jasperFilePaths);
-		    
+		    System.out.println("JasperReport Loaded successfully");
+
 		    //byte[] jasperFileBytes = downloadFileFromGCS("crypto-moon-450715-c2.appspot.com", "Invoice_Table_Based.jasper");
 
 	        // Step 2: Load the JasperReport from the byte array
@@ -139,19 +141,21 @@ public class PdfService {
 //	        JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperInputStream);
 
 			//JasperReport jasperReport = (JasperReport)JRLoader.loadObjectFromFile(jasperFilePath1); 
-			
+		    System.out.println("Before datasource Loading");
 			JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(pdfDetailsList);
-			
+		    System.out.println("Datasources Loaded successfully");
 			JRBeanCollectionDataSource tableDataSource = new JRBeanCollectionDataSource(pdfProductList);
 			
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
 			parameters.put("TABLE_DATA_SOURCE", tableDataSource);
-			
+		    System.out.println("Before jasperprint Loading");
+
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,datasource);
-			
+		    System.out.println("jasperPrint successfully Loaded");
+		    System.out.println("Before exportReportToPdf Loading");
 			byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
-			
+		    System.out.println("exportReportToPdf successfully Loaded");
 	        //uploadPdfToGCS(pdfBytes, "crypto-moon-450715-c2.appspot.com", pdfDetailsList.get(0).getInvoiceNumber() + ".pdf");
 
 			String pdfName = pdfDetails.getInvoiceNumber()+".pdf";
