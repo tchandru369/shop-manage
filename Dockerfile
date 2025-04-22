@@ -14,4 +14,4 @@ FROM openjdk:17-slim
 COPY --from=BUILD /app/target/management-0.0.1-SNAPSHOT.jar application.jar
 COPY src/main/resources /app/resources
 
-ENTRYPOINT ["java", "-jar", "/application.jar"]
+ENTRYPOINT ["java", "-Djava.awt.headless=true", "-jar", "/application.jar"]
