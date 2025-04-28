@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.merchant.management.entity.ComProdDtls;
 import com.merchant.management.entity.ProductDetails;
 
 @Repository
@@ -34,6 +35,11 @@ public interface ProductRepository extends JpaRepository<ProductDetails, Long>{
 	
 	@Query(value = "SELECT ea.product_id,ea.product_primary_id,ea.product_owner,ea.product_name,ea.product_created_on,ea.product_modified_on,ea.product_price,ea.product_cust_price,ea.product_quantity,ea.product_type FROM product_details ea WHERE ea.product_owner = 'thanism@gmail.com' AND CAST(ea.product_quantity AS INT) < 5", nativeQuery = true)
 	List<ProductDetails> getDemandProductDetails(String merchantEmail);
+	
+	@Query(value = "SELECT com_name, prod_type, prod_name FROM CMP_MILK_PROD_DTLS", nativeQuery = true)
+	List<Object[]> getComProdDtls();
+	
+	
 	
 	
 	

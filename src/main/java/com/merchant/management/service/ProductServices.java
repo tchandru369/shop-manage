@@ -1,15 +1,23 @@
 package com.merchant.management.service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.merchant.management.dto.MilkProductResponse;
+import com.merchant.management.dto.MilkProductRequest;
+import com.merchant.management.entity.ComProdDtls;
+import com.merchant.management.entity.MilkProductEntity;
 import com.merchant.management.entity.ProductDetailRes;
 import com.merchant.management.entity.ProductDetails;
+import com.merchant.management.repository.MilkProductRepo;
 import com.merchant.management.repository.ProductRepository;
 
 @Service
@@ -18,10 +26,44 @@ public class ProductServices {
  @Autowired
  private ProductRepository productRepository;
  
+ @Autowired
+ private MilkProductRepo milkProductRepo;
+ 
+ 
  
  @Autowired
- public ProductServices(ProductRepository productRepository) {
+ public ProductServices(ProductRepository productRepository, MilkProductRepo milkProductRepo) {
      this.productRepository = productRepository;
+     this.milkProductRepo = milkProductRepo;
+ }
+ 
+ public ResponseEntity addMilkProducts(List<MilkProductRequest> milkProduct) {
+	 List<MilkProductEntity> milkProdEntity = new ArrayList<MilkProductEntity>();
+	 MilkProductResponse milkRes = new MilkProductResponse();
+	 LocalDate currentDate = LocalDate.now();
+     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+     String formattedDate = currentDate.format(formatter);
+	 for(int i=0;i<milkProduct.size();i++) {
+		 MilkProductEntity milkProdEntities = new MilkProductEntity();
+		 milkProdEntities.setCompanyName(milkProduct.get(i).getCompanyName());
+		 milkProdEntities.setProductOwner(milkProduct.get(i).getProductOwner());
+		 milkProdEntities.setProductName(milkProduct.get(i).getProductName());
+		 milkProdEntities.setProductType(milkProduct.get(i).getProductType());
+		 milkProdEntities.setProductQuantity(milkProduct.get(i).getProductQuantity());
+		 milkProdEntities.setProductBillPrice(milkProduct.get(i).getProductBillPrice());
+		 milkProdEntities.setProductCustPrice(milkProduct.get(i).getProductCustPrice());
+		 milkProdEntities.setProductShopPrice(milkProduct.get(i).getProductShopPrice());
+		 milkProdEntities.setProductLive("1");
+		 milkProdEntities.setProductCreatedDate(formattedDate);
+		 milkProdEntity.add(milkProdEntities);
+
+	 }
+	 
+	 milkProductRepo.saveAll(milkProdEntity);
+	 milkRes.setResponse("success");
+	 milkRes.setErrorCode("0");
+	 milkRes.setErrorMsg("success");
+	 return ResponseEntity.ok(milkRes);
  }
  
  public ResponseEntity<ProductDetailRes> addProducts(List<ProductDetails> productList){
@@ -58,6 +100,20 @@ public class ProductServices {
 	 return ResponseEntity.ok(productRes);
  }
  
+ public ResponseEntity updateMilkProdDetails(MilkProductEntity productDetails) {
+	ProductDetailRes productRes = new ProductDetailRes();
+	int currentProductQty = productDetails.getProductQuantity();
+	int prodQtyFromDB = Integer.parseInt(milkProductRepo.getMilkProdQty(productDetails.getProductOwner(), productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType()));
+	int productQuantity = prodQtyFromDB + currentProductQty;
+	System.out.println("Product Quantity : "+productQuantity);
+	String strPrdQty = Integer.toString(productQuantity);
+	
+ 	milkProductRepo.updateMilkProdQty(productDetails.getProductOwner(),productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType(),productQuantity,productDetails.getProductCustPrice(), productDetails.getProductBillPrice(),productDetails.getProductShopPrice());
+    productRes.setResponse("success");
+    productRes.setErrorCode("0");
+	 return ResponseEntity.ok(productRes);
+ }
+ 
  public List<ProductDetails> getProductDetails(String ownerName){
 	 
 	 List<ProductDetails> productDetails = productRepository.getProductDetails(ownerName);
@@ -65,11 +121,28 @@ public class ProductServices {
 	 return productDetails;
  }
  
+ 
+ public List<ComProdDtls> getComProdDtls(){
+	 List<ComProdDtls> comProdDtls = productRepository.getComProdDtls().stream()
+			    .map(row -> new ComProdDtls((String) row[0], (String) row[1], (String) row[2]))
+			    .collect(Collectors.toList());
+	 
+	 return comProdDtls;
+ }
+ 
+ 
  public List<ProductDetails> getDemandProductDetails(String ownerName){
 	 
 	 List<ProductDetails> productDemandDetails = productRepository.getDemandProductDetails(ownerName);
 	 
 	 return productDemandDetails;
+ }
+ 
+ public List<MilkProductEntity> getOwnerMilkProdDetails(String ownerName){
+	 
+	 List<MilkProductEntity> productDetails = milkProductRepo.getOwnerMilkProdDetails(ownerName);
+	 
+	 return productDetails;
  }
  
 

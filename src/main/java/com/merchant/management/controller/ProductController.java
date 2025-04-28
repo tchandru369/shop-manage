@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.dto.MilkProductResponse;
+import com.merchant.management.dto.MilkProductRequest;
+import com.merchant.management.entity.ComProdDtls;
+import com.merchant.management.entity.MilkProductEntity;
 import com.merchant.management.entity.ProductDetailRes;
 import com.merchant.management.entity.ProductDetails;
 import com.merchant.management.service.ProductServices; 
@@ -58,6 +62,43 @@ public class ProductController {
 		ResponseEntity responses =  productService.updateProductDetails(productDetails);
 		return responses;
 	}
+	
+	@PostMapping("/addMilkProd")
+	public ResponseEntity addMilkProduct(@RequestBody List<MilkProductRequest> milkRequest){
+		MilkProductResponse milkRes = new MilkProductResponse();
+		ResponseEntity responses =  productService.addMilkProducts(milkRequest);
+        if(responses != null) {
+        	milkRes.setResponse("success");
+        	milkRes.setErrorCode("0");
+        }else {
+        	milkRes.setResponse("failure");
+        	milkRes.setErrorCode("1");
+        	milkRes.setErrorMsg("Something went wrong!!!");
+        }
+		
+		return ResponseEntity.ok(milkRes);
+		
+	}
+	
+	@GetMapping("/getComDtls")
+	public List<ComProdDtls> getComProdDtls(){
+		List<ComProdDtls> comProdDtls = productService.getComProdDtls();
+		return comProdDtls;
+	}
+	
+	@GetMapping("/viewMilkProducts")
+	public  List<MilkProductEntity> viewMilkProdDetails(@RequestParam String name){
+		List<MilkProductEntity> productDetail = productService.getOwnerMilkProdDetails(name);
+		for(int i=0;i<productDetail.size();i++) {
+			System.out.println(productDetail.get(i).getProductName());
+		}
+		return productDetail;
+	}
 
+	@PostMapping("/updateMilkPrd")
+	public ResponseEntity updateMilkProduct(@RequestBody MilkProductEntity productDetails){
+		ResponseEntity responses =  productService.updateMilkProdDetails(productDetails);
+		return responses;
+	}
 	
 }
