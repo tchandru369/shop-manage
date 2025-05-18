@@ -17,11 +17,11 @@ spec:
           image: gcr.io/scenic-rampart-456316-u1/management-app:latest
           resources:
             requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
               memory: "1Gi"
               cpu: "500m"
-            limits:
-              memory: "2Gi"
-              cpu: "1"
           volumeMounts:
             - name: storage-volume
               mountPath: /app/storage
