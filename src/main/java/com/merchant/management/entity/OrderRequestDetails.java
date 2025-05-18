@@ -16,24 +16,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "order_request_tb")
+@Table(name = "order_request_details")
 public class OrderRequestDetails {
 	
 	@Id
 	@GeneratedValue
 	private int orderId;
-	@Column(name = "order_comp_name")
-	private String orderCompName;
-	@Column(name = "order_product_type")
-	private String orderProductType;
-	@Column(name = "order_product_name")
-	private String orderProductName;
-	@Column(name = "order_product_qty")
-	private String orderProductQty;
 	@Column(name = "order_product_cust_type")
 	private String orderProductCustType;
+	@Column(name = "order_prod_cust_name")
+	private String orderProductCustName;
+	@Column(name = "order_prod_owner_name")
+	private String orderProductOwnerName;
 	@Column(name = "order_prod_total_amt")
-	private String orderProdTotalAmt;
+	private double orderProdTotalAmt;
 	@Column(name = "order_placed_date")
 	private String orderPlacedDate;
 	@Column(name = "order_bill_pay_flg")
@@ -44,35 +40,41 @@ public class OrderRequestDetails {
 	private String orderCustEmailId;
 	@Column(name = "order_cust_phno")
 	private String orderCustPhNo;
+	@Column(name = "order_request_status")
+	private String orderRequestStatus;
+	@Column(name = "order_balance_flg")
+	private String orderBalanceFlg;
+	
+	
+	public String getOrderProductOwnerName() {
+		return orderProductOwnerName;
+	}
+	public void setOrderProductOwnerName(String orderProductOwnerName) {
+		this.orderProductOwnerName = orderProductOwnerName;
+	}
+	public String getOrderProductCustName() {
+		return orderProductCustName;
+	}
+	public void setOrderProductCustName(String orderProductCustName) {
+		this.orderProductCustName = orderProductCustName;
+	}
+	public String getOrderBalanceFlg() {
+		return orderBalanceFlg;
+	}
+	public void setOrderBalanceFlg(String orderBalanceFlg) {
+		this.orderBalanceFlg = orderBalanceFlg;
+	}
 	public int getOrderId() {
 		return orderId;
 	}
 	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
-	public String getOrderCompName() {
-		return orderCompName;
+	public String getOrderRequestStatus() {
+		return orderRequestStatus;
 	}
-	public void setOrderCompName(String orderCompName) {
-		this.orderCompName = orderCompName;
-	}
-	public String getOrderProductType() {
-		return orderProductType;
-	}
-	public void setOrderProductType(String orderProductType) {
-		this.orderProductType = orderProductType;
-	}
-	public String getOrderProductName() {
-		return orderProductName;
-	}
-	public void setOrderProductName(String orderProductName) {
-		this.orderProductName = orderProductName;
-	}
-	public String getOrderProductQty() {
-		return orderProductQty;
-	}
-	public void setOrderProductQty(String orderProductQty) {
-		this.orderProductQty = orderProductQty;
+	public void setOrderRequestStatus(String orderRequestStatus) {
+		this.orderRequestStatus = orderRequestStatus;
 	}
 	public String getOrderProductCustType() {
 		return orderProductCustType;
@@ -80,10 +82,10 @@ public class OrderRequestDetails {
 	public void setOrderProductCustType(String orderProductCustType) {
 		this.orderProductCustType = orderProductCustType;
 	}
-	public String getOrderProdTotalAmt() {
+	public double getOrderProdTotalAmt() {
 		return orderProdTotalAmt;
 	}
-	public void setOrderProdTotalAmt(String orderProdTotalAmt) {
+	public void setOrderProdTotalAmt(double orderProdTotalAmt) {
 		this.orderProdTotalAmt = orderProdTotalAmt;
 	}
 	public String getOrderPlacedDate() {

@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import com.merchant.management.dto.PdfProductDetails;
 import com.merchant.management.entity.BillingEntity;
 import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.BillingHistory;
+import com.merchant.management.entity.ComProdDtls;
+import com.merchant.management.entity.CountryStateCity;
 import com.merchant.management.entity.ProductDetails;
 import com.merchant.management.repository.BillingHistoryRepo;
 import com.merchant.management.repository.BillingRepository;
@@ -54,6 +57,7 @@ public class BillingService {
 	public BillingService(BillingRepository billingRepository,JavaMailSender mailSender) {
 		this.billingRepository = billingRepository;
 		this.mailSender = mailSender;
+		
 	}
 	
 	public ResponseEntity billingService(BillingEntity billingEntity) {
@@ -133,5 +137,13 @@ public class BillingService {
 		}
 		return billingHistResList;
 	}
+	
+	 public List<CountryStateCity> getConStDtls(){
+		 List<CountryStateCity> comProdDtls = billingRepository.getConStDtls().stream()
+				    .map(row -> new CountryStateCity((String) row[0], (String) row[1], (String) row[2]))
+				    .collect(Collectors.toList());
+		 
+		 return comProdDtls;
+	 }
 
 }

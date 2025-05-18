@@ -29,11 +29,11 @@ public class BillingHistory {
 	@Column(name = "cust_Phone_No")
 	private String custPhnNo;
 	@Column(name = "cust_Paid_Amt")
-	private String custPaidAmt;
+	private double custPaidAmt;
 	@Column(name = "cust_Due_Amt")
-	private String custDueAmt;
+	private double custDueAmt;
 	@Column(name = "cust_Total_Amt")
-	private String custTotalAmt;
+	private double custTotalAmt;
 	@Column(name = "cust_invoice_date")
 	private String custInvoiceDate;
 	@Column(name = "cust_fullyPaid_Flg")
@@ -59,22 +59,22 @@ public class BillingHistory {
 	public void setCustPhnNo(String custPhnNo) {
 		this.custPhnNo = custPhnNo;
 	}
-	public String getCustPaidAmt() {
+	public double getCustPaidAmt() {
 		return custPaidAmt;
 	}
-	public void setCustPaidAmt(String custPaidAmt) {
+	public void setCustPaidAmt(double custPaidAmt) {
 		this.custPaidAmt = custPaidAmt;
 	}
-	public String getCustDueAmt() {
+	public double getCustDueAmt() {
 		return custDueAmt;
 	}
-	public void setCustDueAmt(String custDueAmt) {
+	public void setCustDueAmt(double custDueAmt) {
 		this.custDueAmt = custDueAmt;
 	}
-	public String getCustTotalAmt() {
+	public double getCustTotalAmt() {
 		return custTotalAmt;
 	}
-	public void setCustTotalAmt(String custTotalAmt) {
+	public void setCustTotalAmt(double custTotalAmt) {
 		this.custTotalAmt = custTotalAmt;
 	}
 	public String getCustInvoiceDate() {

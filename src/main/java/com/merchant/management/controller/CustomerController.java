@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
+import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.repository.CustomerRepository;
 import com.merchant.management.service.CustomerService;
 
@@ -45,11 +46,20 @@ public class CustomerController {
 	       
 	}
 	
+	@PostMapping("/saveShopCust")
+	public ResponseEntity<CustomerDetailsRes> saveShopCustomer(@RequestBody ShopCustomerDetails customerDetails) {
+		   CustomerDetailsRes response  = new CustomerDetailsRes();
+	       customerService.saveShopCustomer(customerDetails);
+	       response.setResponse("success");
+	       return ResponseEntity.ok(response);
+	       
+	}
+	
 	
 	@GetMapping("/getCustomer")
 	public ResponseEntity getCustomerForBilling(@RequestParam String custPhNo){
 		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
-		CustomerDetails custDetails = customerService.getCustomerDetailsByPhNo(custPhNo);
+		ShopCustomerDetails custDetails = customerService.getCustomerDetailsByPhNo(custPhNo);
 		if(custDetails == null) {
 			customerDetailsRes.setErrorCode("ERR001");
 			customerDetailsRes.setErrorMsg("Customer Not Found");

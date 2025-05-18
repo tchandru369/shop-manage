@@ -14,14 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.merchant.management.dto.BillingHistoryRes;
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.dto.OrderRequestDto;
 import com.merchant.management.entity.BillingEntity;
 import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.BillingHistory;
+import com.merchant.management.entity.ComProdDtls;
+import com.merchant.management.entity.CountryStateCity;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.ProductDetails;
+import com.merchant.management.entity.ShopCustOrderDetails;
 import com.merchant.management.service.BillingService;
+import com.merchant.management.service.OrderService;
 
 @RestController
 @RequestMapping("/services/v1/billing")
@@ -30,6 +35,9 @@ public class BillingController {
 	
 	@Autowired
 	private BillingService billingService;
+	
+	@Autowired
+	private OrderService orderService;
 	
 	@PostMapping("/billCustomer")
 	public ResponseEntity payBills(@RequestBody BillingEntity billingEntity) {
@@ -53,6 +61,55 @@ public class BillingController {
 		}
 		return billingHistList;
 	}
+	
+	@GetMapping("/getConStDtls")
+	public List<CountryStateCity> getComProdDtls(){
+		List<CountryStateCity> conStDtls = billingService.getConStDtls();
+		return conStDtls;
+	}
     
+	@PostMapping("/addOrderReq")
+	public ResponseEntity addReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.saveCustOrderDetails(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/OrderProcReq")
+	public ResponseEntity orderProcReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.orderProcessRequest(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/deleteOrderReq")
+	public ResponseEntity deleteReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.deleteCustOrderDetails(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/paidOrderReq")
+	public ResponseEntity paidOrderReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.paidOrderRequest(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@GetMapping("/getOrderReq")
+	public List<OrderRequestDto> getOrderRequest(@RequestParam String email) {
+		List<OrderRequestDto> orderList = orderService.getOrderDetails(email);
+		return orderList;
+	}
+	
+	@GetMapping("/getProcOrders")
+	public List<OrderRequestDto> getProcessedOrders(@RequestParam String email) {
+		List<OrderRequestDto> orderList = orderService.getProcessedOrders(email);
+		return orderList;
+	}
+	
+	@PostMapping("/deleteProcOrder")
+	public ResponseEntity deleteProcReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.deleteProcessOrderDetails(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	
 
 }

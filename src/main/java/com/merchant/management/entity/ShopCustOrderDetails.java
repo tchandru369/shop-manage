@@ -21,14 +21,14 @@ public class ShopCustOrderDetails {
 	@Id
 	@GeneratedValue
 	private int orderCustId;
-	@Column(name = "order_cust_name")
-	private String orderCustName;
 	@Column(name = "order_cust_phone_no")
 	private String orderCustPhoneNo;
 	@Column(name = "order_cust_email_id")
 	private String orderCustEmailId;
 	@Column(name = "order_cust_owner_name")
 	private String orderCustOwnerName;
+	@Column(name = "order_cust_prod_cmp")
+	private String orderCustProdCmp;
 	@Column(name = "order_cust_prod_type")
 	private String orderCustProdType;
 	@Column(name = "order_cust_prod_name")
@@ -41,19 +41,17 @@ public class ShopCustOrderDetails {
 	private String orderCustCrtdDate;
 	@Column(name = "order_cust_status")
 	private String orderCustStatus;
-	@Column(name = "order_cust_ref_no")
-	private String orderCustRefNo;
+	public String getOrderCustProdCmp() {
+		return orderCustProdCmp;
+	}
+	public void setOrderCustProdCmp(String orderCustProdCmp) {
+		this.orderCustProdCmp = orderCustProdCmp;
+	}
 	public int getOrderCustId() {
 		return orderCustId;
 	}
 	public void setOrderCustId(int orderCustId) {
 		this.orderCustId = orderCustId;
-	}
-	public String getOrderCustName() {
-		return orderCustName;
-	}
-	public void setOrderCustName(String orderCustName) {
-		this.orderCustName = orderCustName;
 	}
 	public String getOrderCustPhoneNo() {
 		return orderCustPhoneNo;
@@ -108,12 +106,6 @@ public class ShopCustOrderDetails {
 	}
 	public void setOrderCustStatus(String orderCustStatus) {
 		this.orderCustStatus = orderCustStatus;
-	}
-	public String getOrderCustRefNo() {
-		return orderCustRefNo;
-	}
-	public void setOrderCustRefNo(String orderCustRefNo) {
-		this.orderCustRefNo = orderCustRefNo;
 	}
 	
 	

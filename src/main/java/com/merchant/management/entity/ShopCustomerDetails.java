@@ -29,6 +29,8 @@ public class ShopCustomerDetails {
 	private String custAddress;
 	@Column(name = "cust_city")
 	private String custCity;
+	@Column(name = "cust_country")
+	private String custCountry;
 	@Column(name = "cust_state")
 	private String custState;
 	@Column(name = "cust_pincode")
@@ -41,6 +43,8 @@ public class ShopCustomerDetails {
 	private String custEmailId;
 	@Column(name = "cust_pan_no")
 	private String custPanNo;
+	@Column(name = "cust_type")
+	private String custType;
 	@Column(name = "cust_created_date")
 	private String custCreatedDate;
 	@Column(name = "cust_modified_date")
@@ -53,6 +57,20 @@ public class ShopCustomerDetails {
 	private String custBalanceFlg;
 	@Column(name = "cust_password")
 	private String custPassword;
+	
+	
+	public String getCustCountry() {
+		return custCountry;
+	}
+	public void setCustCountry(String custCountry) {
+		this.custCountry = custCountry;
+	}
+	public String getCustType() {
+		return custType;
+	}
+	public void setCustType(String custType) {
+		this.custType = custType;
+	}
 	public int getShopCustId() {
 		return shopCustId;
 	}

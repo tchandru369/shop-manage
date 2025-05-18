@@ -11,14 +11,17 @@ public class PdfDetails {
 	private String customerEmail;
 	private String customerPhNo;
 	private String invoiceNumber;
-	private String discountAmount;
+	private double custBlnAmount;
+	private double finalAmtPaid;
+	private String custPymtDesc;
 	
 	public PdfDetails() {
 		
 	}
 	
 	public PdfDetails(String ownerName, String ownerAddress, String ownerEmail, String ownerPhNo, String customerName,
-			String customerAddrs, String customerEmail, String customerPhNo, String invoiceNumber,String discountAmount) {
+			String customerAddrs, String customerEmail, String customerPhNo, String invoiceNumber, double custBlnAmount,
+			double finalAmtPaid, String custPymtDesc) {
 		super();
 		this.ownerName = ownerName;
 		this.ownerAddress = ownerAddress;
@@ -29,14 +32,33 @@ public class PdfDetails {
 		this.customerEmail = customerEmail;
 		this.customerPhNo = customerPhNo;
 		this.invoiceNumber = invoiceNumber;
-		this.discountAmount = discountAmount;
-	}
-	public String getDiscountAmount() {
-		return discountAmount;
+		this.custBlnAmount = custBlnAmount;
+		this.finalAmtPaid = finalAmtPaid;
+		this.custPymtDesc = custPymtDesc;
 	}
 
-	public void setDiscountAmount(String discountAmount) {
-		this.discountAmount = discountAmount;
+	public double getFinalAmtPaid() {
+		return finalAmtPaid;
+	}
+
+	public void setFinalAmtPaid(double finalAmtPaid) {
+		this.finalAmtPaid = finalAmtPaid;
+	}
+
+	public String getCustPymtDesc() {
+		return custPymtDesc;
+	}
+
+	public void setCustPymtDesc(String custPymtDesc) {
+		this.custPymtDesc = custPymtDesc;
+	}
+
+	public double getCustBlnAmount() {
+		return custBlnAmount;
+	}
+
+	public void setCustBlnAmount(double custBlnAmount) {
+		this.custBlnAmount = custBlnAmount;
 	}
 
 	public String getOwnerName() {

@@ -27,4 +27,14 @@ public interface MilkProductRepo extends JpaRepository<MilkProductEntity, Intege
 	@Transactional
 	@Query(value = "UPDATE milk_product_entity SET product_quantity =:productQty, product_bill_price =:productBillPrice, product_cust_price =:productCustPrice, product_shop_price =:productShopPrice WHERE product_owner =:merchantEmail AND product_name =:productName AND product_type =:productType AND company_name =:companyName", nativeQuery = true)
 	void updateMilkProdQty(String merchantEmail,String productName,String companyName, String productType,int productQty,double productCustPrice, double productBillPrice,double productShopPrice);
+	
+	@Query(value = "SELECT product_quantity FROM milk_product_entity WHERE product_owner =:ownerEmail AND\r\n"
+			+ "product_name =:productName AND product_type =:productType AND company_name =:companyName", nativeQuery = true)
+	int getCurrentMilkProdQty(String ownerEmail,String productType,String productName,String companyName);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE milk_product_entity SET product_quantity =:productQty WHERE product_owner =:ownerEmail AND product_name =:productName AND product_type =:productType AND company_name =:companyName", nativeQuery = true)
+	void updateMilkProcQty(String ownerEmail,String productName,String companyName, String productType,int productQty);
+
 }

@@ -13,11 +13,11 @@ public class BillingHistoryRes {
 	
 	private String custPhnNoRes;
 	
-	private String custPaidAmtRes;
+	private double custPaidAmtRes;
 	
-	private String custDueAmtRes;
+	private double custDueAmtRes;
 	
-	private String custTotalAmtRes;
+	private double custTotalAmtRes;
 	
 	private String custInvoiceDateRes;
 	
@@ -49,27 +49,27 @@ public class BillingHistoryRes {
 		this.custPhnNoRes = custPhnNoRes;
 	}
 
-	public String getCustPaidAmtRes() {
+	public double getCustPaidAmtRes() {
 		return custPaidAmtRes;
 	}
 
-	public void setCustPaidAmtRes(String custPaidAmtRes) {
+	public void setCustPaidAmtRes(double custPaidAmtRes) {
 		this.custPaidAmtRes = custPaidAmtRes;
 	}
 
-	public String getCustDueAmtRes() {
+	public double getCustDueAmtRes() {
 		return custDueAmtRes;
 	}
 
-	public void setCustDueAmtRes(String custDueAmtRes) {
+	public void setCustDueAmtRes(double custDueAmtRes) {
 		this.custDueAmtRes = custDueAmtRes;
 	}
 
-	public String getCustTotalAmtRes() {
+	public double getCustTotalAmtRes() {
 		return custTotalAmtRes;
 	}
 
-	public void setCustTotalAmtRes(String custTotalAmtRes) {
+	public void setCustTotalAmtRes(double custTotalAmtRes) {
 		this.custTotalAmtRes = custTotalAmtRes;
 	}
 

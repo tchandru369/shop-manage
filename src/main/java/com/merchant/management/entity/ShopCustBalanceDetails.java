@@ -37,8 +37,15 @@ public class ShopCustBalanceDetails {
 	private double custBalPaidAmt;
 	@Column(name = "cust_bal_date")
 	private String custBalDate;
-	@Column(name = "cust_bal_ref_no")
-	private String custBalRefNo;
+	@Column(name = "cust_bal_order_status")
+	private String custBalStatus;
+	
+	public String getCustBalStatus() {
+		return custBalStatus;
+	}
+	public void setCustBalStatus(String custBalStatus) {
+		this.custBalStatus = custBalStatus;
+	}
 	public int getShopCustBlnId() {
 		return shopCustBlnId;
 	}
@@ -92,11 +99,5 @@ public class ShopCustBalanceDetails {
 	}
 	public void setCustBalDate(String custBalDate) {
 		this.custBalDate = custBalDate;
-	}
-	public String getCustBalRefNo() {
-		return custBalRefNo;
-	}
-	public void setCustBalRefNo(String custBalRefNo) {
-		this.custBalRefNo = custBalRefNo;
 	}
 }
