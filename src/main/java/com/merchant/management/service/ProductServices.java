@@ -38,12 +38,20 @@ public class ProductServices {
  }
  
  public ResponseEntity addMilkProducts(List<MilkProductRequest> milkProduct) {
-	 List<MilkProductEntity> milkProdEntity = new ArrayList<MilkProductEntity>();
+     String errorMsg = "";
 	 MilkProductResponse milkRes = new MilkProductResponse();
+	 List<MilkProductEntity> milkProdEntity = new ArrayList<MilkProductEntity>();
 	 LocalDate currentDate = LocalDate.now();
      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
      String formattedDate = currentDate.format(formatter);
 	 for(int i=0;i<milkProduct.size();i++) {
+		 
+		 int count = 0;
+    	 count = milkProductRepo.getProdCountValue(milkProduct.get(i).getProductOwner(), milkProduct.get(i).getCompanyName(), 
+    			 milkProduct.get(i).getProductType(), milkProduct.get(i).getProductName(),"1");
+    	 System.out.println("the count is :"+count);
+    	 
+    	 if(count == 0) {
 		 MilkProductEntity milkProdEntities = new MilkProductEntity();
 		 milkProdEntities.setCompanyName(milkProduct.get(i).getCompanyName());
 		 milkProdEntities.setProductOwner(milkProduct.get(i).getProductOwner());
@@ -56,13 +64,21 @@ public class ProductServices {
 		 milkProdEntities.setProductLive("1");
 		 milkProdEntities.setProductCreatedDate(formattedDate);
 		 milkProdEntity.add(milkProdEntities);
-
+		 
+		 }else {
+			 errorMsg = errorMsg+" "+ String.valueOf(i)+". " + milkProduct.get(i).getCompanyName() + "-" + milkProduct.get(i).getProductType()+"-"+milkProduct.get(i).getProductName();
+			 System.out.println(errorMsg);
+		 }
 	 }
 	 
 	 milkProductRepo.saveAll(milkProdEntity);
 	 milkRes.setResponse("success");
 	 milkRes.setErrorCode("0");
-	 milkRes.setErrorMsg("success");
+	 if(errorMsg.isEmpty()) {
+		 milkRes.setErrorMsg("success");
+	 }else {
+		 milkRes.setErrorMsg("Product already available : "+errorMsg);
+	 }
 	 return ResponseEntity.ok(milkRes);
  }
  
@@ -141,6 +157,13 @@ public class ProductServices {
  public List<MilkProductEntity> getOwnerMilkProdDetails(String ownerName){
 	 
 	 List<MilkProductEntity> productDetails = milkProductRepo.getOwnerMilkProdDetails(ownerName);
+	 
+	 return productDetails;
+ }
+ 
+public List<MilkProductEntity> getDemandMilkProdDetail(String ownerName){
+	 
+	 List<MilkProductEntity> productDetails = milkProductRepo.getDemandMilkProdEntity(ownerName);
 	 
 	 return productDetails;
  }

@@ -67,16 +67,8 @@ public class ProductController {
 	public ResponseEntity addMilkProduct(@RequestBody List<MilkProductRequest> milkRequest){
 		MilkProductResponse milkRes = new MilkProductResponse();
 		ResponseEntity responses =  productService.addMilkProducts(milkRequest);
-        if(responses != null) {
-        	milkRes.setResponse("success");
-        	milkRes.setErrorCode("0");
-        }else {
-        	milkRes.setResponse("failure");
-        	milkRes.setErrorCode("1");
-        	milkRes.setErrorMsg("Something went wrong!!!");
-        }
 		
-		return ResponseEntity.ok(milkRes);
+		return ResponseEntity.ok(responses);
 		
 	}
 	
@@ -89,6 +81,15 @@ public class ProductController {
 	@GetMapping("/viewMilkProducts")
 	public  List<MilkProductEntity> viewMilkProdDetails(@RequestParam String name){
 		List<MilkProductEntity> productDetail = productService.getOwnerMilkProdDetails(name);
+		for(int i=0;i<productDetail.size();i++) {
+			System.out.println(productDetail.get(i).getProductName());
+		}
+		return productDetail;
+	}
+	
+	@GetMapping("/viewDemandPrd")
+	public  List<MilkProductEntity> viewDemandMilkProd(@RequestParam String name){
+		List<MilkProductEntity> productDetail = productService.getDemandMilkProdDetail(name);
 		for(int i=0;i<productDetail.size();i++) {
 			System.out.println(productDetail.get(i).getProductName());
 		}
