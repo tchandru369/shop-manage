@@ -105,7 +105,7 @@ public class CustomerService {
 			        merchantDetails.setmerchantPhoneNumber(customerDetails.getCustPhoneNo());
 			        merchantDetails.setMerchantSignUpTime(timestamp.toString());
 			        merchantDetails.setmerchantUserName(customerDetails.getCustName());
-			        merchantDetails.setMerchantUserType("CUST");
+			        merchantDetails.setMerchantUserType("CUSTOMER");
 			        merchantDetails.setRole(Role.Cust);
 			        merchantRepository.save(merchantDetails);
 			        shopCustRepo.save(customerDetails);
