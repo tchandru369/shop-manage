@@ -132,22 +132,20 @@ public class EmailService {
  			MimeMessage mimeMessage = mailSender.createMimeMessage();
  			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
  			 SimpleMailMessage message = new SimpleMailMessage();
+ 			String emailBody = "Dear " + custName + ",\r\n\r\n"
+ 				    + "Thank you for registering with Merchant Corporation.\r\n\r\n"
+ 				    + "Here are your login details:\r\n"
+ 				    + "URL: http://34.47.241.192/public/app-user-login\r\n"
+ 				    + "Username: " + customerEmail + "\r\n"
+ 				    + "Temporary Password: " + customerPass + "\r\n\r\n"
+ 				    + "For your security, please log in as soon as possible and change your password.\r\n\r\n"
+ 				    + "If you have any questions or need assistance, feel free to contact us.\r\n\r\n"
+ 				    + "Best regards,\r\n"
+ 				    + "Merchant Corporation";
  			helper.setFrom("chanper369@gmail.com");
  			helper.setTo(customerEmail);
  			helper.setSubject("Your Account Password Information");
- 			helper.setText("Dear "+custName+",\r\n"
- 					+ "\r\n"
- 					+ "As registration completed, here are the login details for your account:\r\n"
- 					+ "\r\n"
- 					+ "Username: "+customerEmail+"\r\n"
- 					+ "Temporary Password: "+customerPass+"\r\n"
- 					+ "\r\n"
- 					+ "For your security, please log in as soon as possible and update your password.\r\n"
- 					+ "\r\n"
- 					+ "If you have any questions or need assistance, feel free to contact us.\r\n"
- 					+ "\r\n"
- 					+ "Best regards,\r\n"
- 					+ "Merchant Corporation");
+ 			helper.setText(emailBody);
  			
  			
  			//helper.addAttachment(fileName, new ByteArrayDataSource(pdfBytes, "application/pdf"));
