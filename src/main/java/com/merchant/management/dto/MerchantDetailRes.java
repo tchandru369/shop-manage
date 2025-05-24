@@ -5,22 +5,41 @@ public class MerchantDetailRes {
 	private String response;
 	private String token;
 	private String userName;
-	private String userPhoto;
+	private String userType;
+	private String errorMsg;
+	private String errorCode;
+	
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
 
 	public String getUserName() {
 		return userName;
+	}
+
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
 	}
 
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
-	public String getUserPhoto() {
-		return userPhoto;
+	public String getUserType() {
+		return userType;
 	}
 
-	public void setUserPhoto(String userPhoto) {
-		this.userPhoto = userPhoto;
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	public String getToken() {

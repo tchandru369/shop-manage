@@ -119,6 +119,48 @@ public class EmailService {
         return CompletableFuture.completedFuture(null);
     }
 	
+	@Async("taskExecutor")
+    public CompletableFuture<Void> sendCustomerEmail(String customerEmail,String custName, String productOwner,String customerPass) {
+        // Simulate email sending process (e.g., calling an email service)
+        try {
+        	System.out.println("Inside Email service...................");
+        	 LocalDate currentDate = LocalDate.now();
+ 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+ 	        String formattedDate = currentDate.format(formatter);
+ 	        System.out.println("Formatted Date: " + formattedDate);
+ 		try { 
+ 			MimeMessage mimeMessage = mailSender.createMimeMessage();
+ 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
+ 			 SimpleMailMessage message = new SimpleMailMessage();
+ 			helper.setFrom("chanper369@gmail.com");
+ 			helper.setTo(customerEmail);
+ 			helper.setSubject("Your Account Password Information");
+ 			helper.setText("Dear "+custName+",\r\n"
+ 					+ "\r\n"
+ 					+ "As registration completed, here are the login details for your account:\r\n"
+ 					+ "\r\n"
+ 					+ "Username: "+customerEmail+"\r\n"
+ 					+ "Temporary Password: "+customerPass+"\r\n"
+ 					+ "\r\n"
+ 					+ "For your security, please log in as soon as possible and update your password.\r\n"
+ 					+ "\r\n"
+ 					+ "If you have any questions or need assistance, feel free to contact us.\r\n"
+ 					+ "\r\n"
+ 					+ "Best regards,\r\n"
+ 					+ "Merchant Corporation");
+ 			
+ 			
+ 			//helper.addAttachment(fileName, new ByteArrayDataSource(pdfBytes, "application/pdf"));
+ 			 mailSender.send(mimeMessage);
+ 		}catch(Exception e){
+ 			System.out.println(e.getMessage());
+ 		}
+            Thread.sleep(5000); // Simulating a delay for the email sending
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return CompletableFuture.completedFuture(null);
+    }
 	
 //	@Async
 //    public CompletableFuture<Void> sendEmailDup(String customerEmail, String productOwner,String fileName) {

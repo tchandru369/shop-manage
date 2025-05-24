@@ -1,7 +1,16 @@
 package com.merchant.management.entity;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -16,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "shop_customer_details_tb")
-public class ShopCustomerDetails {
+public class ShopCustomerDetails implements UserDetails{
 
 	@Id
 	@GeneratedValue
@@ -57,6 +66,16 @@ public class ShopCustomerDetails {
 	private String custBalanceFlg;
 	@Column(name = "cust_password")
 	private String custPassword;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role",columnDefinition = "VARCHAR(255)")
+	private Role role;
+	
+	public Role getRole() {
+		return role;
+	}
+	public void setRole(Role role) {
+		this.role = role;
+	}
 	
 	
 	public String getCustCountry() {
@@ -173,5 +192,34 @@ public class ShopCustomerDetails {
 	public void setCustPassword(String custPassword) {
 		this.custPassword = custPassword;
 	}
+	
+	
+	
+	
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return List.of(new SimpleGrantedAuthority(role.name()));
+	}
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return custPassword;
+	}
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return custEmailId;
+	}
+	
+	@Override public boolean isEnabled() { return true; }
+	
+	@Override public boolean isAccountNonExpired() { return true; }
+	
+	 @Override public boolean isAccountNonLocked() { return true; }
+	 
+	 
+	 @Override public boolean isCredentialsNonExpired() { return true; }
+	
 
 }

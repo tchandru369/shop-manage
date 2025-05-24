@@ -37,21 +37,20 @@ public class CustomerController {
 	@Autowired 
 	private CustomerRepository customerRepository;
 	
-	@PostMapping("/saveCustomer")
-	public ResponseEntity<CustomerDetailsRes> saveMerchant(@RequestBody CustomerDetails customerDetails) {
-		   CustomerDetailsRes response  = new CustomerDetailsRes();
-	       customerService.saveCustomerDetails(customerDetails);
-	       response.setResponse("success");
-	       return ResponseEntity.ok(response);
-	       
-	}
+//	@PostMapping("/saveCustomer")
+//	public ResponseEntity<CustomerDetailsRes> saveMerchant(@RequestBody CustomerDetails customerDetails) {
+//		   CustomerDetailsRes response  = new CustomerDetailsRes();
+//	       customerService.
+//	       response.setResponse("success");
+//	       return saveCustomerDetails(customerDetails);
+//	       
+//	}
 	
 	@PostMapping("/saveShopCust")
 	public ResponseEntity<CustomerDetailsRes> saveShopCustomer(@RequestBody ShopCustomerDetails customerDetails) {
 		   CustomerDetailsRes response  = new CustomerDetailsRes();
-	       customerService.saveShopCustomer(customerDetails);
-	       response.setResponse("success");
-	       return ResponseEntity.ok(response);
+	      return customerService.saveShopCustomer(customerDetails);
+	       //return ResponseEntity.ok(response);
 	       
 	}
 	

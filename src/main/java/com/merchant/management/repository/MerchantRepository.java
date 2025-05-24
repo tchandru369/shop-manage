@@ -39,5 +39,8 @@ public interface MerchantRepository extends JpaRepository<MerchantDetails, Long>
 	
 	Optional<MerchantDetails> findBymerchantEmail(String merchantEmail);
 	
+	@Query(value = "SELECT COUNT(*) FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
+	int getMerchantCount(String merchantEmail);
+	
 	
 }

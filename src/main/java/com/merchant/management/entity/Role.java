@@ -2,6 +2,6 @@ package com.merchant.management.entity;
 
 public enum Role {
 	
-	Admin,User;
+	Admin,User,Cust;
 
 }
