@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "shop_customer_details_tb")
-public class ShopCustomerDetails implements UserDetails{
+public class ShopCustomerDetails{
 
 	@Id
 	@GeneratedValue
@@ -66,16 +66,8 @@ public class ShopCustomerDetails implements UserDetails{
 	private String custBalanceFlg;
 	@Column(name = "cust_password")
 	private String custPassword;
-	@Enumerated(EnumType.STRING)
-	@Column(name = "role",columnDefinition = "VARCHAR(255)")
-	private Role role;
 	
-	public Role getRole() {
-		return role;
-	}
-	public void setRole(Role role) {
-		this.role = role;
-	}
+	
 	
 	
 	public String getCustCountry() {
@@ -192,34 +184,6 @@ public class ShopCustomerDetails implements UserDetails{
 	public void setCustPassword(String custPassword) {
 		this.custPassword = custPassword;
 	}
-	
-	
-	
-	
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return List.of(new SimpleGrantedAuthority(role.name()));
-	}
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return custPassword;
-	}
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return custEmailId;
-	}
-	
-	@Override public boolean isEnabled() { return true; }
-	
-	@Override public boolean isAccountNonExpired() { return true; }
-	
-	 @Override public boolean isAccountNonLocked() { return true; }
-	 
-	 
-	 @Override public boolean isCredentialsNonExpired() { return true; }
 	
 
 }
