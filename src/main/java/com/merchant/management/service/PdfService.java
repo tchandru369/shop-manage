@@ -242,8 +242,8 @@ public class PdfService {
 			try {
 		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-		    String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
-		   //String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
+		    //String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
+		   String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
 		    File jasperFile = new File(jasperFilePaths);
 		    System.out.println("Jasper file exists: " + jasperFile.exists() + " | Path: " + jasperFile.getAbsolutePath());

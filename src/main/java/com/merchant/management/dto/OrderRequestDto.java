@@ -10,6 +10,7 @@ public class OrderRequestDto {
 	private String orderCustOwnerName;
 	private String orderCustEmailId;
 	private String orderCustType;
+	private String orderReqStatus;
 	private double orderCustTotalPrice;
 	private double orderFinalAmtPaid;
 	
@@ -18,6 +19,14 @@ public class OrderRequestDto {
 	
 	
 	
+	public String getOrderReqStatus() {
+		return orderReqStatus;
+	}
+
+	public void setOrderReqStatus(String orderReqStatus) {
+		this.orderReqStatus = orderReqStatus;
+	}
+
 	public double getOrderFinalAmtPaid() {
 		return orderFinalAmtPaid;
 	}
@@ -35,7 +44,7 @@ public class OrderRequestDto {
 	}
 
 	public OrderRequestDto(String orderCustName, String orderCustPhoneNo, String orderCustCrtdDate,
-			String orderCustOwnerName, String orderCustEmailId, String orderCustType, double orderCustTotalPrice) {
+			String orderCustOwnerName, String orderCustEmailId, String orderCustType, double orderCustTotalPrice,String orderReqStatus) {
 		super();
 		this.orderCustName = orderCustName;
 		this.orderCustPhoneNo = orderCustPhoneNo;
@@ -44,6 +53,7 @@ public class OrderRequestDto {
 		this.orderCustEmailId = orderCustEmailId;
 		this.orderCustType = orderCustType;
 		this.orderCustTotalPrice = orderCustTotalPrice;
+		this.orderReqStatus = orderReqStatus;
 	}
 	
 	public OrderRequestDto() {

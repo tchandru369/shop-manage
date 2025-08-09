@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.MerchantDetails;
+import com.merchant.management.entity.OwnerPaymtDetails;
 import com.merchant.management.entity.Role;
 import com.merchant.management.repository.MerchantRepository;
+import com.merchant.management.repository.OwnerPaymtDetailRepo;
 import com.merchant.management.repository.ShopCustomerRepo;
 import com.merchant.management.security.JwtService;
 
@@ -32,6 +35,8 @@ public class MerchantServices {
 	private JwtService jwtService;
 	@Autowired
 	private ShopCustomerRepo shopCustRepo;
+	@Autowired
+	private OwnerPaymtDetailRepo pymntDetailRepo;
 	
 
 	
@@ -72,6 +77,42 @@ public class MerchantServices {
 		}
 		
 		return ResponseEntity.ok(merchantRes);
+	}
+	
+public BillingEntityRes updatePaymentDetails(String dealersUpi, String ownerEmail,String ownerName, String ownerPh) {
+	
+	 OwnerPaymtDetails ownerPymtDetails =  new OwnerPaymtDetails();
+	 BillingEntityRes billingEntityRes = new BillingEntityRes();
+	 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+	 int count = pymntDetailRepo.getPaymtDtlByEmail(ownerEmail,ownerPh);
+	 if(count == 0) {
+		 ownerPymtDetails.setPymtUpiId(dealersUpi);
+		 ownerPymtDetails.setPymtOwnerEmail(ownerEmail);
+		 ownerPymtDetails.setPymtLive("1");
+		 ownerPymtDetails.setPymtAddedOn(timestamp.toString());
+		 ownerPymtDetails.setPymtOwnerName(ownerName);
+		 ownerPymtDetails.setPymtPhNumber(ownerPh);
+		 pymntDetailRepo.save(ownerPymtDetails);
+		 billingEntityRes.setErrorCode("0");
+		 billingEntityRes.setErrorMsg("success");
+		 billingEntityRes.setResponse("success");
+	 }else {
+		 
+		 pymntDetailRepo.updateUPIPymtDetails(ownerEmail, dealersUpi, ownerPh,timestamp.toString());
+		 billingEntityRes.setErrorCode("0");
+		 billingEntityRes.setErrorMsg("success");
+		 billingEntityRes.setResponse("UPI ID has been updated");
+	 }
+	 
+	 return billingEntityRes;
+		
+	}
+
+public OwnerPaymtDetails getDealerPymtDetails(String ownerEmail) {
+	
+	 OwnerPaymtDetails ownerPymtDetail = pymntDetailRepo.getDealerPymtDetails(ownerEmail);
+	 return ownerPymtDetail;
+		
 	}
 	
 	public String getMerchantPswdByMail(String merchantMail) {

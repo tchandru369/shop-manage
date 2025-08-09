@@ -3,19 +3,30 @@ package com.merchant.management.service;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.merchant.management.dto.CustDetailSummary;
+import com.merchant.management.dto.UserCustBalDto;
+import com.merchant.management.dto.UserCustDetailsReq;
+import com.merchant.management.dto.UserCustDetailsRes;
+import com.merchant.management.dto.UserCustLastTransaction;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.MerchantDetails;
+import com.merchant.management.entity.OrderRequestDetails;
 import com.merchant.management.entity.Role;
+import com.merchant.management.entity.ShopCustBalanceDetails;
 import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.repository.CustomerRepository;
 import com.merchant.management.repository.MerchantRepository;
+import com.merchant.management.repository.OrderReqRepo;
+import com.merchant.management.repository.ShopCustBlnRepo;
 import com.merchant.management.repository.ShopCustomerRepo;
 
 @Service
@@ -25,7 +36,13 @@ public class CustomerService {
 	private CustomerRepository customerRepository;
 	
 	@Autowired
+	private OrderReqRepo orderReqRepo;
+	
+	@Autowired
 	private ShopCustomerRepo shopCustRepo;
+	
+	@Autowired
+	private ShopCustBlnRepo shopCustBlnRepo;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -37,9 +54,16 @@ public class CustomerService {
 	private EmailService emailService;
 	
 	@Autowired
-	public CustomerService(CustomerRepository customerRepository, ShopCustomerRepo shopCustRepo) {
+	private OrderService orderService;
+
+	private Object UserCustDetailsReq;
+	
+	@Autowired
+	public CustomerService(CustomerRepository customerRepository, ShopCustomerRepo shopCustRepo,OrderReqRepo orderReqRepo,ShopCustBlnRepo shopCustBlnRepo) {
 		this.customerRepository = customerRepository;
 		this.shopCustRepo = shopCustRepo;
+		this.orderReqRepo = orderReqRepo;
+		this.shopCustBlnRepo = shopCustBlnRepo;
 	}
  
 //	public ResponseEntity saveCustomerDetails( CustomerDetails customerDetails) {
@@ -124,6 +148,69 @@ public class CustomerService {
 	
 	public ShopCustomerDetails getCustomerDetailsByPhNo(String customerPhNo) {
 		ShopCustomerDetails customerDetails = shopCustRepo.getShopCustDetailsByPhNo(customerPhNo);
+		return customerDetails;
+	}
+	
+	public List<UserCustDetailsRes> getCustomerDetailsByOwnerE(String ownerEmail) {
+		
+		List<UserCustDetailsRes> responseList = new ArrayList<UserCustDetailsRes>();
+		List<ShopCustomerDetails> customerDetails = shopCustRepo.getShopCustDtlsByOwnerE(ownerEmail);
+		
+		for(int i=0;i<customerDetails.size();i++) {
+			UserCustDetailsRes detailRes = new UserCustDetailsRes();
+			detailRes.setCustBalanceFlg(customerDetails.get(i).getCustBalanceFlg());
+			detailRes.setCustEmail(customerDetails.get(i).getCustEmailId());
+			detailRes.setCustName(customerDetails.get(i).getCustName());
+			detailRes.setCustPhoneNo(customerDetails.get(i).getCustPhoneNo());
+			detailRes.setCustType(customerDetails.get(i).getCustType());
+			responseList.add(detailRes);
+		}
+		
+		return responseList;
+	}
+	
+public CustDetailSummary getCustDetailSummary(String ownerEmail,String custEmail) {
+		
+        CustDetailSummary custSummary = new CustDetailSummary();
+        List<UserCustBalDto> balanceList = new ArrayList<UserCustBalDto>();
+        List<UserCustLastTransaction> tranList = new ArrayList<UserCustLastTransaction>();
+        List<OrderRequestDetails> orderReqList = orderReqRepo.getCustOrderTranDetails(ownerEmail, custEmail);
+        ShopCustomerDetails shopCustomer = shopCustRepo.getShopCustDtlsEmailPh(custEmail);
+		List<ShopCustBalanceDetails> customerBlDetails = shopCustBlnRepo.getCustBalList(ownerEmail, custEmail);
+		for(int i=0;i<orderReqList.size();i++) {
+			UserCustLastTransaction orderRequest = new UserCustLastTransaction();
+			orderRequest.setOrderBillPayDate(orderReqList.get(i).getOrderBillPayDate());
+			orderRequest.setOrderPlacedDate(orderReqList.get(i).getOrderPlacedDate());
+			orderRequest.setOrderProdTotalAmt(orderReqList.get(i).getOrderProdTotalAmt());
+			orderRequest.setOrderReqStatus(orderReqList.get(i).getOrderRequestStatus());
+			tranList.add(orderRequest);
+		}
+		for(int i=0;i<customerBlDetails.size();i++) {
+			UserCustBalDto custBalance = new UserCustBalDto();
+			custBalance.setCustBalActAmt(customerBlDetails.get(i).getCustBalActAmt());
+			custBalance.setCustBalAmt(customerBlDetails.get(i).getCustBalAmt());
+			custBalance.setCustBalDate(customerBlDetails.get(i).getCustBalDate());
+			custBalance.setCustBalOrderStatus(customerBlDetails.get(i).getCustBalStatus());
+			custBalance.setCustBalPaidAmt(customerBlDetails.get(i).getCustBalPaidAmt());
+			balanceList.add(custBalance);
+		}
+		custSummary.setCustAddress(shopCustomer.getCustAddress());
+		custSummary.setCustCity(shopCustomer.getCustCity());
+		custSummary.setCustCountry(shopCustomer.getCustCountry());
+		custSummary.setCustCreatedDate(shopCustomer.getCustCreatedDate());
+		custSummary.setCustDob(shopCustomer.getCustDob());
+		custSummary.setCustGender(shopCustomer.getCustGender());
+		custSummary.setCustModifiedDate(shopCustomer.getCustModifiedDate());
+		custSummary.setCustPincode(shopCustomer.getCustPinCode());
+		custSummary.setCustState(shopCustomer.getCustState());
+		custSummary.setBalanceList(balanceList);
+		custSummary.setTransactionList(tranList);
+
+		return custSummary;
+	}
+	
+	public ShopCustomerDetails getCustDtlsPhEmail(String custEmail) {
+		ShopCustomerDetails customerDetails = shopCustRepo.getShopCustDtlsEmailPh(custEmail);
 		return customerDetails;
 	}
 	

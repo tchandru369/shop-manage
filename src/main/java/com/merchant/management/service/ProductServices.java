@@ -130,6 +130,14 @@ public class ProductServices {
 	 return ResponseEntity.ok(productRes);
  }
  
+ public ResponseEntity deleteMilkProdDetails(MilkProductEntity productDetails) {
+		ProductDetailRes productRes = new ProductDetailRes();
+	 	milkProductRepo.deleteMilkProdQty(productDetails.getProductOwner(),productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType());
+	    productRes.setResponse("success");
+	    productRes.setErrorCode("0");
+		 return ResponseEntity.ok(productRes);
+	 }
+ 
  public List<ProductDetails> getProductDetails(String ownerName){
 	 
 	 List<ProductDetails> productDetails = productRepository.getProductDetails(ownerName);

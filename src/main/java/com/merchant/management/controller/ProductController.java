@@ -102,4 +102,10 @@ public class ProductController {
 		return responses;
 	}
 	
+	@PostMapping("/deleteMilkPrd")
+	public ResponseEntity deleteMilkProduct(@RequestBody MilkProductEntity productDetails){
+		ResponseEntity responses =  productService.deleteMilkProdDetails(productDetails);
+		return responses;
+	}
+	
 }

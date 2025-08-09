@@ -1,5 +1,6 @@
 package com.merchant.management.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,8 +24,6 @@ public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Int
 			+ "	AND cust_bal_owner_name =:ownerName AND cust_bal_phone_no =:custPhoneNo", nativeQuery = true)
 	void updateMilkProdQty(double recentBlnce,double paidAmount,String custEmail, String ownerName,String custPhoneNo );
 	
-	Optional<ShopCustomerDetails> findBycustEmailId(String custEmailId);
-	
 	@Query(value = "SELECT ea.cust_name FROM shop_customer_details_tb ea WHERE ea.cust_email_id =:custEmail", nativeQuery = true)
 	String getCustomerDetails(@Param("custEmail") String custEmail);
 	
@@ -33,6 +32,14 @@ public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Int
 	
 	@Query(value = "SELECT cust_email_id FROM shop_customer_details_tb WHERE cust_phone_no =:custPhone", nativeQuery = true)
 	String getCustPhoneCount(String custPhone);
+	
+	@Query(value = "SELECT * FROM shop_customer_details_tb ea WHERE ea.cust_email_id =:custEmail", nativeQuery = true)
+	ShopCustomerDetails getShopCustDtlsEmailPh(String custEmail);
+	
+	@Query(value = "SELECT * FROM shop_customer_details_tb WHERE cust_owner_details =:custEmail", nativeQuery = true)
+	List<ShopCustomerDetails> getShopCustDtlsByOwnerE(String custEmail);
+	
+	
 
 	
 

@@ -1,5 +1,6 @@
 package com.merchant.management.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -18,11 +19,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.merchant.management.dto.CustDetailSummary;
+import com.merchant.management.dto.OrderRequestDto;
+import com.merchant.management.dto.UserCustBalDto;
+import com.merchant.management.dto.UserCustDetailsRes;
+import com.merchant.management.dto.UserCustLastTransaction;
+import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.repository.CustomerRepository;
 import com.merchant.management.service.CustomerService;
+import com.merchant.management.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -36,6 +44,9 @@ public class CustomerController {
 	 
 	@Autowired 
 	private CustomerRepository customerRepository;
+	
+	@Autowired
+	private OrderService orderService;
 	
 //	@PostMapping("/saveCustomer")
 //	public ResponseEntity<CustomerDetailsRes> saveMerchant(@RequestBody CustomerDetails customerDetails) {
@@ -54,6 +65,24 @@ public class CustomerController {
 	       
 	}
 	
+	@PostMapping("/cust/placeOrder")
+	public ResponseEntity paidOrderReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.customerPlaceOrder(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/owner/aprvPlaceOrder")
+	public ResponseEntity approveCustPlaceOrder(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.approveCustPlacedOrder(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/owner/rejctPlaceOrder")
+	public ResponseEntity rejectCustPlaceOrder(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.rejectCustPlacedOrder(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
 	
 	@GetMapping("/getCustomer")
 	public ResponseEntity getCustomerForBilling(@RequestParam String custPhNo){
@@ -69,6 +98,64 @@ public class CustomerController {
 		}
 		
 	}
+	
+	@GetMapping("/owner/getCustomer")
+	public List<UserCustDetailsRes> getCustomerDtlsByUsrEmail(@RequestParam String email){
+		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
+		List<UserCustDetailsRes> custDetails = customerService.getCustomerDetailsByOwnerE(email);
+		return custDetails;	
+	}
+	
+	@GetMapping("/owner/getCustSummary")
+	public ResponseEntity getDetailsByCustUserE(@RequestParam String custEmail,@RequestParam String ownerEmail){
+		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
+		CustDetailSummary custSummary = customerService.getCustDetailSummary(ownerEmail,custEmail);
+		if(custSummary == null) {
+			customerDetailsRes.setErrorCode("ERR001");
+			customerDetailsRes.setErrorMsg("Customer Not Found");
+			customerDetailsRes.setResponse("failure");
+			return ResponseEntity.ok(customerDetailsRes);
+		}else {
+			return ResponseEntity.ok(custSummary);	
+		}
+	}
+	
+	@GetMapping("/cust/getCustomer")
+	public ResponseEntity getCustomerForPlaceOrder(@RequestParam String custEmail){
+		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
+		System.out.println("Get Customer Details First Summary");
+		ShopCustomerDetails custDetails = customerService.getCustDtlsPhEmail(custEmail);
+		if(custDetails == null) {
+			customerDetailsRes.setErrorCode("ERR001");
+			customerDetailsRes.setErrorMsg("Customer Not Found");
+			customerDetailsRes.setResponse("failure");
+			return ResponseEntity.ok(customerDetailsRes);
+		}else {
+			System.out.println("Get Customer Details End Summary");
+			return ResponseEntity.ok(custDetails);
+		}
+		
+		
+	}
+	
+	@GetMapping("/owner/custOrderPlaced")
+	public List<OrderRequestDto> getOrderRequest(@RequestParam String email) {
+		List<OrderRequestDto> orderList = orderService.getCustPlacedOrderForOwner(email);
+		return orderList;
+	}
+	
+	@GetMapping("/cust/custOrderApproved")
+	public List<OrderRequestDto> getCustOrderRequestApproved(@RequestParam String email,@RequestParam String ownerEmail,@RequestParam String date) {
+		List<OrderRequestDto> orderList = orderService.getCustOrderRequestApproved(email,ownerEmail,date);
+		return orderList;
+	}
+	
+	@GetMapping("/cust/custOrderRejected")
+	public List<OrderRequestDto> getCustOrderRequestRejected(@RequestParam String email,@RequestParam String ownerEmail,@RequestParam String date) {
+		List<OrderRequestDto> orderList = orderService.getCustOrderRequestApproved(email,ownerEmail,date);
+		return orderList;
+	}
+	
 	
 	@GetMapping("/downloadZip/{customerId}")
     public void downloadFile(@PathVariable("customerId") String customerId, // Path parameter

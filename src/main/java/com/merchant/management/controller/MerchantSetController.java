@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.dto.TransactionDetailsDto;
+import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.ImageModel;
@@ -25,6 +27,7 @@ import com.merchant.management.entity.ImageSourceDetails;
 import com.merchant.management.entity.ImageSrcDetail;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.MerchantProfileDetails;
+import com.merchant.management.entity.OwnerPaymtDetails;
 import com.merchant.management.service.MerchantServices;
 import com.merchant.management.service.MerchantSetService;
 
@@ -101,6 +104,21 @@ public class MerchantSetController {
 		imageModelFile.setImageType(multipartFile.getContentType());	    
 	    return imageModelFile;
 	}
+	
+	@GetMapping("/owner/updatePymt")
+	public ResponseEntity updatePaymentDetails(@RequestParam String dealerUpi,@RequestParam String ownerEmail,@RequestParam String ownerName
+			,String ownerPh) {
+		BillingEntityRes trans = merchantServices.updatePaymentDetails(dealerUpi, ownerEmail, ownerName, ownerPh);
+		return ResponseEntity.ok(trans);
+	}
+	
+	@GetMapping("/cust/owner/pymtDtls")
+	public ResponseEntity getDealerPaymtDetails(@RequestParam String ownerEmail) {
+		OwnerPaymtDetails trans = merchantServices.getDealerPymtDetails(ownerEmail);
+		return ResponseEntity.ok(trans);
+	}
+	
+	
 	
 	
 	

@@ -3,6 +3,7 @@ package com.merchant.management.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.merchant.management.dto.BillingHistoryRes;
 import com.merchant.management.dto.MerchantDetailRes;
 import com.merchant.management.dto.OrderRequestDto;
+import com.merchant.management.dto.TransactionDetailsDto;
 import com.merchant.management.entity.BillingEntity;
 import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.BillingHistory;
@@ -27,6 +29,7 @@ import com.merchant.management.entity.ProductDetails;
 import com.merchant.management.entity.ShopCustOrderDetails;
 import com.merchant.management.service.BillingService;
 import com.merchant.management.service.OrderService;
+import com.merchant.management.service.PaymentService;
 
 @RestController
 @RequestMapping("/services/v1/billing")
@@ -38,6 +41,11 @@ public class BillingController {
 	
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private PaymentService pymntService;
+	
+	
 	
 	@PostMapping("/billCustomer")
 	public ResponseEntity payBills(@RequestBody BillingEntity billingEntity) {
@@ -92,6 +100,8 @@ public class BillingController {
 	       return ResponseEntity.ok(response);    
 	}
 	
+	
+	
 	@GetMapping("/getOrderReq")
 	public List<OrderRequestDto> getOrderRequest(@RequestParam String email) {
 		List<OrderRequestDto> orderList = orderService.getOrderDetails(email);
@@ -104,11 +114,39 @@ public class BillingController {
 		return orderList;
 	}
 	
+	@GetMapping("/cust/getProcOrders")
+	public List<OrderRequestDto> getCustProcessedOrders(@RequestParam String OwnerEmail,@RequestParam String custEmail) {
+		List<OrderRequestDto> orderList = orderService.getCustProcessedOrders(OwnerEmail,custEmail);
+		return orderList;
+	}
+	
 	@PostMapping("/deleteProcOrder")
 	public ResponseEntity deleteProcReq(@RequestBody OrderRequestDto custOrderDtls) {
 		     BillingEntityRes response  = orderService.deleteProcessOrderDetails(custOrderDtls);		   
 	       return ResponseEntity.ok(response);    
 	}
+	
+	@PostMapping("/payment/createTran")
+	public ResponseEntity createTransaction(@RequestBody OrderRequestDto custOrderDtls) {
+		
+		    TransactionDetailsDto trans = pymntService.createTransaction(custOrderDtls.getOrderCustTotalPrice());
+		     //BillingEntityRes response  = orderService.saveCustOrderDetails(custOrderDtls);		   
+	       return ResponseEntity.ok(trans);    
+	}
+	
+	@PostMapping("/payout")
+	public ResponseEntity createPayout(@RequestParam String dealerUpi,@RequestParam double amount) {
+		TransactionDetailsDto trans = pymntService.transactionToDealer(dealerUpi, 124);
+		return ResponseEntity.ok(trans);
+	}
+	
+	@PostMapping("/cust/confirmPymnt")
+	public ResponseEntity confirmPaymentOrderReq(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.paidOrderRequest(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	
 	
 	
 

@@ -55,5 +55,7 @@ public interface OrderReqDetailRepo extends JpaRepository<ShopCustOrderDetails, 
 			+ "AND order_cust_prod_name =:productName AND order_cust_crtd_date =:orderedDate AND order_cust_phone_no =:custPhNo\r\n"
 			+ "AND order_cust_email_id =:custEmail AND order_cust_prod_cmp =:companyName AND order_cust_prod_type =:productType AND order_cust_status ='BP'", nativeQuery = true)
 	void updtOrdStsBillList(String ownerEmail,String orderedDate,String custPhNo, String custEmail,String companyName,String productType,String productName);
+	
+	
 
 }
