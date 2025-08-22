@@ -8,10 +8,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - 35-200-217-136.nip.io
+    -merchant.merchantapp.info
     secretName: tls-secret
   rules:
-  - host: 35-200-217-136.nip.io
+  - host: merchant.merchantapp.info
     http:
       paths:
       - path: /.well-known/acme-challenge/*
