@@ -65,5 +65,5 @@ spec:
     app: backend-service-k8s
   ports:
     - port: 443           # Port exposed by the service
-      targetPort: 8080     # Port on the pod
+      targetPort: 443     # Port on the pod
       protocol: TCP
