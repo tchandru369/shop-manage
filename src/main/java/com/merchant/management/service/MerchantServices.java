@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,10 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.dto.MerchantReg;
 import com.merchant.management.entity.BillingEntityRes;
+import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.OwnerPaymtDetails;
 import com.merchant.management.entity.Role;
+import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.repository.MerchantRepository;
 import com.merchant.management.repository.OwnerPaymtDetailRepo;
 import com.merchant.management.repository.ShopCustomerRepo;
@@ -27,6 +31,8 @@ public class MerchantServices {
 
 	@Autowired
 	private MerchantRepository merchantRepository;
+	@Autowired
+    private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
@@ -40,35 +46,69 @@ public class MerchantServices {
 	
 
 	
-	public ResponseEntity<MerchantDetailRes> saveMerchantDetails( MerchantDetails merchant) {
+	public ResponseEntity<MerchantDetailRes> saveMerchantDetails( MerchantReg merchant) {
+		
 		MerchantDetailRes merchantRes = new MerchantDetailRes();
-		int merchantCount = merchantRepository.getMerchantCount(merchant.getMerchantEmail());
+		MerchantDetails merchantDetailMain = new MerchantDetails();
+		ShopCustomerDetails newCustDetails = new ShopCustomerDetails();
+		int merchantCount = merchantRepository.getMerchantCount(merchant.getRegMerchantEmail());
 		if(merchantCount!=0) {
 			merchantRes.setResponse("success");
 			merchantRes.setErrorMsg("customer already present as Owner");
 			merchantRes.setErrorCode("1");
 		}else {
-			int custEmailCount = shopCustRepo.getCustMailCount(merchant.getMerchantEmail());
+			int custEmailCount = shopCustRepo.getCustMailCount(merchant.getRegMerchantEmail());
 			if(custEmailCount != 0) {
 				merchantRes.setResponse("success");
 				merchantRes.setErrorMsg("Email already registered as Customer");
 				merchantRes.setErrorCode("1");
 			}else {
-				String customerEmail = shopCustRepo.getCustPhoneCount(merchant.getmerchantPhoneNumber());
+				String customerEmail = shopCustRepo.getCustPhoneCount(merchant.getRegMerchantPhNo());
 				if(customerEmail!=null) {
 					merchantRes.setResponse("success");
 					merchantRes.setErrorMsg("Phone number already registered as Customer with "+customerEmail);
 					merchantRes.setErrorCode("1");
 				}else {
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			        merchant.setMerchantSignUpTime(timestamp.toString());
-			        merchant .setMerchantPassword(passwordEncoder.encode(merchant.getMerchantPassword()));
-					merchant.setMerchantUserType("USER");
-					merchant.setRole(Role.User);
-					merchantRepository.save(merchant);
+					Long seq = jdbcTemplate.queryForObject("SELECT nextval('customer_ref_seq')", Long.class);
+
+			        // 3️⃣ Generate Ref ID with leading zeros
+			        String customerRefId = "CUST-" + String.format("%012d", seq);
+					merchantDetailMain.setMerchantSignUpTime(timestamp.toString());
+					merchantDetailMain.setMerchantPassword(passwordEncoder.encode(merchant.getRegMerchantPass()));
+					merchantDetailMain.setMerchantUserType("USER");
+					merchantDetailMain.setMerchantAddress(merchant.getRegMerchantAddrs());
+					merchantDetailMain.setMerchantEmail(merchant.getRegMerchantEmail());
+					merchantDetailMain.setMerchantRefId(customerRefId);
+					merchantDetailMain.setMerchantUserName(merchant.getRegMerchantName());
+					merchantDetailMain.setMerchantPhoneNumber(merchant.getRegMerchantPhNo());
+					merchantDetailMain.setRole(Role.User);
+					
+					newCustDetails.setCustCreatedDate(timestamp.toString());
+					newCustDetails.setCustAddress(merchant.getRegMerchantAddrs());
+					newCustDetails.setCustEmailId(merchant.getRegMerchantEmail());
+					newCustDetails.setCustName(merchant.getRegMerchantName());
+					newCustDetails.setCustPassword(passwordEncoder.encode(merchant.getRegMerchantPass()));
+					newCustDetails.setCustPhoneNo(merchant.getRegMerchantPhNo());
+					newCustDetails.setCustType("D");
+					newCustDetails.setCustPanNo(merchant.getRegMerchantPan());
+					newCustDetails.setCustBalanceFlg("N");
+					newCustDetails.setCustCity(merchant.getRegMerchantCty());
+					newCustDetails.setCustCountry(merchant.getRegMerchantCtry());
+					newCustDetails.setShopCustRefId(customerRefId);
+					newCustDetails.setCustDob(merchant.getRegMerchantDob());
+					newCustDetails.setCustGender(merchant.getRegMerchantGen());
+					newCustDetails.setCustLive("1");
+					newCustDetails.setCustOwnerRefId("SELF");
+					newCustDetails.setCustPinCode(merchant.getRegMerchantPin());
+					newCustDetails.setCustState(merchant.getRegMerchantState());
+					merchantRepository.save(merchantDetailMain);
+					shopCustRepo.save(newCustDetails);
 					merchantRes.setResponse("success");
 					merchantRes.setErrorCode("0");
 					merchantRes.setErrorMsg("Registered successfully, Please Login");
+					
+					
 				}
 				
 			}
@@ -79,15 +119,15 @@ public class MerchantServices {
 		return ResponseEntity.ok(merchantRes);
 	}
 	
-public BillingEntityRes updatePaymentDetails(String dealersUpi, String ownerEmail,String ownerName, String ownerPh) {
+public BillingEntityRes updatePaymentDetails(String dealersUpi, String ownerRefId,String ownerName, String ownerPh) {
 	
 	 OwnerPaymtDetails ownerPymtDetails =  new OwnerPaymtDetails();
 	 BillingEntityRes billingEntityRes = new BillingEntityRes();
 	 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-	 int count = pymntDetailRepo.getPaymtDtlByEmail(ownerEmail,ownerPh);
+	 int count = pymntDetailRepo.getPaymtDtlByEmail(ownerRefId,ownerPh);
 	 if(count == 0) {
 		 ownerPymtDetails.setPymtUpiId(dealersUpi);
-		 ownerPymtDetails.setPymtOwnerEmail(ownerEmail);
+		 ownerPymtDetails.setPymtOwnerRefId(ownerRefId);
 		 ownerPymtDetails.setPymtLive("1");
 		 ownerPymtDetails.setPymtAddedOn(timestamp.toString());
 		 ownerPymtDetails.setPymtOwnerName(ownerName);
@@ -98,7 +138,7 @@ public BillingEntityRes updatePaymentDetails(String dealersUpi, String ownerEmai
 		 billingEntityRes.setResponse("success");
 	 }else {
 		 
-		 pymntDetailRepo.updateUPIPymtDetails(ownerEmail, dealersUpi, ownerPh,timestamp.toString());
+		 pymntDetailRepo.updateUPIPymtDetails(ownerRefId, dealersUpi, ownerPh,timestamp.toString());
 		 billingEntityRes.setErrorCode("0");
 		 billingEntityRes.setErrorMsg("success");
 		 billingEntityRes.setResponse("UPI ID has been updated");
@@ -139,6 +179,10 @@ public OwnerPaymtDetails getDealerPymtDetails(String ownerEmail) {
 public MerchantDetails getMerchantService(String email) {
 		return merchantRepository.getMerchantProfileDetails(email);
 	}
+
+public MerchantDetails getMerchantServiceDetails(String email) {
+	return merchantRepository.getMerchantDetailsByRefId(email);
+}
 
 //	public MerchantDetails authMerchantPswdByMail(MerchantDetails merchant) {
 //		

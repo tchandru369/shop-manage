@@ -1,6 +1,7 @@
 package com.merchant.management.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.dto.MerchantReg;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.ShopCustomerDetails;
+import com.merchant.management.entity.CountryStateCity;
 import com.merchant.management.entity.ImageSrcDetail;
 import com.merchant.management.repository.MerchantRepository;
 import com.merchant.management.repository.ShopCustomerRepo;
 import com.merchant.management.security.AuthenticationRequest;
 import com.merchant.management.security.JwtService;
+import com.merchant.management.service.BillingService;
 import com.merchant.management.service.MerchantServices;
 
 @RestController
@@ -45,14 +49,22 @@ private MerchantServices merchantServices;
 @Autowired
 private JwtService jwtServices;
 @Autowired
+private BillingService billingService;
+@Autowired
 private AuthenticationManager authenticationManager;
 
 
 @PostMapping("/merchants")
-public ResponseEntity<MerchantDetailRes> saveMerchant(@RequestBody MerchantDetails merchant) {
+public ResponseEntity<MerchantDetailRes> saveMerchant(@RequestBody MerchantReg merchant) {
 	   MerchantDetailRes response  = new MerchantDetailRes();
        return  merchantServices.saveMerchantDetails(merchant);
        
+}
+
+@GetMapping("/getConStDtls")
+public List<CountryStateCity> getComProdDtls(){
+	List<CountryStateCity> conStDtls = billingService.getConStDtls();
+	return conStDtls;
 }
 
 
@@ -123,11 +135,14 @@ public ResponseEntity<MerchantDetailRes> merchantLogin(@RequestBody MerchantDeta
                 new UsernamePasswordAuthenticationToken(merchant.getMerchantEmail(), merchant.getMerchantPassword()));
 
             String jwtToken = jwtServices.generateToken(merchantOpt.get());
-            String merchantName = merchantRepository.getMerchantDetails(merchant.getMerchantEmail());
+            MerchantDetails merchantDet = merchantRepository.getMerchantProfileDetails(merchant.getMerchantEmail());
 
             response.setResponse("success");
             response.setToken(jwtToken);
-            response.setUserName(merchantName);
+            response.setUserName(merchantDet.getMerchantUserName());
+            response.setCustRefId(merchantDet.getMerchantRefId());
+            //response.set
+            
             response.setUserType(String.valueOf(merchantOpt.get().getRole()));
             return ResponseEntity.ok(response);
         }

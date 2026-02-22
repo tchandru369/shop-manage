@@ -54,7 +54,7 @@ public class JwtServices {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(merchantDetails.getmerchantUserName())
+                .setSubject(merchantDetails.getMerchantUserName())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

@@ -7,6 +7,7 @@ public class UserCustDetailsRes {
 	private String custType;
 	private String custPhoneNo;
 	private String custBalanceFlg;
+	private String custRefId;
 
 	public String getCustName() {
 		return custName;
@@ -37,5 +38,12 @@ public class UserCustDetailsRes {
 	}
 	public void setCustBalanceFlg(String custBalanceFlg) {
 		this.custBalanceFlg = custBalanceFlg;
-	}	
+	}
+	public String getCustRefId() {
+		return custRefId;
+	}
+	public void setCustRefId(String custRefId) {
+		this.custRefId = custRefId;
+	}
+	
 }

@@ -7,18 +7,51 @@ public class OrderRequestDto {
 	private String orderCustName;
 	private String orderCustPhoneNo;
 	private String orderCustCrtdDate;
-	private String orderCustOwnerName;
+	private String orderOwnerRefId;
 	private String orderCustEmailId;
 	private String orderCustType;
+	private String orderCustRefId;
+	private String orderPymtRefId;
 	private String orderReqStatus;
+	private String noteToPayer;
+	private String orderRefId;
 	private double orderCustTotalPrice;
 	private double orderFinalAmtPaid;
 	
 	private List<MilkOrderList> orderList;
 	
-	
-	
-	
+	public String getOrderRefId() {
+		return orderRefId;
+	}
+
+	public void setOrderRefId(String orderRefId) {
+		this.orderRefId = orderRefId;
+	}
+
+	public String getOrderCustRefId() {
+		return orderCustRefId;
+	}
+
+	public void setOrderCustRefId(String orderCustRefId) {
+		this.orderCustRefId = orderCustRefId;
+	}
+
+	public String getOrderPymtRefId() {
+		return orderPymtRefId;
+	}
+
+	public void setOrderPymtRefId(String orderPymtRefId) {
+		this.orderPymtRefId = orderPymtRefId;
+	}
+
+	public String getNoteToPayer() {
+		return noteToPayer;
+	}
+
+	public void setNoteToPayer(String noteToPayer) {
+		this.noteToPayer = noteToPayer;
+	}
+
 	public String getOrderReqStatus() {
 		return orderReqStatus;
 	}
@@ -44,12 +77,12 @@ public class OrderRequestDto {
 	}
 
 	public OrderRequestDto(String orderCustName, String orderCustPhoneNo, String orderCustCrtdDate,
-			String orderCustOwnerName, String orderCustEmailId, String orderCustType, double orderCustTotalPrice,String orderReqStatus) {
+			String orderOwnerRefId, String orderCustEmailId, String orderCustType, double orderCustTotalPrice,String orderReqStatus) {
 		super();
 		this.orderCustName = orderCustName;
 		this.orderCustPhoneNo = orderCustPhoneNo;
 		this.orderCustCrtdDate = orderCustCrtdDate;
-		this.orderCustOwnerName = orderCustOwnerName;
+		this.orderOwnerRefId = orderOwnerRefId;
 		this.orderCustEmailId = orderCustEmailId;
 		this.orderCustType = orderCustType;
 		this.orderCustTotalPrice = orderCustTotalPrice;
@@ -77,11 +110,11 @@ public class OrderRequestDto {
 	public void setOrderCustCrtdDate(String orderCustCrtdDate) {
 		this.orderCustCrtdDate = orderCustCrtdDate;
 	}
-	public String getOrderCustOwnerName() {
-		return orderCustOwnerName;
+	public String getOrderOwnerRefId() {
+		return orderOwnerRefId;
 	}
-	public void setOrderCustOwnerName(String orderCustOwnerName) {
-		this.orderCustOwnerName = orderCustOwnerName;
+	public void setOrderOwnerRefId(String orderOwnerRefId) {
+		this.orderOwnerRefId = orderOwnerRefId;
 	}
 	public String getOrderCustEmailId() {
 		return orderCustEmailId;

@@ -21,8 +21,8 @@ public class MilkProductEntity {
 	@Id
 	@GeneratedValue
 	private int product_id;
-	@Column(name = "product_owner")
-	private String productOwner;
+	@Column(name = "product_owner_ref_id")
+	private String productOwnerRefId;
 	@Column(name = "company_name")
 	private String companyName;
 	@Column(name = "product_type")
@@ -41,6 +41,8 @@ public class MilkProductEntity {
 	private String productLive;
 	@Column(name = "product_created_date")
 	private String productCreatedDate;
+	
+	
 	
 	public String getProductCreatedDate() {
 		return productCreatedDate;
@@ -102,10 +104,10 @@ public class MilkProductEntity {
 	public void setProductLive(String productLive) {
 		this.productLive = productLive;
 	}
-	public String getProductOwner() {
-		return productOwner;
+	public String getProductOwnerRefId() {
+		return productOwnerRefId;
 	}
-	public void setProductOwner(String productOwner) {
-		this.productOwner = productOwner;
+	public void setProductOwnerRefId(String productOwnerRefId) {
+		this.productOwnerRefId = productOwnerRefId;
 	}
 }

@@ -32,8 +32,8 @@ public class OwnerPaymtDetails {
 	private String pymtAddedOn;
 	@Column(name = "pymt_mod_on")
 	private String pymtModOn;
-	@Column(name = "pymt_owner_email")
-	private String pymtOwnerEmail;
+	@Column(name = "pymt_owner_ref_id")
+	private String pymtOwnerRefId;
 	@Column(name = "pymt_live")
 	private String pymtLive;
 	public int getPymtId() {
@@ -72,11 +72,12 @@ public class OwnerPaymtDetails {
 	public void setPymtModOn(String pymtModOn) {
 		this.pymtModOn = pymtModOn;
 	}
-	public String getPymtOwnerEmail() {
-		return pymtOwnerEmail;
+	
+	public String getPymtOwnerRefId() {
+		return pymtOwnerRefId;
 	}
-	public void setPymtOwnerEmail(String pymtOwnerEmail) {
-		this.pymtOwnerEmail = pymtOwnerEmail;
+	public void setPymtOwnerRefId(String pymtOwnerRefId) {
+		this.pymtOwnerRefId = pymtOwnerRefId;
 	}
 	public String getPymtLive() {
 		return pymtLive;

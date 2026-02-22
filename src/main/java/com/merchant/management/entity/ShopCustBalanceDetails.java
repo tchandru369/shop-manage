@@ -25,10 +25,10 @@ public class ShopCustBalanceDetails {
 	private String custBalName;
 	@Column(name = "cust_bal_phone_no")
 	private String custBalPhoneNo;
-	@Column(name = "cust_bal_email_id")
-	private String custBalEmailId;
-	@Column(name = "cust_bal_owner_name")
-	private String custBalOwnerName;
+	@Column(name = "cust_bal_cust_ref_id")
+	private String custBalCustRefId;
+	@Column(name = "cust_bal_owner_ref_id")
+	private String custBalOwnerRefId;
 	@Column(name = "cust_bal_amt")
 	private double custBalAmt;
 	@Column(name = "cust_bal_act_amt")
@@ -37,9 +37,27 @@ public class ShopCustBalanceDetails {
 	private double custBalPaidAmt;
 	@Column(name = "cust_bal_date")
 	private String custBalDate;
+	@Column(name = "cust_bal_order_ref_id")
+	private String custBalOrderRefId;
+	@Column(name = "cust_bal_pymt_ref_id")
+	private String custBalPymtRefId;
 	@Column(name = "cust_bal_order_status")
 	private String custBalStatus;
 	
+	
+	
+	public String getCustBalOrderRefId() {
+		return custBalOrderRefId;
+	}
+	public void setCustBalOrderRefId(String custBalOrderRefId) {
+		this.custBalOrderRefId = custBalOrderRefId;
+	}
+	public String getCustBalPymtRefId() {
+		return custBalPymtRefId;
+	}
+	public void setCustBalPymtRefId(String custBalPymtRefId) {
+		this.custBalPymtRefId = custBalPymtRefId;
+	}
 	public String getCustBalStatus() {
 		return custBalStatus;
 	}
@@ -64,17 +82,18 @@ public class ShopCustBalanceDetails {
 	public void setCustBalPhoneNo(String custBalPhoneNo) {
 		this.custBalPhoneNo = custBalPhoneNo;
 	}
-	public String getCustBalEmailId() {
-		return custBalEmailId;
+	
+	public String getCustBalCustRefId() {
+		return custBalCustRefId;
 	}
-	public void setCustBalEmailId(String custBalEmailId) {
-		this.custBalEmailId = custBalEmailId;
+	public void setCustBalCustRefId(String custBalCustRefId) {
+		this.custBalCustRefId = custBalCustRefId;
 	}
-	public String getCustBalOwnerName() {
-		return custBalOwnerName;
+	public String getCustBalOwnerRefId() {
+		return custBalOwnerRefId;
 	}
-	public void setCustBalOwnerName(String custBalOwnerName) {
-		this.custBalOwnerName = custBalOwnerName;
+	public void setCustBalOwnerRefId(String custBalOwnerRefId) {
+		this.custBalOwnerRefId = custBalOwnerRefId;
 	}
 	public double getCustBalAmt() {
 		return custBalAmt;

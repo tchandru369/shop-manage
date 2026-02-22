@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.merchant.management.dto.CustDetailSummary;
+import com.merchant.management.dto.CustOverAllPymtStatusRes;
+import com.merchant.management.dto.CustProdPriceCount;
+import com.merchant.management.dto.CustomerGraphEntityRes;
 import com.merchant.management.dto.OrderRequestDto;
 import com.merchant.management.dto.UserCustBalDto;
 import com.merchant.management.dto.UserCustDetailsRes;
@@ -106,6 +109,16 @@ public class CustomerController {
 		return custDetails;	
 	}
 	
+	@GetMapping("/cust/getGraph")
+	public List<CustomerGraphEntityRes> getCustGraphEntity(@RequestParam String custEmail){
+		return customerService.getCustGraphEntity(custEmail);
+	}
+	
+	@GetMapping("/cust/getProdCount")
+	public List<CustProdPriceCount> getCustProductCount(@RequestParam String custEmail){
+		return customerService.getCustProdCount(custEmail);
+	}
+	
 	@GetMapping("/owner/getCustSummary")
 	public ResponseEntity getDetailsByCustUserE(@RequestParam String custEmail,@RequestParam String ownerEmail){
 		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
@@ -154,6 +167,18 @@ public class CustomerController {
 	public List<OrderRequestDto> getCustOrderRequestRejected(@RequestParam String email,@RequestParam String ownerEmail,@RequestParam String date) {
 		List<OrderRequestDto> orderList = orderService.getCustOrderRequestApproved(email,ownerEmail,date);
 		return orderList;
+	}
+	
+	@GetMapping("/cust/getcustLastTrans")
+	public List<CustOverAllPymtStatusRes> getCustLastTransaction(@RequestParam String custEmail,@RequestParam String ownerEmail) {
+		List<CustOverAllPymtStatusRes> custPymtList = customerService.getCustOverAllStatusList(custEmail,ownerEmail);
+		return custPymtList;
+	}
+	
+	@GetMapping("/cust/getcustLastOrderDts")
+	public List<OrderRequestDto> getCustLastOrderDetails(@RequestParam String custEmail,@RequestParam String ownerEmail) {
+		List<OrderRequestDto> custPymtList = customerService.getLastOrderStatus(custEmail,ownerEmail);
+		return custPymtList;
 	}
 	
 	

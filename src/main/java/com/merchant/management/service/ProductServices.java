@@ -47,14 +47,14 @@ public class ProductServices {
 	 for(int i=0;i<milkProduct.size();i++) {
 		 
 		 int count = 0;
-    	 count = milkProductRepo.getProdCountValue(milkProduct.get(i).getProductOwner(), milkProduct.get(i).getCompanyName(), 
+    	 count = milkProductRepo.getProdCountValue(milkProduct.get(i).getProductOwnerRefId(), milkProduct.get(i).getCompanyName(), 
     			 milkProduct.get(i).getProductType(), milkProduct.get(i).getProductName(),"1");
     	 System.out.println("the count is :"+count);
     	 
     	 if(count == 0) {
 		 MilkProductEntity milkProdEntities = new MilkProductEntity();
 		 milkProdEntities.setCompanyName(milkProduct.get(i).getCompanyName());
-		 milkProdEntities.setProductOwner(milkProduct.get(i).getProductOwner());
+		 milkProdEntities.setProductOwnerRefId(milkProduct.get(i).getProductOwnerRefId());
 		 milkProdEntities.setProductName(milkProduct.get(i).getProductName());
 		 milkProdEntities.setProductType(milkProduct.get(i).getProductType());
 		 milkProdEntities.setProductQuantity(milkProduct.get(i).getProductQuantity());
@@ -119,12 +119,12 @@ public class ProductServices {
  public ResponseEntity updateMilkProdDetails(MilkProductEntity productDetails) {
 	ProductDetailRes productRes = new ProductDetailRes();
 	int currentProductQty = productDetails.getProductQuantity();
-	int prodQtyFromDB = Integer.parseInt(milkProductRepo.getMilkProdQty(productDetails.getProductOwner(), productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType()));
+	int prodQtyFromDB = Integer.parseInt(milkProductRepo.getMilkProdQty(productDetails.getProductOwnerRefId(), productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType()));
 	int productQuantity = prodQtyFromDB + currentProductQty;
 	System.out.println("Product Quantity : "+productQuantity);
 	String strPrdQty = Integer.toString(productQuantity);
 	
- 	milkProductRepo.updateMilkProdQty(productDetails.getProductOwner(),productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType(),productQuantity,productDetails.getProductCustPrice(), productDetails.getProductBillPrice(),productDetails.getProductShopPrice());
+ 	milkProductRepo.updateMilkProdQty(productDetails.getProductOwnerRefId(),productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType(),productQuantity,productDetails.getProductCustPrice(), productDetails.getProductBillPrice(),productDetails.getProductShopPrice());
     productRes.setResponse("success");
     productRes.setErrorCode("0");
 	 return ResponseEntity.ok(productRes);
@@ -132,7 +132,7 @@ public class ProductServices {
  
  public ResponseEntity deleteMilkProdDetails(MilkProductEntity productDetails) {
 		ProductDetailRes productRes = new ProductDetailRes();
-	 	milkProductRepo.deleteMilkProdQty(productDetails.getProductOwner(),productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType());
+	 	milkProductRepo.deleteMilkProdQty(productDetails.getProductOwnerRefId(),productDetails.getProductName(),productDetails.getCompanyName(),productDetails.getProductType());
 	    productRes.setResponse("success");
 	    productRes.setErrorCode("0");
 		 return ResponseEntity.ok(productRes);

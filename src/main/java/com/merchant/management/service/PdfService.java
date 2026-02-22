@@ -97,8 +97,8 @@ public class PdfService {
 		    pdfDetails.setCustomerPhNo(billingEntity.getBillingCustomerPhNo());
 		    pdfDetails.setOwnerEmail(ownerDetails.getMerchantEmail());
 		    pdfDetails.setOwnerAddress(ownerDetails.getMerchantAddress());
-		    pdfDetails.setOwnerName(ownerDetails.getmerchantUserName());
-		    pdfDetails.setOwnerPhNo(ownerDetails.getmerchantPhoneNumber());
+		    pdfDetails.setOwnerName(ownerDetails.getMerchantUserName());
+		    pdfDetails.setOwnerPhNo(ownerDetails.getMerchantPhoneNumber());
 		    pdfDetails.setInvoiceNumber("INV"+billingEntity.getBillingNo());
 		    //pdfDetails.setDiscountAmount(billingEntity.getBillingTotalPriceTax());
 		    pdfDetailsList.add(pdfDetails);
@@ -113,7 +113,7 @@ public class PdfService {
 		    }
 		    System.out.println(pdfProductList.get(0).getProductName());		    
 		    billingHistory.setCutEmailId(pdfDetails.getCustomerEmail());
-		    billingHistory.setCustShopEmailId(pdfDetails.getOwnerEmail());
+		    billingHistory.setCustOwnerEmailId(pdfDetails.getOwnerEmail());
 		    billingHistory.setCustInvoiceId(pdfDetails.getInvoiceNumber());
 		    billingHistory.setCustPhnNo(pdfDetails.getCustomerPhNo());
 		    //billingHistory.setCustTotalAmt(billingEntity.getBillingTotalPrice());
@@ -132,8 +132,8 @@ public class PdfService {
 			try {
 		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-		    String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
-		   //String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
+		    //String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
+		   String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
 		    File jasperFile = new File(jasperFilePaths);
 		    System.out.println("Jasper file exists: " + jasperFile.exists() + " | Path: " + jasperFile.getAbsolutePath());
@@ -204,23 +204,22 @@ public class PdfService {
 			List<PdfProductDetails> pdfProductList = new ArrayList<PdfProductDetails>();
 			List<PdfDetails> pdfDetailsList = new ArrayList<PdfDetails>();
 			PdfDetails pdfDetails =  new PdfDetails();
-		    String ownerName = billingEntity.getOrderCustOwnerName();
+		    String ownerName = billingEntity.getOrderOwnerRefId();
 		    String custPhNo = billingEntity.getOrderCustPhoneNo();
 		    shopCustDtls = shopCustRepo.getShopCustDetailsByPhNo(custPhNo);
-		    ownerDetails = merchantRepository.getMerchantProfileDetails(ownerName);
+		    ownerDetails = merchantRepository.getMerchantDetailsByRefId(ownerName);
 		    pdfDetails.setCustomerName(billingEntity.getOrderCustName());
 		    pdfDetails.setCustomerEmail(billingEntity.getOrderCustEmailId());
 		    pdfDetails.setCustomerAddrs(shopCustDtls.getCustAddress());
 		    pdfDetails.setCustomerPhNo(billingEntity.getOrderCustPhoneNo());
 		    pdfDetails.setOwnerEmail(ownerDetails.getMerchantEmail());
 		    pdfDetails.setOwnerAddress(ownerDetails.getMerchantAddress());
-		    pdfDetails.setOwnerName(ownerDetails.getmerchantUserName());
-		    pdfDetails.setOwnerPhNo(ownerDetails.getmerchantPhoneNumber());
+		    pdfDetails.setOwnerName(ownerDetails.getMerchantUserName());
+		    pdfDetails.setOwnerPhNo(ownerDetails.getMerchantPhoneNumber());
 		    pdfDetails.setInvoiceNumber(billingHistory.getCustInvoiceId());
 		    pdfDetails.setCustBlnAmount(billingEntity.getOrderCustTotalPrice());
 		    pdfDetails.setCustBlnAmount(billingHistory.getCustDueAmt());
 		    pdfDetails.setFinalAmtPaid(billingEntity.getOrderFinalAmtPaid());
-		    
 		    if(billingHistory.getCustFullyPaidFlg() == "Y") {
 		    	pdfDetails.setCustPymtDesc("Full payment has been settled. For further clarification, Please contact Dealer");
 		    }else if(billingHistory.getCustFullyPaidFlg() == "N") {
@@ -285,7 +284,7 @@ public class PdfService {
 			
 			System.out.println("Billing Report Generated Successfully......");
             
-			emailService.sendEmail1(billingEntity.getOrderCustEmailId(), billingEntity.getOrderCustOwnerName(), pdfName, pdfBytes);
+			emailService.sendEmail1(billingEntity.getOrderCustEmailId(), billingEntity.getOrderOwnerRefId(), pdfName, pdfBytes);
 			//emailService.sendEmailDup(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(),pdfName);
 			} 
 			catch(Exception e) {

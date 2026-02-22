@@ -38,9 +38,51 @@ public class BillingHistory {
 	private String custInvoiceDate;
 	@Column(name = "cust_fullyPaid_Flg")
 	private String custFullyPaidFlg;
-	@Column(name = "cust_shop_email_id")
-	private String custShopEmailId;
+	@Column(name = "cust_owner_email_id")
+	private String custOwnerEmailId;
+	@Column(name = "shop_cust_ref_id")
+	private String shopCustRefId;
+	@Column(name = "shop_owner_ref_id")
+	private String shopOwnerRefId;
+	@Column(name = "shop_order_ref_id")
+	private String shopOrderRefId;
+	@Column(name = "cust_pymt_ref_id")
+	private String custPymtRefId;
 	
+	
+	
+	
+	
+	public String getCustPymtRefId() {
+		return custPymtRefId;
+	}
+	public void setCustPymtRefId(String custPymtRefId) {
+		this.custPymtRefId = custPymtRefId;
+	}
+	public long getBillingId() {
+		return billingId;
+	}
+	public void setBillingId(long billingId) {
+		this.billingId = billingId;
+	}
+	public String getCustEmailId() {
+		return custEmailId;
+	}
+	public void setCustEmailId(String custEmailId) {
+		this.custEmailId = custEmailId;
+	}
+	public String getShopCustRefId() {
+		return shopCustRefId;
+	}
+	public void setShopCustRefId(String shopCustRefId) {
+		this.shopCustRefId = shopCustRefId;
+	}
+	public String getShopOwnerRefId() {
+		return shopOwnerRefId;
+	}
+	public void setShopOwnerRefId(String shopOwnerRefId) {
+		this.shopOwnerRefId = shopOwnerRefId;
+	}
 	public String getCustInvoiceId() {
 		return custInvoiceId;
 	}
@@ -89,11 +131,18 @@ public class BillingHistory {
 	public void setCustFullyPaidFlg(String custFullyPaidFlg) {
 		this.custFullyPaidFlg = custFullyPaidFlg;
 	}
-	public String getCustShopEmailId() {
-		return custShopEmailId;
+	public String getCustOwnerEmailId() {
+		return custOwnerEmailId;
 	}
-	public void setCustShopEmailId(String custShopEmailId) {
-		this.custShopEmailId = custShopEmailId;
+	public void setCustOwnerEmailId(String custOwnerEmailId) {
+		this.custOwnerEmailId = custOwnerEmailId;
 	}
+	public String getShopOrderRefId() {
+		return shopOrderRefId;
+	}
+	public void setShopOrderRefId(String shopOrderRefId) {
+		this.shopOrderRefId = shopOrderRefId;
+	}
+	
 
 }

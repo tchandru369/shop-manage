@@ -1,0 +1,11 @@
+@Query(value = "SELECT * FROM cust_order_placed_tb WHERE cust_order_email =:custEmail AND cust_order_owner_email =:ownerEmail",
+ nativeQuery = true)
+	List<CustOrderPlacedDtls> getCustOverallOrderStatus(String custEmail, String ownerEmail);
+	
+	
+	@Query(value = "SELECT order_prod_total_amt FROM order_request_details WHERE order_cust_email_id =:custEmail 
+	AND order_placed_date =:placedDate AND order_prod_owner_name=:ownerEmail AND order_request_status =:reqStatus", nativeQuery = true)
+    double getOrderplcdTotalAmt(String custEmail,String placedDate,String ownerEmail,String reqStatus);
+	
+	
+	

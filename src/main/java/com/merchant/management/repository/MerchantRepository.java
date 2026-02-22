@@ -28,18 +28,18 @@ public interface MerchantRepository extends JpaRepository<MerchantDetails, Long>
 	@Query(value = "SELECT ea.merchant_password FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
 		String findPasswordByEmail(@Param("merchantEmail") String merchantEmail);
 	
-	@Query(value = "SELECT ea.merchant_name FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
+	@Query(value = "SELECT ea.merchant_name FROM merchant_details ea WHERE ea.merchant_ref_id =:merchantEmail", nativeQuery = true)
 	String getMerchantDetails(@Param("merchantEmail") String merchantEmail);
 	
-	@Query(value = "SELECT ea.merchant_photo FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
-	String getMerchantPhototDetails(@Param("merchantEmail") String merchantEmail);
+	@Query(value = "SELECT * FROM merchant_details ea WHERE ea.merchant_ref_id =:merchantEmail", nativeQuery = true)
+	MerchantDetails getMerchantDetailsByRefId(@Param("merchantEmail") String merchantEmail);
 	
-	@Query(value = "SELECT * FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
-	MerchantDetails getMerchantProfileDetails(String merchantEmail); 
+	@Query(value = "SELECT * FROM merchant_details ea WHERE ea.merchant_email =:ownerRefId", nativeQuery = true)
+	MerchantDetails getMerchantProfileDetails(String ownerRefId); 
 	
 	Optional<MerchantDetails> findBymerchantEmail(String merchantEmail);
 	
-	@Query(value = "SELECT COUNT(*) FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
+	@Query(value = "SELECT COUNT(*) FROM merchant_details ea WHERE ea.merchant_ref_id =:merchantEmail", nativeQuery = true)
 	int getMerchantCount(String merchantEmail);
 	
 	

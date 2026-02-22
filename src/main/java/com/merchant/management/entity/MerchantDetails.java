@@ -7,16 +7,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import com.merchant.management.entity.Role;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,8 +33,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class MerchantDetails implements UserDetails {
 	
 	@Id
-	@GeneratedValue 
-	private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long merchantId;
+	@Column(unique = true)
+    private String merchantRefId;
 	@Column(name = "merchant_name")
 	private String merchantUserName;
 	@Column(name = "merchant_password")
@@ -73,17 +78,37 @@ public class MerchantDetails implements UserDetails {
 //		this.merchantPhoto = merchantPhoto;
 //		this.merchantUserType = merchantUserType;
 //	}
+	
+	
 	public String getMerchantUserType() {
 		return merchantUserType;
 	}
-	public void setMerchantUserType(String merchantUserType) {
-		this.merchantUserType = merchantUserType;
+	public long getMerchantId() {
+		return merchantId;
 	}
-	public String getmerchantUserName() {
+	public void setMerchantId(long merchantId) {
+		this.merchantId = merchantId;
+	}
+	public String getMerchantRefId() {
+		return merchantRefId;
+	}
+	public void setMerchantRefId(String merchantRefId) {
+		this.merchantRefId = merchantRefId;
+	}
+	public String getMerchantUserName() {
 		return merchantUserName;
 	}
-	public void setmerchantUserName(String merchantUserName) {
+	public void setMerchantUserName(String merchantUserName) {
 		this.merchantUserName = merchantUserName;
+	}
+	public String getMerchantPhoneNumber() {
+		return merchantPhoneNumber;
+	}
+	public void setMerchantPhoneNumber(String merchantPhoneNumber) {
+		this.merchantPhoneNumber = merchantPhoneNumber;
+	}
+	public void setMerchantUserType(String merchantUserType) {
+		this.merchantUserType = merchantUserType;
 	}
 	public String getMerchantPassword() {
 		return merchantPassword;
@@ -96,12 +121,6 @@ public class MerchantDetails implements UserDetails {
 	}
 	public void setMerchantEmail(String merchantEmail) {
 		this.merchantEmail = merchantEmail;
-	}
-	public String getmerchantPhoneNumber() {
-		return merchantPhoneNumber;
-	}
-	public void setmerchantPhoneNumber(String merchantPhoneNumber) {
-		this.merchantPhoneNumber = merchantPhoneNumber;
 	}
 	public String getMerchantAddress() {
 		return merchantAddress;

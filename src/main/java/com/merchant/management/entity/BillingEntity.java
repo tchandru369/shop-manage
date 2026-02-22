@@ -2,15 +2,16 @@ package com.merchant.management.entity;
 
 import java.util.List;
 
-import org.springframework.data.relational.core.mapping.Table;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,7 @@ import com.merchant.management.entity.*;
 public class BillingEntity {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int billing_id;
 	@Column(name="billing_customer_name")
 	private String billingCustomerName;
@@ -59,9 +60,7 @@ public class BillingEntity {
 	@Column(name = "billing_due_flag")
 	private String billingDueFlag;
 	
-	@OneToMany
-	@JoinColumn(name = "billing_id")
-	private List<ProductDetails> productDetails;
+	
 	
 	
 	
@@ -174,15 +173,6 @@ public class BillingEntity {
 	}
 	public void setBillingTotalPriceTax(String billingTotalPriceTax) {
 		this.billingTotalPriceTax = billingTotalPriceTax;
-	}
-   
-	public List<ProductDetails> getProductDetails() {
-		return productDetails;
-	}
-
-
-	public void setProductDetails(List<ProductDetails> productDetails) {
-		this.productDetails = productDetails;
 	}
 	
 	public String getBillingDuePrice() {

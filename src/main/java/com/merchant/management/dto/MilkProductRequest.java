@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 
 public class MilkProductRequest {
    
-	private String productOwner;
+	private String productOwnerRefId;
 	private String companyName;
 	private String productType;
 	private String productName;
@@ -12,11 +12,11 @@ public class MilkProductRequest {
 	private double productBillPrice;
 	private double productShopPrice;
 	private double productCustPrice;
-	public String getProductOwner() {
-		return productOwner;
+	public String getProductOwnerRefId() {
+		return productOwnerRefId;
 	}
-	public void setProductOwner(String productOwner) {
-		this.productOwner = productOwner;
+	public void setProductOwnerRefId(String productOwnerRefId) {
+		this.productOwnerRefId = productOwnerRefId;
 	}
 	public String getCompanyName() {
 		return companyName;

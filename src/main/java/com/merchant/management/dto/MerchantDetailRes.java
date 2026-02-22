@@ -8,7 +8,18 @@ public class MerchantDetailRes {
 	private String userType;
 	private String errorMsg;
 	private String errorCode;
+	private String custRefId;
 	
+	
+	
+
+	public String getCustRefId() {
+		return custRefId;
+	}
+
+	public void setCustRefId(String custRefId) {
+		this.custRefId = custRefId;
+	}
 
 	public String getErrorCode() {
 		return errorCode;

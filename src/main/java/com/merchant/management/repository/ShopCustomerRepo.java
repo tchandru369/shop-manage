@@ -15,7 +15,7 @@ import com.merchant.management.entity.ShopCustomerDetails;
 
 public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Integer> {
 	
-	@Query(value = "SELECT * FROM shop_customer_details_tb ea WHERE ea.cust_phone_no =:customerPhNo", nativeQuery = true)
+	@Query(value = "SELECT * FROM shop_customer_details_tb ea WHERE ea.cust_phone_no =:customerPhNo AND (ea.cust_type='I' OR ea.cust_type='S')", nativeQuery = true)
 	ShopCustomerDetails getShopCustDetailsByPhNo(String customerPhNo);
 	
 	@Modifying
@@ -24,19 +24,27 @@ public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Int
 			+ "	AND cust_bal_owner_name =:ownerName AND cust_bal_phone_no =:custPhoneNo", nativeQuery = true)
 	void updateMilkProdQty(double recentBlnce,double paidAmount,String custEmail, String ownerName,String custPhoneNo );
 	
-	@Query(value = "SELECT ea.cust_name FROM shop_customer_details_tb ea WHERE ea.cust_email_id =:custEmail", nativeQuery = true)
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE shop_customer_details_tb SET cust_balance_flg =:blanceFlg WHERE shop_cust_ref_id =:custRefId AND cust_owner_ref_id =:ownerRefId", nativeQuery = true)
+	void updateCustBlnDtlFlag(String blanceFlg,String custRefId,String ownerRefId);
+	
+	@Query(value = "SELECT ea.cust_name FROM shop_customer_details_tb ea WHERE ea.shop_cust_ref_id =:custEmail", nativeQuery = true)
 	String getCustomerDetails(@Param("custEmail") String custEmail);
 	
-	@Query(value = "SELECT COUNT(*) FROM shop_customer_details_tb WHERE cust_email_id =:custEmail", nativeQuery = true)
+	@Query(value = "SELECT ea.cust_email_id FROM shop_customer_details_tb ea WHERE ea.shop_cust_ref_id =:custRefId", nativeQuery = true)
+	String getCustomerEmailDetails(@Param("custRefId") String custEmail);
+	
+	@Query(value = "SELECT COUNT(*) FROM shop_customer_details_tb WHERE shop_cust_ref_id =:custEmail", nativeQuery = true)
 	int getCustMailCount(String custEmail);
 	
-	@Query(value = "SELECT cust_email_id FROM shop_customer_details_tb WHERE cust_phone_no =:custPhone", nativeQuery = true)
+	@Query(value = "SELECT shop_cust_ref_id FROM shop_customer_details_tb WHERE cust_phone_no =:custPhone", nativeQuery = true)
 	String getCustPhoneCount(String custPhone);
 	
-	@Query(value = "SELECT * FROM shop_customer_details_tb ea WHERE ea.cust_email_id =:custEmail", nativeQuery = true)
+	@Query(value = "SELECT * FROM shop_customer_details_tb ea WHERE ea.shop_cust_ref_id =:custEmail", nativeQuery = true)
 	ShopCustomerDetails getShopCustDtlsEmailPh(String custEmail);
 	
-	@Query(value = "SELECT * FROM shop_customer_details_tb WHERE cust_owner_details =:custEmail", nativeQuery = true)
+	@Query(value = "SELECT * FROM shop_customer_details_tb WHERE cust_owner_ref_id =:custEmail", nativeQuery = true)
 	List<ShopCustomerDetails> getShopCustDtlsByOwnerE(String custEmail);
 	
 	

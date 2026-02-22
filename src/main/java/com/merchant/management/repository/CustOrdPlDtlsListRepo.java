@@ -12,32 +12,61 @@ import com.merchant.management.entity.ShopCustOrderDetails;
 
 public interface CustOrdPlDtlsListRepo extends JpaRepository<CustOrderDtlList, Integer>{
 	
-	@Query(value = "SELECT * FROM cust_order_dtl_list_tb WHERE cust_order_emailid =:custEmail AND cust_order_owner_name =:ownerEmail\r\n"
-			+ " AND cust_order_crd_date =:orderDate AND cust_order_ph_no =:custPhoneNo AND cust_order_req_status = 'OP' AND cust_order_live_flg = '1';", nativeQuery = true)
-	List<CustOrderDtlList> getCustOrderPlacedList(String custEmail,String ownerEmail,String orderDate,String custPhoneNo);
+	@Query(value = "SELECT * FROM cust_order_dtl_list_tb WHERE cust_order_crd_date =:orderDate AND cust_order_live_flg = '1' AND cust_order_ref_id =:orderRefId", nativeQuery = true)
+	List<CustOrderDtlList> getCustOrderPlacedList(String orderDate,String orderRefId);
 	
-	@Query(value = "SELECT * FROM cust_order_dtl_list_tb WHERE cust_order_emailid =:custEmail AND cust_order_owner_name =:ownerEmail\r\n"
-			+ " AND cust_order_crd_date =:orderDate AND cust_order_req_status =:orderStatus AND cust_order_live_flg = '1';", nativeQuery = true)
-	List<CustOrderDtlList> getCustOrderPlacedListAprvd(String custEmail,String ownerEmail,String orderDate,String orderStatus);
+	@Query(value = "SELECT * FROM cust_order_dtl_list_tb WHERE cust_order_ref_id =:orderRefId\r\n"
+			+ " AND cust_order_crd_date =:orderDate AND cust_order_live_flg = '1';", nativeQuery = true)
+	List<CustOrderDtlList> getCustOrderPlacedListAprvd(String orderRefId,String orderDate);
 	
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='OPA'  WHERE cust_order_owner_name =:ownerEmail\r\n"
-			+ "			AND cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate AND cust_order_ph_no =:custPhNo\r\n"
-			+ "			AND cust_order_emailid =:custEmail AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_req_status ='OP'", nativeQuery = true)
-	void updateCustPlcdDtlList(String ownerEmail,String orderedDate,String custPhNo, String custEmail,String companyName,String productType,String productName);
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='OPA'\r\n"
+			+ " WHERE cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate AND cust_order_ref_id =:orderRefId\r\n"
+			+ "	AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType", nativeQuery = true)
+	void updateCustPlcdDtlList(String orderedDate,String orderRefId,String companyName,String productType,String productName);
 
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='OPR'  WHERE cust_order_owner_name =:ownerEmail\r\n"
-			+ "			AND cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate AND cust_order_ph_no =:custPhNo\r\n"
-			+ "			AND cust_order_emailid =:custEmail AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_req_status ='OP'", nativeQuery = true)
-	void updateCustPlcdDtlListR(String ownerEmail,String orderedDate,String custPhNo, String custEmail,String companyName,String productType,String productName);
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='BP' WHERE cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_ref_id =:orderRefId AND cust_order_req_status ='OPA'", nativeQuery = true)
+	void updateCustPlcdDtlListBP(String orderedDate,String companyName,String productType,String productName,String orderRefId);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='BSV'  WHERE cust_order_ref_id =:orderRefId\r\n"
+			+ "			AND cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate\r\n"
+			+ "			AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_req_status ='BP'", nativeQuery = true)
+	void updateCustPlcdDtlListBSV(String orderedDate, String orderRefId,String companyName,String productType,String productName);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='BS'  WHERE cust_order_ref_id =:orderRefId\r\n"
+			+ " AND cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate\r\n"
+			+ " AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_req_status ='BSV'", nativeQuery = true)
+	void updateCustPlcdDtlListBS(String orderRefId,String orderedDate,String companyName,String productType,String productName);
+
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='BS'  WHERE cust_order_ref_id =:orderRefId\r\n"
+			+ "			AND cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate\r\n"
+			+ "			AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_req_status ='BP'", nativeQuery = true)
+	void updateCustPlcdDtlLstOwnerPaidBS(String orderedDate, String orderRefId,String companyName,String productType,String productName);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='OPR'  WHERE cust_order_ref_id =:orderRefId\r\n"
+			+ "			AND cust_order_prod_name =:productName AND cust_order_crd_date =:orderedDate\r\n"
+			+ "			AND cust_order_prod_cmp =:companyName AND cust_order_prod_type =:productType AND cust_order_req_status ='OP'", nativeQuery = true)
+	void updateCustPlcdDtlListR(String orderedDate, String orderRefId,String companyName,String productType,String productName);
 
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='OP'  WHERE cust_order_owner_name =:ownerEmail\r\n"
-			+ "		    AND cust_order_crd_date =:orderedDate AND cust_order_ph_no =:custPhNo\r\n"
-			+ "			AND cust_order_emailid =:custEmail AND cust_order_req_status ='OPA'", nativeQuery = true)
-	void updateCustPlcdDtlListBck(String ownerEmail,String orderedDate,String custPhNo, String custEmail);
+	@Query(value = "UPDATE cust_order_dtl_list_tb SET cust_order_req_status ='OP' WHERE cust_order_ref_id =:orderRefId\r\n"
+			+ " AND cust_order_crd_date =:orderedDate\r\n"
+			+ "	AND cust_order_req_status ='OPA'", nativeQuery = true)
+	void updateCustPlcdDtlListBck(String orderRefId,String orderedDate);
+	
+	@Query(value = "SELECT * FROM cust_order_dtl_list_tb WHERE cust_order_ref_id =:orderRefId AND cust_order_crd_date =:orderDate AND cust_order_live_flg = '1'", nativeQuery = true)
+	List<CustOrderDtlList> getCustOverAllOrderList(String orderDate,String orderRefId);
 }

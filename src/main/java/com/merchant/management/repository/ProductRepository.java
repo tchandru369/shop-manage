@@ -22,8 +22,8 @@ public interface ProductRepository extends JpaRepository<ProductDetails, Long>{
 	@Query(value = "SELECT ea.product_id,ea.product_primary_id,ea.product_owner,ea.product_name,ea.product_created_on,ea.product_modified_on,ea.product_price,ea.product_cust_price,ea.product_quantity,ea.product_type FROM product_details ea WHERE ea.product_owner =:merchantEmail", nativeQuery = true)
 	List<ProductDetails> getProductDetails(String merchantEmail);
 	
-	@Query(value = "SELECT ea.product_quantity FROM product_details ea WHERE ea.product_owner =:merchantEmail AND ea.product_name =:productName", nativeQuery = true)
-	String getProductQuantity(String merchantEmail,String productName);
+	@Query(value = "SELECT ea.product_quantity FROM product_details ea WHERE ea.product_owner =:ownerRefId AND ea.product_name =:productName", nativeQuery = true)
+	String getProductQuantity(String ownerRefId,String productName);
 	
 	@Query(value = "SELECT ea.product_primary_id FROM product_details ea WHERE ea.product_owner =:merchantEmail AND ea.product_name =:productName", nativeQuery = true)
 	String getProductPrimaryId(String merchantEmail,String productName);

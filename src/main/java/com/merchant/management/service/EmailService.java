@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 
@@ -150,6 +151,48 @@ public class EmailService {
  			
  			//helper.addAttachment(fileName, new ByteArrayDataSource(pdfBytes, "application/pdf"));
  			 mailSender.send(mimeMessage);
+ 		}catch(Exception e){
+ 			System.out.println(e.getMessage());
+ 		}
+            Thread.sleep(5000); // Simulating a delay for the email sending
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return CompletableFuture.completedFuture(null);
+    }
+	
+	@Async("taskExecutor")
+    public CompletableFuture<Void> sendConfmCustPymtEmail(String customerEmail,String custName, String productOwner) {
+        // Simulate email sending process (e.g., calling an email service)
+        try {
+        	System.out.println("Inside Email service...................");
+        	 LocalDate currentDate = LocalDate.now();
+        	 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+        	 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a"); // 12-hour format with AM/PM
+        	 LocalDateTime currentDateTime = LocalDateTime.now(); // Get current date and time
+
+        	 String formattedDate = currentDateTime.format(dateFormatter); // Format the date
+        	 String formattedTime = currentDateTime.format(timeFormatter); // Format the time	
+ 		try { 
+ 			MimeMessage mimeMessage = mailSender.createMimeMessage();
+ 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
+ 			 SimpleMailMessage message = new SimpleMailMessage();
+ 			 String emailBody = "Dear " + custName + ",\r\n\r\n"
+	                   + "Date: " + formattedDate + "\r\n"
+	                   + "Time: " + formattedTime + "\r\n\r\n" // Add the time here
+	                   + "Thanks for making payment to the dealer. You will receive the acknowledgement once your payment has been verified by your respective dealer.\r\n\r\n"
+	                   + "If you have any questions or need assistance, feel free to contact us.\r\n\r\n"
+	                   + "Best regards,\r\n"
+	                   + "Merchant Corporation";
+ 			helper.setFrom("chanper369@gmail.com");
+ 			helper.setTo(customerEmail);
+ 			helper.setSubject("Acknowledgement of Payment to Dealer");
+ 			helper.setText(emailBody);
+ 			
+ 			
+ 			//helper.addAttachment(fileName, new ByteArrayDataSource(pdfBytes, "application/pdf"));
+ 			 mailSender.send(mimeMessage);
+ 			
  		}catch(Exception e){
  			System.out.println(e.getMessage());
  		}

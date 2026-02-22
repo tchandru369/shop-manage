@@ -24,8 +24,8 @@ public class CustomerDetails {
 	private int id;
 	@Column(name = "customer_name")
 	private String customerName;
-	@Column(name = "customer_unique_no")
-	private String customerUniqueNo;
+	@Column(name = "customer_ref_id")
+	private String customerRefId;
 	@Column(name = "customer_password")
 	private String CustomerPassword;
 	@Column(name = "customer_email")
@@ -59,12 +59,12 @@ public class CustomerDetails {
 //		this.customerType = customerType;
 //	}
 	
-	public String getCustomerUniqueNo() {
-		return customerUniqueNo;
+	public String getcustomerRefId() {
+		return customerRefId;
 	}
 
-	public void setCustomerUniqueNo(String customerUniqueNo) {
-		this.customerUniqueNo = customerUniqueNo;
+	public void setcustomerRefId(String customerRefId) {
+		this.customerRefId = customerRefId;
 	}
 	public int getId() {
 		return id;

@@ -27,16 +27,43 @@ public class CustOrderPlacedDtls {
 	private String custOrderEmail;
 	@Column(name="cust_order_phno")
 	private String custOrderPhNo;
-	@Column(name="cust_order_owner_email")
-	private String custOrderOwnerEmail;
+	@Column(name="cust_customerRef_id")
+	private String custCustRefId;
+	@Column(name="cust_order_owner_ref_id")
+	private String custOrderOwnerRefId;
 	@Column(name="cust_order_type")
 	private String custOrderType;
+	@Column(name="cust_order_ref_id")
+	private String custOrderRefId;
+	@Column(name="cust_pymt_ref_id")
+	private String custPymtRefId;
 	@Column(name="cust_order_crtd_date")
 	private String custOrderCrtdDate;
 	@Column(name="cust_order_req_status")
 	private String custOrderReqStatus;
 	@Column(name="cust_order_live_flg")
 	private String custOrderLiveFlg;
+	
+	
+	
+	public String getCustCustRefId() {
+		return custCustRefId;
+	}
+	public void setCustCustRefId(String custCustRefId) {
+		this.custCustRefId = custCustRefId;
+	}
+	public String getCustPymtRefId() {
+		return custPymtRefId;
+	}
+	public void setCustPymtRefId(String custPymtRefId) {
+		this.custPymtRefId = custPymtRefId;
+	}
+	public String getCustOrderRefId() {
+		return custOrderRefId;
+	}
+	public void setCustOrderRefId(String custOrderRefId) {
+		this.custOrderRefId = custOrderRefId;
+	}
 	public int getCustOrdId() {
 		return custOrdId;
 	}
@@ -61,11 +88,11 @@ public class CustOrderPlacedDtls {
 	public void setCustOrderPhNo(String custOrderPhNo) {
 		this.custOrderPhNo = custOrderPhNo;
 	}
-	public String getCustOrderOwnerEmail() {
-		return custOrderOwnerEmail;
+	public String getCustOrderOwnerRefId() {
+		return custOrderOwnerRefId;
 	}
-	public void setCustOrderOwnerEmail(String custOrderOwnerEmail) {
-		this.custOrderOwnerEmail = custOrderOwnerEmail;
+	public void setCustOrderOwnerRefId(String custOrderOwnerRefId) {
+		this.custOrderOwnerRefId = custOrderOwnerRefId;
 	}
 	public String getCustOrderType() {
 		return custOrderType;

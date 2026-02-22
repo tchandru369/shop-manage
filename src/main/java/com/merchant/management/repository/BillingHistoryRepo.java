@@ -14,7 +14,7 @@ import com.merchant.management.entity.ProductDetails;
 @EnableJpaRepositories
 public interface BillingHistoryRepo extends JpaRepository<BillingHistory, Long>{
 	
-	@Query(value = "SELECT * FROM billing_history ea WHERE ea.cust_shop_email_id =:merchantEmail", nativeQuery = true)
-	List<BillingHistory> getBillingHistoryDetails(String merchantEmail);
+	@Query(value = "SELECT * FROM billing_history ea WHERE ea.shop_owner_ref_id =:ownerRefId", nativeQuery = true)
+	List<BillingHistory> getBillingHistoryDetails(String ownerRefId);
 
 }

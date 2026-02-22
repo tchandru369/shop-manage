@@ -47,19 +47,19 @@ public class BillingController {
 	
 	
 	
-	@PostMapping("/billCustomer")
-	public ResponseEntity payBills(@RequestBody BillingEntity billingEntity) {
-		     BillingEntityRes response  = new BillingEntityRes();		   
-		   if(billingService.billingService(billingEntity) != null) {
-			   response.setResponse("success");
-		   }else {
-			   response.setErrorCode("Bill not paid successfully");
-			   response.setErrorCode("ERR002") ;
-			   response.setResponse("failure");
-		   }
-	      
-	       return ResponseEntity.ok(response);    
-	}
+//	@PostMapping("/billCustomer")
+//	public ResponseEntity payBills(@RequestBody BillingEntity billingEntity) {
+//		     BillingEntityRes response  = new BillingEntityRes();		   
+//		   if(billingService.billingService(billingEntity) != null) {
+//			   response.setResponse("success");
+//		   }else {
+//			   response.setErrorCode("Bill not paid successfully");
+//			   response.setErrorCode("ERR002") ;
+//			   response.setResponse("failure");
+//		   }
+//	      
+//	       return ResponseEntity.ok(response);    
+//	}
 	
 	@GetMapping("/viewBillHistory")
 	public  List<BillingHistoryRes> viewProducts(@RequestParam String email){
@@ -100,6 +100,18 @@ public class BillingController {
 	       return ResponseEntity.ok(response);    
 	}
 	
+	@PostMapping("/owner/verifyCustPymt")
+	public ResponseEntity custVerifyPymentdata(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.custAmntPaidVerifiedAmnt(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/owner/notPaidCustPymt")
+	public ResponseEntity custNotVerifiedPymntDtls(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.ownerCustNotPaidConf(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
 	
 	
 	@GetMapping("/getOrderReq")
@@ -114,9 +126,21 @@ public class BillingController {
 		return orderList;
 	}
 	
+	@GetMapping("/owner/getProcOrders")
+	public List<OrderRequestDto> getCustConfPymtOrders(@RequestParam String email) {
+		List<OrderRequestDto> orderList = orderService.getProcessedOrders(email);
+		return orderList;
+	}
+	
 	@GetMapping("/cust/getProcOrders")
 	public List<OrderRequestDto> getCustProcessedOrders(@RequestParam String OwnerEmail,@RequestParam String custEmail) {
 		List<OrderRequestDto> orderList = orderService.getCustProcessedOrders(OwnerEmail,custEmail);
+		return orderList;
+	}
+	
+	@GetMapping("/owner/getCustVerPymtList")
+	public List<OrderRequestDto> getCustVerifyPymtList(@RequestParam String email) {
+		List<OrderRequestDto> orderList = orderService.getCustConfPymtOrders(email);
 		return orderList;
 	}
 	
@@ -142,9 +166,11 @@ public class BillingController {
 	
 	@PostMapping("/cust/confirmPymnt")
 	public ResponseEntity confirmPaymentOrderReq(@RequestBody OrderRequestDto custOrderDtls) {
-		     BillingEntityRes response  = orderService.paidOrderRequest(custOrderDtls);		   
+		     BillingEntityRes response  = orderService.custConfirmRequest(custOrderDtls);		   
 	       return ResponseEntity.ok(response);    
 	}
+	
+	
 	
 	
 	

@@ -11,7 +11,7 @@ public class CustDetailSummary {
 	private String custDob;
 	private String custGender;
 	private String custState;
-	private String custPincode;
+	private int custPincode;
 	private String custModifiedDate;
 	private List<UserCustBalDto> BalanceList;
 	private List<UserCustLastTransaction> transactionList;
@@ -57,10 +57,10 @@ public class CustDetailSummary {
 	public void setCustState(String custState) {
 		this.custState = custState;
 	}
-	public String getCustPincode() {
+	public int getCustPincode() {
 		return custPincode;
 	}
-	public void setCustPincode(String custPincode) {
+	public void setCustPincode(int custPincode) {
 		this.custPincode = custPincode;
 	}
 	public String getCustModifiedDate() {

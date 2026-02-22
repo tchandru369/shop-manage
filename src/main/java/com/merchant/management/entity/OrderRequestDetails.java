@@ -26,8 +26,10 @@ public class OrderRequestDetails {
 	private String orderProductCustType;
 	@Column(name = "order_prod_cust_name")
 	private String orderProductCustName;
-	@Column(name = "order_prod_owner_name")
-	private String orderProductOwnerName;
+	@Column(name = "order_owner_ref_id")
+	private String orderOwnerRefId;
+	@Column(name = "order_cust_ref_id")
+	private String orderCustRefId;
 	@Column(name = "order_prod_total_amt")
 	private double orderProdTotalAmt;
 	@Column(name = "order_placed_date")
@@ -40,17 +42,34 @@ public class OrderRequestDetails {
 	private String orderCustEmailId;
 	@Column(name = "order_cust_phno")
 	private String orderCustPhNo;
+	@Column(name = "order_ref_id")
+	private String orderRefId;
+	@Column(name = "order_pymt_ref_id")
+	private String orderPymtRefId;
 	@Column(name = "order_request_status")
 	private String orderRequestStatus;
 	@Column(name = "order_balance_flg")
 	private String orderBalanceFlg;
 	
 	
-	public String getOrderProductOwnerName() {
-		return orderProductOwnerName;
+	
+	public String getOrderRefId() {
+		return orderRefId;
 	}
-	public void setOrderProductOwnerName(String orderProductOwnerName) {
-		this.orderProductOwnerName = orderProductOwnerName;
+	public void setOrderRefId(String orderRefId) {
+		this.orderRefId = orderRefId;
+	}
+	public String getorderPymtRefId() {
+		return orderPymtRefId;
+	}
+	public void setorderPymtRefId(String orderPymtRefId) {
+		this.orderPymtRefId = orderPymtRefId;
+	}
+	public String getOrderOwnerRefId() {
+		return orderOwnerRefId;
+	}
+	public void setOrderOwnerRefId(String orderOwnerRefId) {
+		this.orderOwnerRefId = orderOwnerRefId;
 	}
 	public String getOrderProductCustName() {
 		return orderProductCustName;
@@ -118,6 +137,19 @@ public class OrderRequestDetails {
 	public void setOrderCustPhNo(String orderCustPhNo) {
 		this.orderCustPhNo = orderCustPhNo;
 	}
+	public String getOrderCustRefId() {
+		return orderCustRefId;
+	}
+	public void setOrderCustRefId(String orderCustRefId) {
+		this.orderCustRefId = orderCustRefId;
+	}
+	public String getOrderPymtRefId() {
+		return orderPymtRefId;
+	}
+	public void setOrderPymtRefId(String orderPymtRefId) {
+		this.orderPymtRefId = orderPymtRefId;
+	}
+	
 	
 
 }

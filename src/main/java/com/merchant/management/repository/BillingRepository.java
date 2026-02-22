@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.merchant.management.entity.BillingEntity;
 
 
-@Repository
+@EnableJpaRepositories
 public interface BillingRepository extends JpaRepository<BillingEntity, Integer>{
 	
 	@Query(value = "SELECT country_names,state_names,city_names FROM con_state_city", nativeQuery = true)

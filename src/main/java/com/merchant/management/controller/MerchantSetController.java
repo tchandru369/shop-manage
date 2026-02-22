@@ -28,6 +28,7 @@ import com.merchant.management.entity.ImageSrcDetail;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.MerchantProfileDetails;
 import com.merchant.management.entity.OwnerPaymtDetails;
+import com.merchant.management.repository.ShopCustomerRepo;
 import com.merchant.management.service.MerchantServices;
 import com.merchant.management.service.MerchantSetService;
 
@@ -43,6 +44,9 @@ public class MerchantSetController {
 	
 	@Autowired
 	private MerchantServices merchantServices;
+	
+	@Autowired
+	private ShopCustomerRepo shopCustDtlRepo;
 	
 	@PostMapping(value = "/saveImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<CustomerDetailsRes> authenticate(@RequestPart("imageDetails") ImageSourceDetails imageModel,
@@ -69,11 +73,11 @@ public class MerchantSetController {
 	public ResponseEntity<MerchantProfileDetails> getProfileDetails(@RequestParam String email){
 		MerchantProfileDetails merchantRes = new MerchantProfileDetails();
 		MerchantDetails merchantDetails = new MerchantDetails();
-		merchantDetails = merchantServices.getMerchantService(email);
-		merchantRes.setMerchantEmail(email);
+		merchantDetails = merchantServices.getMerchantServiceDetails(email);
+		merchantRes.setMerchantEmail(shopCustDtlRepo.getCustomerEmailDetails(email));
 		merchantRes.setMerchantAddress(merchantDetails.getMerchantAddress());
-		merchantRes.setMerchantPhoneNumber(merchantDetails.getmerchantPhoneNumber());
-		merchantRes.setMerchantUserName(merchantDetails.getmerchantUserName());
+		merchantRes.setMerchantPhoneNumber(merchantDetails.getMerchantPhoneNumber());
+		merchantRes.setMerchantUserName(merchantDetails.getMerchantUserName());
 		merchantRes.setMerchantUserType(merchantDetails.getMerchantUserType());
 		
 		return ResponseEntity.ok(merchantRes);
@@ -106,8 +110,7 @@ public class MerchantSetController {
 	}
 	
 	@GetMapping("/owner/updatePymt")
-	public ResponseEntity updatePaymentDetails(@RequestParam String dealerUpi,@RequestParam String ownerEmail,@RequestParam String ownerName
-			,String ownerPh) {
+	public ResponseEntity updatePaymentDetails(@RequestParam String dealerUpi,@RequestParam String ownerEmail,@RequestParam String ownerName,@RequestParam String ownerPh) {
 		BillingEntityRes trans = merchantServices.updatePaymentDetails(dealerUpi, ownerEmail, ownerName, ownerPh);
 		return ResponseEntity.ok(trans);
 	}

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.merchant.management.entity.CustomerDetails;
 
+@EnableJpaRepositories
 public interface CustomerRepository extends JpaRepository<CustomerDetails, Integer>{
     
 	@Query(value = "SELECT * FROM customer_details ea WHERE ea.customer_phone_no =:customerPhNo", nativeQuery = true)

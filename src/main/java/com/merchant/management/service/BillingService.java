@@ -60,44 +60,44 @@ public class BillingService {
 		
 	}
 	
-	public ResponseEntity billingService(BillingEntity billingEntity) {
-		BillingHistory billingHistory = new BillingHistory();
-		BillingEntityRes billingResponse = new BillingEntityRes();
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        billingEntity.setBillingDateTime(timestamp.toString());
-        long nanoTime = System.nanoTime();
-        long uniqueNumber = nanoTime % 10_000_000_0;
-        billingEntity.setBillingNo(String.valueOf(uniqueNumber));
-        LocalTime currentTime = LocalTime.now();
-        billingEntity.setBillingTime(currentTime.toString());
-        List<ProductDetails> productDetails = billingEntity.getProductDetails();
-        if(!billingEntity.getBillingDuePrice().equals("0")) {
-        	billingEntity.setBillingDueFlag("1");
-        }else {
-        	billingEntity.setBillingDueFlag("0");
-        }
-       
-        for(int i=0;i<productDetails.size();i++) {
-        	int productQuantity = 0;
-        	String productOwner = productDetails.get(i).getProductOwner();
-        	String productName =productDetails.get(i).getProductName();
-        	int currentProductQty = Integer.parseInt( productDetails.get(i).getProductQuantity());
-        	System.out.println("Billing Product Qty : "+ productRepository.getProductQuantity(productOwner, productName));
-        	int prodQtyFromDB = Integer.parseInt(productRepository.getProductQuantity(productOwner, productName));
-        	productQuantity = prodQtyFromDB - currentProductQty;
-        	System.out.println("Product Quantity : "+productQuantity);
-        	String strPrdQty = Integer.toString(productQuantity);
-        	productRepository.updateProductQty(productOwner, productName, strPrdQty);
-        }
-        
-        pdfService.generateBillPdf(billingEntity, productDetails);
-        //emailService.sendEmail(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner());
-		 billingRepository.save(billingEntity);
-		
-			 billingResponse.setErrorCode("0");
-			 billingResponse.setResponse("success");
-		return ResponseEntity.ok(billingResponse);
-	}
+//	public ResponseEntity billingService(BillingEntity billingEntity) {
+//		BillingHistory billingHistory = new BillingHistory();
+//		BillingEntityRes billingResponse = new BillingEntityRes();
+//		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//        billingEntity.setBillingDateTime(timestamp.toString());
+//        long nanoTime = System.nanoTime();
+//        long uniqueNumber = nanoTime % 10_000_000_0;
+//        billingEntity.setBillingNo(String.valueOf(uniqueNumber));
+//        LocalTime currentTime = LocalTime.now();
+//        billingEntity.setBillingTime(currentTime.toString());
+//        List<ProductDetails> productDetails = billingEntity.getProductDetails();
+//        if(!billingEntity.getBillingDuePrice().equals("0")) {
+//        	billingEntity.setBillingDueFlag("1");
+//        }else {
+//        	billingEntity.setBillingDueFlag("0");
+//        }
+//       
+//        for(int i=0;i<productDetails.size();i++) {
+//        	int productQuantity = 0;
+//        	String productOwner = productDetails.get(i).getProductOwner();
+//        	String productName =productDetails.get(i).getProductName();
+//        	int currentProductQty = Integer.parseInt( productDetails.get(i).getProductQuantity());
+//        	System.out.println("Billing Product Qty : "+ productRepository.getProductQuantity(productOwner, productName));
+//        	int prodQtyFromDB = Integer.parseInt(productRepository.getProductQuantity(productOwner, productName));
+//        	productQuantity = prodQtyFromDB - currentProductQty;
+//        	System.out.println("Product Quantity : "+productQuantity);
+//        	String strPrdQty = Integer.toString(productQuantity);
+//        	productRepository.updateProductQty(productOwner, productName, strPrdQty);
+//        }
+//        
+//        pdfService.generateBillPdf(billingEntity, productDetails);
+//        //emailService.sendEmail(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner());
+//		 billingRepository.save(billingEntity);
+//		
+//			 billingResponse.setErrorCode("0");
+//			 billingResponse.setResponse("success");
+//		return ResponseEntity.ok(billingResponse);
+//	}
 	
 	@Async
 	 public void sendEmail(String customerEmail, String ownerMail) {

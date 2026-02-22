@@ -32,6 +32,8 @@ public class ShopCustomerDetails{
 	private int shopCustId;
 	@Column(name = "cust_name")
 	private String custName;
+	@Column(unique = true)
+    private String shopCustRefId;
 	@Column(name = "cust_phone_no")
 	private String custPhoneNo;
 	@Column(name = "cust_address")
@@ -43,7 +45,7 @@ public class ShopCustomerDetails{
 	@Column(name = "cust_state")
 	private String custState;
 	@Column(name = "cust_pincode")
-	private String custPinCode;
+	private int custPinCode;
 	@Column(name = "cust_dob")
 	private String custDob;
 	@Column(name = "cust_gender")
@@ -58,8 +60,8 @@ public class ShopCustomerDetails{
 	private String custCreatedDate;
 	@Column(name = "cust_modified_date")
 	private String custModifiedDate;
-	@Column(name = "cust_owner_details")
-	private String custOwmerDetails;
+	@Column(name = "cust_owner_ref_id")
+	private String custOwnerRefId;
 	@Column(name = "cust_live")
 	private String custLive;
 	@Column(name = "cust_balance_flg")
@@ -70,6 +72,12 @@ public class ShopCustomerDetails{
 	
 	
 	
+	public String getShopCustRefId() {
+		return shopCustRefId;
+	}
+	public void setShopCustRefId(String shopCustRefId) {
+		this.shopCustRefId = shopCustRefId;
+	}
 	public String getCustCountry() {
 		return custCountry;
 	}
@@ -118,10 +126,10 @@ public class ShopCustomerDetails{
 	public void setCustState(String custState) {
 		this.custState = custState;
 	}
-	public String getCustPinCode() {
+	public int getCustPinCode() {
 		return custPinCode;
 	}
-	public void setCustPinCode(String custPinCode) {
+	public void setCustPinCode(int custPinCode) {
 		this.custPinCode = custPinCode;
 	}
 	public String getCustDob() {
@@ -160,11 +168,11 @@ public class ShopCustomerDetails{
 	public void setCustModifiedDate(String custModifiedDate) {
 		this.custModifiedDate = custModifiedDate;
 	}
-	public String getCustOwmerDetails() {
-		return custOwmerDetails;
+	public String getCustOwnerRefId() {
+		return custOwnerRefId;
 	}
-	public void setCustOwmerDetails(String custOwmerDetails) {
-		this.custOwmerDetails = custOwmerDetails;
+	public void setCustOwnerRefId(String custOwnerRefId) {
+		this.custOwnerRefId = custOwnerRefId;
 	}
 	public String getCustLive() {
 		return custLive;

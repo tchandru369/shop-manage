@@ -21,12 +21,6 @@ public class ShopCustOrderDetails {
 	@Id
 	@GeneratedValue
 	private int orderCustId;
-	@Column(name = "order_cust_phone_no")
-	private String orderCustPhoneNo;
-	@Column(name = "order_cust_email_id")
-	private String orderCustEmailId;
-	@Column(name = "order_cust_owner_name")
-	private String orderCustOwnerName;
 	@Column(name = "order_cust_prod_cmp")
 	private String orderCustProdCmp;
 	@Column(name = "order_cust_prod_type")
@@ -35,12 +29,20 @@ public class ShopCustOrderDetails {
 	private String orderCustProdName;
 	@Column(name = "order_cust_prod_qty")
 	private int orderCustProdQty;
+	@Column(name = "order_cust_ref_id")
+	private String orderCustRefId;
 	@Column(name = "order_cust_prod_price")
 	private double orderCustProdPrice;
 	@Column(name = "order_cust_crtd_date")
 	private String orderCustCrtdDate;
-	@Column(name = "order_cust_status")
-	private String orderCustStatus;
+	
+	
+	public String getOrderCustRefId() {
+		return orderCustRefId;
+	}
+	public void setOrderCustRefId(String orderCustRefId) {
+		this.orderCustRefId = orderCustRefId;
+	}
 	public String getOrderCustProdCmp() {
 		return orderCustProdCmp;
 	}
@@ -52,24 +54,6 @@ public class ShopCustOrderDetails {
 	}
 	public void setOrderCustId(int orderCustId) {
 		this.orderCustId = orderCustId;
-	}
-	public String getOrderCustPhoneNo() {
-		return orderCustPhoneNo;
-	}
-	public void setOrderCustPhoneNo(String orderCustPhoneNo) {
-		this.orderCustPhoneNo = orderCustPhoneNo;
-	}
-	public String getOrderCustEmailId() {
-		return orderCustEmailId;
-	}
-	public void setOrderCustEmailId(String orderCustEmailId) {
-		this.orderCustEmailId = orderCustEmailId;
-	}
-	public String getOrderCustOwnerName() {
-		return orderCustOwnerName;
-	}
-	public void setOrderCustOwnerName(String orderCustOwnerName) {
-		this.orderCustOwnerName = orderCustOwnerName;
 	}
 	public String getOrderCustProdType() {
 		return orderCustProdType;
@@ -100,12 +84,6 @@ public class ShopCustOrderDetails {
 	}
 	public void setOrderCustCrtdDate(String orderCustCrtdDate) {
 		this.orderCustCrtdDate = orderCustCrtdDate;
-	}
-	public String getOrderCustStatus() {
-		return orderCustStatus;
-	}
-	public void setOrderCustStatus(String orderCustStatus) {
-		this.orderCustStatus = orderCustStatus;
 	}
 	
 	
