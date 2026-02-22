@@ -16,11 +16,12 @@ spring:
     hikari:
       connection-timeout: 20000
       maximum-pool-size: 5
-      url:jdbc:postgresql://dpg-d6da2n8gjchc73a211g0-a:5432/postgres_persistance_storage?createDatabaseIfNotExist=true
+      url: jdbc:postgresql://dpg-d6da2n8gjchc73a211g0-a:5432/postgres_persistance_storage?createDatabaseIfNotExist=true
+#url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}?createDatabaseIfNotExist=true
       username: postgres_persistance_storage_user
       password: 9qdqP6uoyx8DV8V4FUmN3fzxnrWaCSWl
       schema: classpath:/schema.sql
-      initialization-mode: always
+    initialization-mode: always
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
