@@ -661,14 +661,14 @@ public class OrderService {
              
     		List<ShopCustOrderDetails> custList = new ArrayList<ShopCustOrderDetails>();
     		double finalAmt = 0;
-    		 for(int i=0;i<custOrderDtls.getOrderList().size();i++) {
-    			 System.out.println("Inside List started...");
-    			 
-    			 custOrdPlListRepo.updateCustPlcdDtlListR( custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(),
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
-    		 }
+//    		 for(int i=0;i<custOrderDtls.getOrderList().size();i++) {
+//    			 System.out.println("Inside List started...");
+//    			 
+//    			 custOrdPlListRepo.updateCustPlcdDtlListR( custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(),
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
+//    		 }
     		 
     		 custOrdPlDtlRepo.updateCustPlcdOrderStatusR(custOrderDtls.getOrderOwnerRefId(),custOrderDtls.getOrderCustType(), custOrderDtls.getOrderCustCrtdDate()
     				 , custOrderDtls.getOrderCustPhoneNo(), custOrderDtls.getOrderCustRefId(),custOrderDtls.getOrderRefId());
@@ -701,7 +701,7 @@ public class OrderService {
     				response.setResponse("success"); 
     				response.setErrorMsg(custOrderDtls.getOrderList().get(i).getOrderCustProdCmp()+" "+
     					 custOrderDtls.getOrderList().get(i).getOrderCustProdName()+" "+custOrderDtls.getOrderList().get(i).getOrderCustProdType()+" "+"Not present in DB");
-    				custOrdPlListRepo.updateCustPlcdDtlListBck(custOrderDtls.getOrderOwnerRefId(), custOrderDtls.getOrderCustCrtdDate());
+    				//custOrdPlListRepo.updateCustPlcdDtlListBck(custOrderDtls.getOrderOwnerRefId(), custOrderDtls.getOrderCustCrtdDate());
     				return response;
     			 }
     			 ShopCustOrderDetails shopCustList = new ShopCustOrderDetails();
@@ -719,10 +719,10 @@ public class OrderService {
     				 shopCustList.setOrderCustProdPrice(custOrderDtls.getOrderList().get(i).getOrderCustProdQty()*milkObj.getProductCustPrice());
     				 finalAmt = finalAmt+shopCustList.getOrderCustProdPrice();
     			 }
-    			 custOrdPlListRepo.updateCustPlcdDtlList(custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(), 
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
+//    			 custOrdPlListRepo.updateCustPlcdDtlList(custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(), 
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
     			 custList.add(shopCustList);
     		 }
     		 
