@@ -138,6 +138,12 @@ public class BillingController {
 		return orderList;
 	}
 	
+	@GetMapping("/cust/saveDealer")
+	public BillingEntityRes custSaveDealerForCust(@RequestParam String OwnerEmail,@RequestParam String custEmail) {
+		BillingEntityRes orderList = orderService.updateDealerForCust(OwnerEmail,custEmail);
+		return orderList;
+	}
+	
 	@GetMapping("/owner/getCustVerPymtList")
 	public List<OrderRequestDto> getCustVerifyPymtList(@RequestParam String email) {
 		List<OrderRequestDto> orderList = orderService.getCustConfPymtOrders(email);

@@ -194,6 +194,27 @@ public class OrderService {
 	}
 	
 	@Transactional(readOnly = false)
+	public BillingEntityRes updateDealerForCust(String ownerRefId,String custRefId) {
+		BillingEntityRes response = new BillingEntityRes();
+		 String balanceFlg = shopCustDetailRepo.getCustBalanceFlag(custRefId);
+		 
+		 if(balanceFlg.equals("N")) {
+			 shopCustDetailRepo.updateDealerForCustomer(ownerRefId, custRefId);
+			 response.setErrorCode("0");
+			 response.setResponse("success");
+			 response.setErrorMsg("success");
+		 }else {
+			 response.setErrorCode("1");
+			 response.setResponse("failure");
+			 response.setErrorMsg("Please settle the balance Amount to change Dealer");
+		 }
+		 		 //shopBlnRepo
+		 
+		 return response;
+		 
+	}
+	
+	@Transactional(readOnly = false)
 	public BillingEntityRes deleteProcessOrderDetails(OrderRequestDto custOrderDtls) {
 		BillingEntityRes response = new BillingEntityRes();
 		 

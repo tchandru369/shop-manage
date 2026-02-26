@@ -76,13 +76,28 @@ public class MerchantServices {
 			        String customerRefId = "CUST-" + String.format("%012d", seq);
 					merchantDetailMain.setMerchantSignUpTime(timestamp.toString());
 					merchantDetailMain.setMerchantPassword(passwordEncoder.encode(merchant.getRegMerchantPass()));
-					merchantDetailMain.setMerchantUserType("USER");
+					
 					merchantDetailMain.setMerchantAddress(merchant.getRegMerchantAddrs());
 					merchantDetailMain.setMerchantEmail(merchant.getRegMerchantEmail());
 					merchantDetailMain.setMerchantRefId(customerRefId);
 					merchantDetailMain.setMerchantUserName(merchant.getRegMerchantName());
 					merchantDetailMain.setMerchantPhoneNumber(merchant.getRegMerchantPhNo());
-					merchantDetailMain.setRole(Role.User);
+					if(merchant.getRegMerchantNature().equals("D")) {
+						merchantDetailMain.setRole(Role.User);
+						newCustDetails.setCustType("D");
+						merchantDetailMain.setMerchantUserType("USER");
+						newCustDetails.setCustOwnerRefId("SELF");
+					}else if(merchant.getRegMerchantNature().equals("S")) {
+					merchantDetailMain.setRole(Role.Cust);
+					newCustDetails.setCustType("S");
+					newCustDetails.setCustOwnerRefId("CHOOSE");
+					merchantDetailMain.setMerchantUserType("CUSTOMER");
+					}else if(merchant.getRegMerchantNature().equals("I")) {
+						merchantDetailMain.setRole(Role.Cust);
+						newCustDetails.setCustType("I");
+						newCustDetails.setCustOwnerRefId("CHOOSE");
+						merchantDetailMain.setMerchantUserType("CUSTOMER");
+					}
 					
 					newCustDetails.setCustCreatedDate(timestamp.toString());
 					newCustDetails.setCustAddress(merchant.getRegMerchantAddrs());
@@ -90,7 +105,6 @@ public class MerchantServices {
 					newCustDetails.setCustName(merchant.getRegMerchantName());
 					newCustDetails.setCustPassword(passwordEncoder.encode(merchant.getRegMerchantPass()));
 					newCustDetails.setCustPhoneNo(merchant.getRegMerchantPhNo());
-					newCustDetails.setCustType("D");
 					newCustDetails.setCustPanNo(merchant.getRegMerchantPan());
 					newCustDetails.setCustBalanceFlg("N");
 					newCustDetails.setCustCity(merchant.getRegMerchantCty());
@@ -99,7 +113,6 @@ public class MerchantServices {
 					newCustDetails.setCustDob(merchant.getRegMerchantDob());
 					newCustDetails.setCustGender(merchant.getRegMerchantGen());
 					newCustDetails.setCustLive("1");
-					newCustDetails.setCustOwnerRefId("SELF");
 					newCustDetails.setCustPinCode(merchant.getRegMerchantPin());
 					newCustDetails.setCustState(merchant.getRegMerchantState());
 					merchantRepository.save(merchantDetailMain);

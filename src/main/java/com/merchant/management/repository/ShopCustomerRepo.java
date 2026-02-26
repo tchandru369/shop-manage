@@ -35,7 +35,18 @@ public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Int
 	@Query(value = "SELECT ea.cust_email_id FROM shop_customer_details_tb ea WHERE ea.shop_cust_ref_id =:custRefId", nativeQuery = true)
 	String getCustomerEmailDetails(@Param("custRefId") String custEmail);
 	
-	@Query(value = "SELECT COUNT(*) FROM shop_customer_details_tb WHERE shop_cust_ref_id =:custEmail", nativeQuery = true)
+	@Query(value = "SELECT ea.cust_balance_flg FROM shop_customer_details_tb ea WHERE ea.shop_cust_ref_id =:custRefId", nativeQuery = true)
+	String getCustBalanceFlag( String custRefId);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE shop_customer_details_tb SET cust_owner_ref_id =:ownerRefId WHERE shop_cust_ref_id =:custRefId", nativeQuery = true)
+	void updateDealerForCustomer(String ownerRefId,String custRefId);
+	
+	@Query(value = "SELECT * FROM shop_customer_details_tb WHERE cust_city =:cityPlace AND cust_type = 'D'", nativeQuery = true)
+	List<ShopCustomerDetails> getDealerDetailsForCust(String cityPlace);
+	
+	@Query(value = "SELECT COUNT(*) FROM shop_customer_details_tb WHERE cust_email_id =:custEmail", nativeQuery = true)
 	int getCustMailCount(String custEmail);
 	
 	@Query(value = "SELECT shop_cust_ref_id FROM shop_customer_details_tb WHERE cust_phone_no =:custPhone", nativeQuery = true)
