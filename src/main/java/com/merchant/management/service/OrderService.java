@@ -194,6 +194,27 @@ public class OrderService {
 	}
 	
 	@Transactional(readOnly = false)
+	public BillingEntityRes updateDealerForCust(String ownerRefId,String custRefId) {
+		BillingEntityRes response = new BillingEntityRes();
+		 String balanceFlg = shopCustDetailRepo.getCustBalanceFlag(custRefId);
+		 
+		 if(balanceFlg.equals("N")) {
+			 shopCustDetailRepo.updateDealerForCustomer(ownerRefId, custRefId);
+			 response.setErrorCode("0");
+			 response.setResponse("success");
+			 response.setErrorMsg("success");
+		 }else {
+			 response.setErrorCode("1");
+			 response.setResponse("failure");
+			 response.setErrorMsg("Please settle the balance Amount to change Dealer");
+		 }
+		 		 //shopBlnRepo
+		 
+		 return response;
+		 
+	}
+	
+	@Transactional(readOnly = false)
 	public BillingEntityRes deleteProcessOrderDetails(OrderRequestDto custOrderDtls) {
 		BillingEntityRes response = new BillingEntityRes();
 		 
@@ -531,7 +552,7 @@ public class OrderService {
 	     billHistRepo.save(billingHistory);
 	     custOverallPymtStatusRepo.save(custOverallStatus);
 	     
-	     emailService.sendConfmCustPymtEmail(billingHistory.getCustEmailId(), paidOrderReq.getOrderCustName(), paidOrderReq.getOrderOwnerRefId());
+	     emailService.sendConfmCustPymtEmailBrevo(billingHistory.getCustEmailId(), paidOrderReq.getOrderCustName(), paidOrderReq.getOrderOwnerRefId());
 	    
 	     
 	     response.setResponse("success");
@@ -661,14 +682,14 @@ public class OrderService {
              
     		List<ShopCustOrderDetails> custList = new ArrayList<ShopCustOrderDetails>();
     		double finalAmt = 0;
-    		 for(int i=0;i<custOrderDtls.getOrderList().size();i++) {
-    			 System.out.println("Inside List started...");
-    			 
-    			 custOrdPlListRepo.updateCustPlcdDtlListR( custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(),
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
-    		 }
+//    		 for(int i=0;i<custOrderDtls.getOrderList().size();i++) {
+//    			 System.out.println("Inside List started...");
+//    			 
+//    			 custOrdPlListRepo.updateCustPlcdDtlListR( custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(),
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
+//    		 }
     		 
     		 custOrdPlDtlRepo.updateCustPlcdOrderStatusR(custOrderDtls.getOrderOwnerRefId(),custOrderDtls.getOrderCustType(), custOrderDtls.getOrderCustCrtdDate()
     				 , custOrderDtls.getOrderCustPhoneNo(), custOrderDtls.getOrderCustRefId(),custOrderDtls.getOrderRefId());
@@ -701,7 +722,7 @@ public class OrderService {
     				response.setResponse("success"); 
     				response.setErrorMsg(custOrderDtls.getOrderList().get(i).getOrderCustProdCmp()+" "+
     					 custOrderDtls.getOrderList().get(i).getOrderCustProdName()+" "+custOrderDtls.getOrderList().get(i).getOrderCustProdType()+" "+"Not present in DB");
-    				custOrdPlListRepo.updateCustPlcdDtlListBck(custOrderDtls.getOrderOwnerRefId(), custOrderDtls.getOrderCustCrtdDate());
+    				//custOrdPlListRepo.updateCustPlcdDtlListBck(custOrderDtls.getOrderOwnerRefId(), custOrderDtls.getOrderCustCrtdDate());
     				return response;
     			 }
     			 ShopCustOrderDetails shopCustList = new ShopCustOrderDetails();
@@ -719,10 +740,10 @@ public class OrderService {
     				 shopCustList.setOrderCustProdPrice(custOrderDtls.getOrderList().get(i).getOrderCustProdQty()*milkObj.getProductCustPrice());
     				 finalAmt = finalAmt+shopCustList.getOrderCustProdPrice();
     			 }
-    			 custOrdPlListRepo.updateCustPlcdDtlList(custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(), 
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
-    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
+//    			 custOrdPlListRepo.updateCustPlcdDtlList(custOrderDtls.getOrderCustCrtdDate(),custOrderDtls.getOrderRefId(), 
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdCmp(), 
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdType(),
+//    					 custOrderDtls.getOrderList().get(i).getOrderCustProdName());
     			 custList.add(shopCustList);
     		 }
     		 

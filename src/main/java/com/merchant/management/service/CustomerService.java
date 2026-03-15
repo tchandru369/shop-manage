@@ -199,7 +199,7 @@ public class CustomerService {
 			        merchantDetails.setRole(Role.Cust);
 			        merchantRepository.save(merchantDetails);
 			        shopCustRepo.save(customerDetails);
-			        emailService.sendCustomerEmail(customerDetails.getCustEmailId(), customerDetails.getCustName(),customerDetails.getCustOwnerRefId(), defaultPassword);
+			        emailService.sendCustomerEmailBrevo(customerDetails.getCustEmailId(), customerDetails.getCustName(),customerDetails.getCustOwnerRefId(), defaultPassword);
 			        custRes.setErrorCode("0");
 			        custRes.setResponse("success");
 			        custRes.setErrorMsg("success");

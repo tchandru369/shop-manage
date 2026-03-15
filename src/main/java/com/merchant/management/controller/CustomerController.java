@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.merchant.management.dto.CustDealersList;
 import com.merchant.management.dto.CustDetailSummary;
 import com.merchant.management.dto.CustOverAllPymtStatusRes;
 import com.merchant.management.dto.CustProdPriceCount;
@@ -32,6 +33,7 @@ import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.repository.CustomerRepository;
+import com.merchant.management.repository.ShopCustomerRepo;
 import com.merchant.management.service.CustomerService;
 import com.merchant.management.service.OrderService;
 
@@ -44,6 +46,9 @@ public class CustomerController {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private ShopCustomerRepo shopCustDtls;
 	 
 	@Autowired 
 	private CustomerRepository customerRepository;
@@ -107,6 +112,24 @@ public class CustomerController {
 		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
 		List<UserCustDetailsRes> custDetails = customerService.getCustomerDetailsByOwnerE(email);
 		return custDetails;	
+	}
+	
+	@GetMapping("/cust/dealerList")
+	public List<CustDealersList> getDealersListByPlaces(@RequestParam String place){
+		CustomerDetailsRes customerDetailsRes = new CustomerDetailsRes();
+	    List<CustDealersList> dealersList= new ArrayList<CustDealersList>();
+		
+		List<ShopCustomerDetails> custDetails = shopCustDtls.getDealerDetailsForCust(place);
+		
+		for(int i=0;i<custDetails.size();i++) {
+			CustDealersList dealer = new CustDealersList();
+			dealer.setDealerEmail(custDetails.get(i).getCustEmailId());
+			dealer.setDealerName(custDetails.get(i).getCustName());
+			dealer.setDealerPhNo(custDetails.get(i).getCustPhoneNo());
+			dealer.setDealerRefId(custDetails.get(i).getShopCustRefId());
+			dealersList.add(dealer);
+		}
+		return dealersList;	
 	}
 	
 	@GetMapping("/cust/getGraph")

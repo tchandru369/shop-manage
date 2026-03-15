@@ -7,14 +7,28 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.merchant.management.dto.BrevoEmailReq;
+import com.merchant.management.dto.EmailAttachement;
+import com.merchant.management.dto.EmailReceipent;
+import com.merchant.management.dto.EmailSender;
 
 //import com.google.cloud.storage.Blob;
 //import com.google.cloud.storage.BlobId;
@@ -32,6 +46,13 @@ public class EmailService {
 	@Autowired
 	private JavaMailSender mailSender;
 	
+	 @Value("${brevo.api.key}")
+	 private String brevoApiKey;
+	 
+	 @Value("${brevo.api.url}")
+	 private String brevoApiUrl;
+	 
+	 
 	public EmailService(JavaMailSender mailSender) {
 		this.mailSender = mailSender;
 	}
@@ -120,6 +141,70 @@ public class EmailService {
         return CompletableFuture.completedFuture(null);
     }
 	
+
+	@Async("taskExecutor")
+    public CompletableFuture<Void> sendBrevoEmail(String customerEmail, String productOwner,String fileName,String encodedString) {
+        // Simulate email sending process (e.g., calling an email service)
+		 LocalDate currentDate = LocalDate.now();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	        String formattedDate = currentDate.format(formatter);
+	        System.out.println("Formatted Date: " + formattedDate);
+		System.out.println("Inside Brevo Email Service.........");
+		BrevoEmailReq request = new BrevoEmailReq();
+		EmailSender sender = new EmailSender();
+		sender.setName("Merchant App");
+		sender.setEmail("tchandru369@gmail.com");
+
+		EmailReceipent recipient = new EmailReceipent();
+		recipient.setEmail(customerEmail);
+		recipient.setName("Customer");
+		
+		EmailAttachement attachement = new EmailAttachement();
+		attachement.setName(fileName);
+		attachement.setContent(encodedString);
+
+		request.setSender(sender);
+		request.setTo(List.of(recipient));
+		request.setSubject("Shopping at Merchant App "+formattedDate);
+		String htmlContent = "<html><body>"
+		        + "<p>Dear Customer,</p>"
+		        + "<p>I hope this email finds you well.</p>"
+		        + "<p>Please find the attached invoice for your recent purchase with Merchant App. "
+		        + "The details of your bill are included in the attached PDF document.</p>"
+		        + "<p>If you have any questions or concerns regarding the invoice, "
+		        + "please do not hesitate to contact us.</p>"
+		        + "<p>Thank you for your business, and we look forward to serving you again.</p>"
+		        + "<p>Best regards,<br>Merchant App Team</p>"
+		        + "</body></html>";
+		request.setHtmlContent(htmlContent);
+		request.setAttachment(List.of(attachement));
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setConnectTimeout(10000); // 10 seconds
+		factory.setReadTimeout(10000);
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("accept", "application/json");
+        headers.set("api-key", brevoApiKey);
+        
+        System.out.println("Before Http Call!!!!!!!!!!!");
+        System.out.println(brevoApiUrl +" "+ brevoApiKey);
+        System.out.println("Encoded size: " + encodedString.length());
+        HttpEntity<BrevoEmailReq> emailRequest = new HttpEntity<>(request, headers);
+        System.out.println("After Http Entity!!!!!!!!!!!");
+        ResponseEntity<String> response = restTemplate.exchange(
+                brevoApiUrl,
+                HttpMethod.POST,
+                emailRequest,
+                String.class
+        );
+        System.out.println("After Http Call!!!!!!!!!!!");
+        
+        System.out.println(response.getBody());
+        return CompletableFuture.completedFuture(null);
+    }
+	
 	@Async("taskExecutor")
     public CompletableFuture<Void> sendCustomerEmail(String customerEmail,String custName, String productOwner,String customerPass) {
         // Simulate email sending process (e.g., calling an email service)
@@ -134,15 +219,14 @@ public class EmailService {
  			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
  			 SimpleMailMessage message = new SimpleMailMessage();
  			String emailBody = "Dear " + custName + ",\r\n\r\n"
- 				    + "Thank you for registering with Merchant Corporation.\r\n\r\n"
- 				    + "Here are your login details:\r\n"
- 				    + "URL: http://34.47.241.192/public/app-user-login\r\n"
- 				    + "Username: " + customerEmail + "\r\n"
- 				    + "Temporary Password: " + customerPass + "\r\n\r\n"
- 				    + "For your security, please log in as soon as possible and change your password.\r\n\r\n"
- 				    + "If you have any questions or need assistance, feel free to contact us.\r\n\r\n"
- 				    + "Best regards,\r\n"
- 				    + "Merchant Corporation";
+ 			        + "Thank you for registering with Merchant Corporation.\r\n\r\n"
+ 			        + "Please install Merchant App from Play Store and use the below credentials:\r\n\r\n"
+ 			        + "Username: " + customerEmail + "\r\n"
+ 			        + "Temporary Password: " + customerPass + "\r\n\r\n"
+ 			        + "For your security, please log in as soon as possible and change your password.\r\n\r\n"
+ 			        + "If you have any questions or need assistance, feel free to contact us.\r\n\r\n"
+ 			        + "Best regards,\r\n"
+ 			        + "Merchant Corporation";
  			helper.setFrom("chanper369@gmail.com");
  			helper.setTo(customerEmail);
  			helper.setSubject("Your Account Password Information");
@@ -158,6 +242,65 @@ public class EmailService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return CompletableFuture.completedFuture(null);
+    }
+	
+	@Async("taskExecutor")
+    public CompletableFuture<Void> sendCustomerEmailBrevo(String customerEmail,String custName, String productOwner,String customerPass) {
+        // Simulate email sending process (e.g., calling an email service)
+        
+        BrevoEmailReq request = new BrevoEmailReq();
+		EmailSender sender = new EmailSender();
+		sender.setName("Merchant App");
+		sender.setEmail("tchandru369@gmail.com");
+
+		EmailReceipent recipient = new EmailReceipent();
+		recipient.setEmail(customerEmail);
+		recipient.setName("Customer");
+		
+//		EmailAttachement attachement = new EmailAttachement();
+//		attachement.setName(fileName);
+//		attachement.setContent(encodedString);
+
+		request.setSender(sender);
+		request.setTo(List.of(recipient));
+		request.setSubject("Your Account Password Information");
+		String htmlContent = "<html><body>"
+		        + "<p>Dear " + custName + ",</p>"
+		        + "<p>Thank you for registering with Merchant Corporation.</p>"
+		        + "<p>Please install Merchant App from Play Store and use the below credentials:</p>"
+		        + "<p>"
+		        + "<b>Username:</b> " + customerEmail + "<br>"
+		        + "<b>Temporary Password:</b> " + customerPass
+		        + "</p>"
+		        + "<p>For your security, please log in as soon as possible and change your password.</p>"
+		        + "<p>If you have any questions or need assistance, feel free to contact us.</p>"
+		        + "<p>Best regards,<br>"
+		        + "Merchant Corporation</p>"
+		        + "</body></html>";
+		request.setHtmlContent(htmlContent);
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setConnectTimeout(10000); // 10 seconds
+		factory.setReadTimeout(10000);
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("accept", "application/json");
+        headers.set("api-key", brevoApiKey);
+        
+        System.out.println("Before Http Call!!!!!!!!!!!");
+        HttpEntity<BrevoEmailReq> emailRequest = new HttpEntity<>(request, headers);
+        System.out.println("After Http Entity!!!!!!!!!!!");
+        ResponseEntity<String> response = restTemplate.exchange(
+                brevoApiUrl,
+                HttpMethod.POST,
+                emailRequest,
+                String.class
+        );
+        System.out.println("After Http Call!!!!!!!!!!!");
+        
+        System.out.println(response.getBody());
         return CompletableFuture.completedFuture(null);
     }
 	
@@ -200,6 +343,68 @@ public class EmailService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        return CompletableFuture.completedFuture(null);
+    }
+	
+	@Async("taskExecutor")
+    public CompletableFuture<Void> sendConfmCustPymtEmailBrevo(String customerEmail,String custName, String productOwner) {
+        // Simulate email sending process (e.g., calling an email service)
+		LocalDate currentDate = LocalDate.now();
+   	 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+   	 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a"); // 12-hour format with AM/PM
+   	 LocalDateTime currentDateTime = LocalDateTime.now(); // Get current date and time
+
+   	 String formattedDate = currentDateTime.format(dateFormatter); // Format the date
+   	 String formattedTime = currentDateTime.format(timeFormatter); // Format the time	
+        BrevoEmailReq request = new BrevoEmailReq();
+		EmailSender sender = new EmailSender();
+		sender.setName("Merchant App");
+		sender.setEmail("tchandru369@gmail.com");
+
+		EmailReceipent recipient = new EmailReceipent();
+		recipient.setEmail(customerEmail);
+		recipient.setName("Customer");
+		
+//		EmailAttachement attachement = new EmailAttachement();
+//		attachement.setName(fileName);
+//		attachement.setContent(encodedString);
+
+		request.setSender(sender);
+		request.setTo(List.of(recipient));
+		request.setSubject("Acknowledgement of Payment to Dealer");
+		String htmlContent = "<html><body>"
+		        + "<p>Dear " + custName + ",</p>"
+		        + "<p><b>Date:</b> " + formattedDate + "<br>"
+		        + "<b>Time:</b> " + formattedTime + "</p>"
+		        + "<p>Thanks for making payment to the dealer. You will receive the acknowledgement once your payment has been verified by your respective dealer.</p>"
+		        + "<p>If you have any questions or need assistance, feel free to contact us.</p>"
+		        + "<p>Best regards,<br>"
+		        + "Merchant Corporation</p>"
+		        + "</body></html>";
+		request.setHtmlContent(htmlContent);
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setConnectTimeout(10000); // 10 seconds
+		factory.setReadTimeout(10000);
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("accept", "application/json");
+        headers.set("api-key", brevoApiKey);
+        
+        System.out.println("Before Http Call!!!!!!!!!!!");
+        HttpEntity<BrevoEmailReq> emailRequest = new HttpEntity<>(request, headers);
+        System.out.println("After Http Entity!!!!!!!!!!!");
+        ResponseEntity<String> response = restTemplate.exchange(
+                brevoApiUrl,
+                HttpMethod.POST,
+                emailRequest,
+                String.class
+        );
+        System.out.println("After Http Call!!!!!!!!!!!");
+        
+        System.out.println(response.getBody());
         return CompletableFuture.completedFuture(null);
     }
 	

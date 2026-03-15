@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,8 +133,8 @@ public class PdfService {
 			try {
 		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-		   String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
-		   //String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
+		   //String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
+		   String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
 		    File jasperFile = new File(jasperFilePaths);
 		    System.out.println("Jasper file exists: " + jasperFile.exists() + " | Path: " + jasperFile.getAbsolutePath());
@@ -174,8 +175,11 @@ public class PdfService {
 //			JasperExportManager.exportReportToPdfFile(jasperPrint,finalPdfPath);
 			
 			System.out.println("Billing Report Generated Successfully......");
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+			emailService.sendBrevoEmail(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(), pdfName, base64Pdf);
             
-			emailService.sendEmail1(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(), pdfName, pdfBytes);
+			//emailService.sendEmail1(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(), pdfName, pdfBytes);
 			//emailService.sendEmailDup(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(),pdfName);
 			} 
 			catch(Exception e) {
@@ -220,6 +224,7 @@ public class PdfService {
 		    pdfDetails.setCustBlnAmount(billingEntity.getOrderCustTotalPrice());
 		    pdfDetails.setCustBlnAmount(billingHistory.getCustDueAmt());
 		    pdfDetails.setFinalAmtPaid(billingEntity.getOrderFinalAmtPaid());
+		    pdfDetails.setInvoiceNumber("INV"+billingEntity.getOrderRefId());
 		    if(billingHistory.getCustFullyPaidFlg() == "Y") {
 		    	pdfDetails.setCustPymtDesc("Full payment has been settled. For further clarification, Please contact Dealer");
 		    }else if(billingHistory.getCustFullyPaidFlg() == "N") {
@@ -241,8 +246,8 @@ public class PdfService {
 			try {
 		    //String jasperFilePath = resource.getFile().getAbsolutePath();
 //		    System.out.println(jasperFilePath);
-		   String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
-		   //String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
+		   //String jasperFilePaths = "/app/resources/JasperFile/Invoice_Table_Based.jasper";
+		   String jasperFilePaths ="src/main/resources/JasperFile/Invoice_Table_Based.jasper";
 		    System.out.println("Inside Jasper Loader........."+jasperFilePaths);
 		    File jasperFile = new File(jasperFilePaths);
 		    System.out.println("Jasper file exists: " + jasperFile.exists() + " | Path: " + jasperFile.getAbsolutePath());
@@ -283,8 +288,11 @@ public class PdfService {
 //			JasperExportManager.exportReportToPdfFile(jasperPrint,finalPdfPath);
 			
 			System.out.println("Billing Report Generated Successfully......");
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+			emailService.sendBrevoEmail(billingEntity.getOrderCustEmailId(), billingEntity.getOrderOwnerRefId(), pdfName, base64Pdf);
+           
             
-			emailService.sendEmail1(billingEntity.getOrderCustEmailId(), billingEntity.getOrderOwnerRefId(), pdfName, pdfBytes);
+			//emailService.sendEmail1(billingEntity.getOrderCustEmailId(), billingEntity.getOrderOwnerRefId(), pdfName, pdfBytes);
 			//emailService.sendEmailDup(billingEntity.getBillingCustomerEmail(), productDetails.get(0).getProductOwner(),pdfName);
 			} 
 			catch(Exception e) {

@@ -13,6 +13,7 @@ public class MerchantReg {
     private String regMerchantCtry;
     private String regMerchantCty;
     private String regMerchantPan;
+    private String regMerchantNature;
     private int regMerchantPin;
     
     public MerchantReg() {
@@ -21,7 +22,7 @@ public class MerchantReg {
     
 	public MerchantReg(String regMerchantName, String regMerchantEmail, String regMerchantPhNo, String regMerchantPass,
 			String regMerchantAddrs, String regMerchantDob, String regMerchantGen, String regMerchantState,
-			String regMerchantCtry, String regMerchantCty, String regMerchantPan, int regMerchantPin) {
+			String regMerchantCtry, String regMerchantCty, String regMerchantPan, int regMerchantPin, String regMerchantNature) {
 		super();
 		this.regMerchantName = regMerchantName;
 		this.regMerchantEmail = regMerchantEmail;
@@ -35,7 +36,17 @@ public class MerchantReg {
 		this.regMerchantCty = regMerchantCty;
 		this.regMerchantPan = regMerchantPan;
 		this.regMerchantPin = regMerchantPin;
+		this.regMerchantNature = regMerchantNature;	}
+	
+	
+	public String getRegMerchantNature() {
+		return regMerchantNature;
 	}
+
+	public void setRegMerchantNature(String regMerchantNature) {
+		this.regMerchantNature = regMerchantNature;
+	}
+
 	public String getRegMerchantName() {
 		return regMerchantName;
 	}
