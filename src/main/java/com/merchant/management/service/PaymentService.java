@@ -17,10 +17,10 @@ import com.razorpay.Transfer;
 @Service
 public class PaymentService {
 	
-	@Value("${razorpay.secret-key}")
+	
 	private String secretkey;
 	
-	@Value("${razorpay.secret-id}")
+
 	private String secretId;
 	
 	private static String CURRENCY = "INR";
