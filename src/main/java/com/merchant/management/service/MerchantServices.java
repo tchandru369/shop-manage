@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.merchant.management.dto.MerchantDetailRes;
 import com.merchant.management.dto.MerchantReg;
+import com.merchant.management.dto.UpdatePassReq;
 import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.MerchantDetails;
@@ -131,6 +132,30 @@ public class MerchantServices {
 		
 		return ResponseEntity.ok(merchantRes);
 	}
+	
+	public BillingEntityRes updateUserPassword(UpdatePassReq updatePass) {
+		
+		 OwnerPaymtDetails ownerPymtDetails =  new OwnerPaymtDetails();
+		 BillingEntityRes billingEntityRes = new BillingEntityRes();
+		 String merchantPass = merchantRepository.getMerchantPass(updatePass.getUserRefId());
+		 boolean previousPass = passwordEncoder.matches(updatePass.getOldPassword(), merchantPass);
+		 
+		 if(previousPass == true) {
+			 String newPassEncode = passwordEncoder.encode(updatePass.getNewPassword());
+			 merchantRepository.updateUserPassword(newPassEncode, updatePass.getUserRefId());
+			 shopCustRepo.updateUserPassword(newPassEncode, updatePass.getUserRefId());
+			 billingEntityRes.setErrorCode("0");
+			 billingEntityRes.setErrorMsg("success");
+			 billingEntityRes.setResponse("success");
+		 }else {
+			 billingEntityRes.setErrorCode("1");
+			 billingEntityRes.setErrorMsg("Old Password doesn't match");
+			 billingEntityRes.setResponse("failure");
+		 }
+		 
+		 return billingEntityRes;
+			
+		}
 	
 public BillingEntityRes updatePaymentDetails(String dealersUpi, String ownerRefId,String ownerName, String ownerPh) {
 	

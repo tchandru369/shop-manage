@@ -25,6 +25,7 @@ import com.merchant.management.dto.CustOverAllPymtStatusRes;
 import com.merchant.management.dto.CustProdPriceCount;
 import com.merchant.management.dto.CustomerGraphEntityRes;
 import com.merchant.management.dto.OrderRequestDto;
+import com.merchant.management.dto.UpdatePassReq;
 import com.merchant.management.dto.UserCustBalDto;
 import com.merchant.management.dto.UserCustDetailsRes;
 import com.merchant.management.dto.UserCustLastTransaction;
@@ -35,6 +36,7 @@ import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.repository.CustomerRepository;
 import com.merchant.management.repository.ShopCustomerRepo;
 import com.merchant.management.service.CustomerService;
+import com.merchant.management.service.MerchantServices;
 import com.merchant.management.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,6 +58,11 @@ public class CustomerController {
 	@Autowired
 	private OrderService orderService;
 	
+	@Autowired
+	private MerchantServices merchantService;
+	
+	
+	
 //	@PostMapping("/saveCustomer")
 //	public ResponseEntity<CustomerDetailsRes> saveMerchant(@RequestBody CustomerDetails customerDetails) {
 //		   CustomerDetailsRes response  = new CustomerDetailsRes();
@@ -70,6 +77,14 @@ public class CustomerController {
 		   CustomerDetailsRes response  = new CustomerDetailsRes();
 	      return customerService.saveShopCustomer(customerDetails);
 	       //return ResponseEntity.ok(response);
+	       
+	}
+	
+	@PostMapping("/updatePass")
+	public ResponseEntity<BillingEntityRes> updateUserPassword(@RequestBody UpdatePassReq updatePass) {
+		   BillingEntityRes response  = new BillingEntityRes();
+		   response = merchantService.updateUserPassword(updatePass);
+	       return ResponseEntity.ok(response);
 	       
 	}
 	

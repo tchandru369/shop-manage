@@ -10,10 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.MerchantDetails;
@@ -42,5 +44,17 @@ public interface MerchantRepository extends JpaRepository<MerchantDetails, Long>
 	@Query(value = "SELECT COUNT(*) FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
 	int getMerchantCount(String merchantEmail);
 	
+	@Query(value = "SELECT merchant_password FROM merchant_details ea WHERE ea.merchant_ref_id =:custRefId", nativeQuery = true)
+	String getMerchantPass(String custRefId);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE merchant_details SET merchant_password =:newPass WHERE merchant_ref_id =:custRefId", nativeQuery = true)
+	void updateUserPassword(String newPass,String custRefId);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE merchant_details SET merchant_password =:newPass WHERE merchant_email =:email", nativeQuery = true)
+	void updateUserPasswordByEmail(String newPass,String email);
 	
 }

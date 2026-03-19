@@ -1,6 +1,7 @@
 package com.merchant.management.controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,14 +25,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.merchant.management.dto.MerchantDetailRes;
 import com.merchant.management.dto.MerchantReg;
 import com.merchant.management.entity.MerchantDetails;
+import com.merchant.management.entity.OtpEntity;
 import com.merchant.management.entity.ShopCustomerDetails;
 import com.merchant.management.entity.CountryStateCity;
 import com.merchant.management.entity.ImageSrcDetail;
 import com.merchant.management.repository.MerchantRepository;
+import com.merchant.management.repository.OtpRepository;
 import com.merchant.management.repository.ShopCustomerRepo;
 import com.merchant.management.security.AuthenticationRequest;
 import com.merchant.management.security.JwtService;
 import com.merchant.management.service.BillingService;
+import com.merchant.management.service.EmailService;
 import com.merchant.management.service.MerchantServices;
 
 @RestController
@@ -45,11 +50,18 @@ private MerchantRepository merchantRepository;
 private ShopCustomerRepo shopCustRepo;
 
 @Autowired
+private OtpRepository otpRepository;
+
+@Autowired
 private MerchantServices merchantServices;
 @Autowired
 private JwtService jwtServices;
 @Autowired
 private BillingService billingService;
+@Autowired
+private PasswordEncoder passwordEncoder;
+@Autowired
+private EmailService emailService;
 @Autowired
 private AuthenticationManager authenticationManager;
 
@@ -163,6 +175,76 @@ public ResponseEntity<MerchantDetailRes> merchantLogin(@RequestBody MerchantDeta
 @PostMapping("/authenticate")
 public ResponseEntity<MerchantDetailRes> authenticate(@RequestBody MerchantDetails merchant){
 	return ResponseEntity.ok(merchantServices.authenticate(merchant));
+}
+
+@PostMapping("/forgot-password")
+public ResponseEntity<MerchantDetailRes> forgotPassword(@RequestParam String email) {
+
+	MerchantDetailRes merchantRes = new MerchantDetailRes();
+    String otp = generateOtp();
+
+    OtpEntity entity = new OtpEntity();
+    entity.setEmail(email);
+    entity.setOtp(otp);
+    entity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+
+    otpRepository.save(entity);
+
+    emailService.sendOtpEmail(email, otp);
+    merchantRes.setErrorCode("0");
+    merchantRes.setErrorMsg("OTP sent successfully");
+    merchantRes.setResponse("success");
+
+    return ResponseEntity.ok(merchantRes);
+}
+
+@PostMapping("/verify-otp")
+public ResponseEntity<MerchantDetailRes> verifyOtp(@RequestParam String email,
+                                   @RequestParam String otp) {
+	MerchantDetailRes merchantRes = new MerchantDetailRes();
+
+    OtpEntity entity = otpRepository.findById(email).orElseThrow();
+
+    if (entity.getExpiryTime().isBefore(LocalDateTime.now())) {
+    	merchantRes.setErrorCode("1");
+    	merchantRes.setErrorMsg("OTP expired");
+    	merchantRes.setResponse("failure");
+        return ResponseEntity.badRequest().body(merchantRes);
+    }
+
+    if (!entity.getOtp().equals(otp)) {
+    	merchantRes.setErrorCode("1");
+    	merchantRes.setErrorMsg("Invalid OTP");
+    	merchantRes.setResponse("failure");
+        return ResponseEntity.badRequest().body(merchantRes);
+    }
+    
+    merchantRes.setErrorCode("0");
+	merchantRes.setErrorMsg("OTP verified");
+	merchantRes.setResponse("success");
+
+    return ResponseEntity.ok(merchantRes);
+}
+
+@PostMapping("/reset-password")
+public ResponseEntity<MerchantDetailRes> resetPassword(@RequestParam String email,
+                                        @RequestParam String newPass) {
+	
+	MerchantDetailRes merchantRes = new MerchantDetailRes();
+	
+   String password = passwordEncoder.encode(newPass);
+    merchantRepository.updateUserPasswordByEmail(password, email);
+
+    otpRepository.deleteById(email); // cleanup
+    merchantRes.setErrorCode("0");
+	merchantRes.setErrorMsg("Password updated successfully");
+	merchantRes.setResponse("success");
+
+    return ResponseEntity.ok(merchantRes);
+}
+
+public String generateOtp() {
+    return String.valueOf((int)(Math.random() * 900000) + 100000); // 6 digit
 }
 
 

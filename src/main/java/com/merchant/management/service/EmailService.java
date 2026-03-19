@@ -305,6 +305,57 @@ public class EmailService {
     }
 	
 	@Async("taskExecutor")
+    public CompletableFuture<Void> sendOtpEmail(String userEmail,String otpUser) {
+        // Simulate email sending process (e.g., calling an email service)
+        
+        BrevoEmailReq request = new BrevoEmailReq();
+		EmailSender sender = new EmailSender();
+		sender.setName("Merchant App");
+		sender.setEmail("tchandru369@gmail.com");
+
+		EmailReceipent recipient = new EmailReceipent();
+		recipient.setEmail(userEmail);
+		recipient.setName("User");
+		
+//		EmailAttachement attachement = new EmailAttachement();
+//		attachement.setName(fileName);
+//		attachement.setContent(encodedString);
+
+		request.setSender(sender);
+		request.setTo(List.of(recipient));
+		request.setSubject("OTP for Password Reset");
+		String htmlContent = "<html><body>"
+	            + "<h3>Your OTP for password reset</h3>"
+	            + "<p><b>" + otpUser + "</b></p>"
+	            + "<p>This OTP is valid for 5 minutes.</p>"
+	            + "</body></html>";
+		request.setHtmlContent(htmlContent);
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setConnectTimeout(10000); // 10 seconds
+		factory.setReadTimeout(10000);
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("accept", "application/json");
+        headers.set("api-key", brevoApiKey);
+        
+        System.out.println("Before Http Call!!!!!!!!!!!");
+        HttpEntity<BrevoEmailReq> emailRequest = new HttpEntity<>(request, headers);
+        System.out.println("After Http Entity!!!!!!!!!!!");
+        ResponseEntity<String> response = restTemplate.exchange(
+                brevoApiUrl,
+                HttpMethod.POST,
+                emailRequest,
+                String.class
+        );
+        System.out.println("After Http Call!!!!!!!!!!!");
+        
+        System.out.println(response.getBody());
+        return CompletableFuture.completedFuture(null);
+    }
+	
+	@Async("taskExecutor")
     public CompletableFuture<Void> sendConfmCustPymtEmail(String customerEmail,String custName, String productOwner) {
         // Simulate email sending process (e.g., calling an email service)
         try {

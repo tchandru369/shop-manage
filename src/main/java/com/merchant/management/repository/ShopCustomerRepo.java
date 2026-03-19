@@ -43,6 +43,11 @@ public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Int
 	@Query(value = "UPDATE shop_customer_details_tb SET cust_owner_ref_id =:ownerRefId WHERE shop_cust_ref_id =:custRefId", nativeQuery = true)
 	void updateDealerForCustomer(String ownerRefId,String custRefId);
 	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE shop_customer_details_tb SET cust_password =:newPass WHERE shop_cust_ref_id =:custRefId", nativeQuery = true)
+	void updateUserPassword(String newPass,String custRefId);
+	
 	@Query(value = "SELECT * FROM shop_customer_details_tb WHERE cust_city =:cityPlace AND cust_type = 'D'", nativeQuery = true)
 	List<ShopCustomerDetails> getDealerDetailsForCust(String cityPlace);
 	
