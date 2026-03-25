@@ -13,9 +13,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://dpg-d6da2n8gjchc73a211g0-a:5432/postgres_persistance_storage
-    username: postgres_persistance_storage_user
-    password: 9qdqP6uoyx8DV8V4FUmN3fzxnrWaCSWl
+    url: jdbc:postgresql://dpg-d722d0ffte5s73e4p6a0-a:5432/postgres_persistance_storage
+    username: postgres_persistance_storage_7xqu_user
+    password: t4ivMkjF2cxR2CJVohqc8nVJjX2xfAWo
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
