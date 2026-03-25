@@ -30,6 +30,9 @@ public interface MerchantRepository extends JpaRepository<MerchantDetails, Long>
 	@Query(value = "SELECT ea.merchant_password FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
 		String findPasswordByEmail(@Param("merchantEmail") String merchantEmail);
 	
+	@Query(value = "SELECT ea.merchant_name FROM merchant_details ea WHERE ea.merchant_email =:merchantEmail", nativeQuery = true)
+	String findUserByEmail(@Param("merchantEmail") String merchantEmail);
+	
 	@Query(value = "SELECT ea.merchant_name FROM merchant_details ea WHERE ea.merchant_ref_id =:merchantEmail", nativeQuery = true)
 	String getMerchantDetails(@Param("merchantEmail") String merchantEmail);
 	

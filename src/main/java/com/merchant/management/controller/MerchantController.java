@@ -181,19 +181,25 @@ public ResponseEntity<MerchantDetailRes> authenticate(@RequestBody MerchantDetai
 public ResponseEntity<MerchantDetailRes> forgotPassword(@RequestParam String email) {
 
 	MerchantDetailRes merchantRes = new MerchantDetailRes();
-    String otp = generateOtp();
-
-    OtpEntity entity = new OtpEntity();
-    entity.setEmail(email);
-    entity.setOtp(otp);
-    entity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
-
-    otpRepository.save(entity);
-
-    emailService.sendOtpEmail(email, otp);
-    merchantRes.setErrorCode("0");
-    merchantRes.setErrorMsg("OTP sent successfully");
-    merchantRes.setResponse("success");
+    String merchantValEmail = merchantRepository.findUserByEmail(email);
+    
+    if(merchantValEmail == null){
+    	merchantRes.setErrorCode("1");
+        merchantRes.setErrorMsg("User Not found!!!");
+        merchantRes.setResponse("failure");
+    }else {
+    	String otp = generateOtp();
+        OtpEntity entity = new OtpEntity();
+        entity.setEmail(email);
+        entity.setOtp(otp);
+        entity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+        otpRepository.save(entity);
+        emailService.sendOtpEmail(email, otp);
+        merchantRes.setErrorCode("0");
+        merchantRes.setErrorMsg("OTP sent successfully");
+        merchantRes.setResponse("success");
+    }
+    
 
     return ResponseEntity.ok(merchantRes);
 }
