@@ -19,6 +19,7 @@ import com.merchant.management.dto.CustOverAllPymtStatusRes;
 import com.merchant.management.dto.CustProdPriceCount;
 import com.merchant.management.dto.CustomerGraphEntityRes;
 import com.merchant.management.dto.MilkOrderList;
+import com.merchant.management.dto.MyRequestNotifyDto;
 import com.merchant.management.dto.OrderRequestDto;
 import com.merchant.management.dto.UserCustBalDto;
 import com.merchant.management.dto.UserCustDetailsReq;
@@ -150,6 +151,18 @@ public class CustomerService {
 		 return comProdDtls;
 	 }
 	
+	public MyRequestNotifyDto myRequestNotifyDto(String email) {
+		List<Object[]> results = orderReqRepo.getNotifyCount(email);
+	   
+	        Object[] row = results.get(0);
+	        return new MyRequestNotifyDto(
+	            row[0].toString(),
+	            row[1].toString(),
+	            row[3].toString(),
+	            row[2].toString()
+	        );
+	}
+	
 	public ResponseEntity<CustomerDetailsRes> saveShopCustomer( ShopCustomerDetails customerDetails) {
 		 CustomerDetailsRes custRes = new CustomerDetailsRes();
 		int merchantCount = merchantRepository.getMerchantCount(customerDetails.getCustEmailId());
@@ -272,6 +285,7 @@ public CustDetailSummary getCustDetailSummary(String ownerEmail,String custEmail
 		custSummary.setCustState(shopCustomer.getCustState());
 		custSummary.setBalanceList(balanceList);
 		custSummary.setTransactionList(tranList);
+		custSummary.setCustRefId(shopCustomer.getShopCustRefId());
 
 		return custSummary;
 	}

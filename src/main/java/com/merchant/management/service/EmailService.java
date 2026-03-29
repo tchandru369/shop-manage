@@ -29,6 +29,7 @@ import com.merchant.management.dto.BrevoEmailReq;
 import com.merchant.management.dto.EmailAttachement;
 import com.merchant.management.dto.EmailReceipent;
 import com.merchant.management.dto.EmailSender;
+import com.merchant.management.dto.OrderRequestDto;
 
 //import com.google.cloud.storage.Blob;
 //import com.google.cloud.storage.BlobId;
@@ -329,6 +330,63 @@ public class EmailService {
 	            + "<p><b>" + otpUser + "</b></p>"
 	            + "<p>This OTP is valid for 5 minutes.</p>"
 	            + "</body></html>";
+		request.setHtmlContent(htmlContent);
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setConnectTimeout(10000); // 10 seconds
+		factory.setReadTimeout(10000);
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("accept", "application/json");
+        headers.set("api-key", brevoApiKey);
+        
+        System.out.println("Before Http Call!!!!!!!!!!!");
+        HttpEntity<BrevoEmailReq> emailRequest = new HttpEntity<>(request, headers);
+        System.out.println("After Http Entity!!!!!!!!!!!");
+        ResponseEntity<String> response = restTemplate.exchange(
+                brevoApiUrl,
+                HttpMethod.POST,
+                emailRequest,
+                String.class
+        );
+        System.out.println("After Http Call!!!!!!!!!!!");
+        
+        System.out.println(response.getBody());
+        return CompletableFuture.completedFuture(null);
+    }
+	
+	@Async("taskExecutor")
+    public CompletableFuture<Void> balancePaidAcknowledge(OrderRequestDto orderRequest) {
+        // Simulate email sending process (e.g., calling an email service)
+        
+        BrevoEmailReq request = new BrevoEmailReq();
+		EmailSender sender = new EmailSender();
+		sender.setName("Merchant App");
+		sender.setEmail("tchandru369@gmail.com");
+
+		EmailReceipent recipient = new EmailReceipent();
+		recipient.setEmail(orderRequest.getOrderCustEmailId());
+		recipient.setName("User");
+	
+//		EmailAttachement attachement = new EmailAttachement();
+//		attachement.setName(fileName);
+//		attachement.setContent(encodedString);
+
+		request.setSender(sender);
+		request.setTo(List.of(recipient));
+		request.setSubject("Order Balance Notification");
+		String htmlContent = "<html>\r\n"
+		        + "<body>\r\n"
+		        + "    <p>Dear <b>"+orderRequest.getOrderCustName()+"</b>,</p>\r\n"
+		        + "    <p>Thank you for settling the balance amount ₹<b>"+orderRequest.getOrderFinalAmtPaid()+"</b> for order <b>"+orderRequest.getOrderRefId()+"</b>, which was placed on <b>"+orderRequest.getOrderCustCrtdDate()+"</b>.</p>\r\n"
+		        + "    <p>We kindly request you to clear any pending balance from your end to the Dealer as soon as possible. This will help avoid any inconvenience when placing future orders.</p>\r\n"
+		        + "    <p>Note: If the balance amount is greater than ₹1,000, it should be settled within 3 days. For other amounts, the settlement period is up to 7 days. This is to ensure smooth order processing and avoid any potential order blocking.</p>\r\n"
+		        + "    <p>We appreciate your cooperation and look forward to your continued business.</p>\r\n"
+		        + "    <p>Best regards,<br>Merchant Corporation</p>\r\n"
+		        + "</body>\r\n"
+		        + "</html>";
+		
 		request.setHtmlContent(htmlContent);
 		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
 		factory.setConnectTimeout(10000); // 10 seconds

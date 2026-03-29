@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.merchant.management.dto.CustOverAllPymtStatusRes;
 import com.merchant.management.dto.MilkOrderList;
 import com.merchant.management.dto.OrderRequestDto;
+import com.merchant.management.dto.OwnerRemResponseDto;
 import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.BillingHistory;
 import com.merchant.management.entity.CustOrderDtlList;
@@ -230,6 +231,53 @@ public class OrderService {
 		 
 	}
 	
+	public OwnerRemResponseDto ownerSendRemToCustomer(String ownerEmail, String custEmail) {
+		
+		String SentOrderId = "";
+		String AllSentId = "";
+		OwnerRemResponseDto billingRes = new OwnerRemResponseDto();
+		List<ShopCustBalanceDetails> shopBlnDtl = shopBlnRepo.getCustBalListByCustOwner(ownerEmail, custEmail);
+		List<OrderRequestDto> orderReqDtoList = new ArrayList<OrderRequestDto>();
+		for(int i=0;i<shopBlnDtl.size();i++) {
+			List<OrderRequestDetails> flg = orderRepo.getCustRemainderSentFlg(shopBlnDtl.get(i).getCustBalOwnerRefId(), shopBlnDtl.get(i).getCustBalCustRefId(), shopBlnDtl.get(i).getCustBalOrderRefId(),shopBlnDtl.get(i).getCustBalPymtRefId());
+			if(shopBlnDtl.get(i).getCustRemSentFlg() <= 1 && flg.size()==0) {
+				OrderRequestDetails orderDetails = new OrderRequestDetails();
+				CustomerTransEntity custTransEntity = new CustomerTransEntity();
+				custTransEntity = custTransEntityRepo.getCustTransDetails(shopBlnDtl.get(i).getCustBalOwnerRefId(),shopBlnDtl.get(i).getCustBalCustRefId(), shopBlnDtl.get(i).getCustBalOrderRefId(), shopBlnDtl.get(i).getCustBalPymtRefId());
+				orderDetails.setOrderBalanceFlg("N");
+				orderDetails.setOrderBillPayDate(custTransEntity.getTransPymtDate());
+				orderDetails.setOrderBillPayFlg("Y");
+				orderDetails.setOrderCustPhNo(shopBlnDtl.get(i).getCustBalPhoneNo());
+				orderDetails.setOrderCustRefId(custTransEntity.getTransCustRefId());
+				orderDetails.setOrderFinalAmtPaid(shopBlnDtl.get(i).getCustBalPaidAmt());
+				orderDetails.setOrderOwnerRefId(custTransEntity.getTransOwnerRefId());
+				orderDetails.setOrderPlacedDate(shopBlnDtl.get(i).getCustBalDate());
+				orderDetails.setOrderProdTotalAmt(shopBlnDtl.get(i).getCustBalActAmt());
+				orderDetails.setOrderPymtRefId(shopBlnDtl.get(i).getCustBalPymtRefId());
+				orderDetails.setOrderRefId(shopBlnDtl.get(i).getCustBalOrderRefId());
+				orderDetails.setOrderRequestStatus("RA");
+				orderRepo.save(orderDetails);
+				int newValue = shopBlnDtl.get(i).getCustRemSentFlg()+1;
+				shopBlnRepo.updateRemBalanceFlg(shopBlnDtl.get(i).getCustBalPymtRefId(),shopBlnDtl.get(i).getCustBalCustRefId(),
+						shopBlnDtl.get(i).getCustBalOwnerRefId(), shopBlnDtl.get(i).getCustBalOrderRefId(), newValue);
+				
+				SentOrderId += shopBlnDtl.get(i).getCustBalOrderRefId()+",";
+				
+			}else{
+				AllSentId += shopBlnDtl.get(i).getCustBalOrderRefId()+",";
+			}
+			
+		}
+		
+		billingRes.setErrorCode("0");
+		billingRes.setErrorMsg("success");
+		billingRes.setRemSent(SentOrderId);
+		billingRes.setRemAllSent(AllSentId);
+		
+		
+		return billingRes;
+	}
+	
 	public BillingEntityRes customerPlaceOrder(OrderRequestDto custOrderDtl) {
 		BillingEntityRes response = new BillingEntityRes();
 		LocalDate currentDate = LocalDate.now();
@@ -300,15 +348,17 @@ public class OrderService {
 	     billingHistory.setCustDueAmt(remainAmt);
 	     custOverallStatus.setPymtAmountBalance(remainAmt);
 	     if(remainAmt != 0) {
-	    	 custOverallStatus.setFullPaymentFlg("Y");  
+	    	 custOverallStatus.setFullPaymentFlg("N");  
 	    	 shopCustDetailRepo.updateCustBlnDtlFlag("1", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
 	    	 billingHistory.setCustFullyPaidFlg("N");
+		     shopCustBlnDtls.setCustBalStatus("N");
 	    	 orderRepo.updateordStsBill("N", formattedDate, paidOrderReq.getOrderCustRefId(),
 	    			paidOrderReq.getOrderCustCrtdDate() , paidOrderReq.getOrderCustType(), paidOrderReq.getOrderOwnerRefId(),pymtRefId);
 	     }else {
-	    	 custOverallStatus.setFullPaymentFlg("N");
+	    	 custOverallStatus.setFullPaymentFlg("Y");
 	    	 shopCustDetailRepo.updateCustBlnDtlFlag("0", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
 	    	 billingHistory.setCustFullyPaidFlg("Y");
+		     shopCustBlnDtls.setCustBalStatus("Y");
 	    	 orderRepo.updateordStsBill("Y", formattedDate, paidOrderReq.getOrderCustRefId(),
 		    			paidOrderReq.getOrderCustCrtdDate() , paidOrderReq.getOrderCustType(), paidOrderReq.getOrderOwnerRefId(),pymtRefId);
 	     }
@@ -339,8 +389,20 @@ public class OrderService {
 	     billingHistory.setShopOwnerRefId(paidOrderReq.getOrderOwnerRefId());
 	     billingHistory.setShopOrderRefId(paidOrderReq.getOrderRefId());
 	     billingHistory.setCustPymtRefId(pymtRefId);
+	     shopCustBlnDtls.setCustBalActAmt(paidOrderReq.getOrderCustTotalPrice());
+	     shopCustBlnDtls.setCustBalAmt(remainAmt);
+	     shopCustBlnDtls.setCustBalCustRefId(paidOrderReq.getOrderCustRefId());
+	     shopCustBlnDtls.setCustBalDate(formattedDate);
+	     shopCustBlnDtls.setCustBalName(paidOrderReq.getOrderCustName());
+	     shopCustBlnDtls.setCustBalOrderRefId(paidOrderReq.getOrderRefId());
+	     shopCustBlnDtls.setCustBalOwnerRefId(paidOrderReq.getOrderOwnerRefId());
+	     shopCustBlnDtls.setCustBalPaidAmt(paidOrderReq.getOrderFinalAmtPaid());
+	     shopCustBlnDtls.setCustBalPhoneNo(paidOrderReq.getOrderCustPhoneNo());
+	     shopCustBlnDtls.setCustBalPymtRefId(pymtRefId);
+	     shopCustBlnDtls.setCustRemSentFlg(0);
+	     //shopCustBlnDtls.set
 	     billHistRepo.save(billingHistory);
-	    
+	     shopBlnRepo.save(shopCustBlnDtls);
 	     custOverallPymtStatusRepo.save(custOverallStatus);
 	     pdfService.generatePaidBillPdf(paidOrderReq, billingHistory);
 	     
@@ -358,7 +420,7 @@ public class OrderService {
 		double remainAmt = paidOrderReq.getOrderCustTotalPrice() - paidOrderReq.getOrderFinalAmtPaid();
 		shopBlnRepo.updateCustpymtVerifiyBalance(paidOrderReq.getOrderFinalAmtPaid(), remainAmt, paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId()
 				, paidOrderReq.getOrderCustCrtdDate());
-		//custTransEntityRepo.updtCustPymntOrdList(paidOrderReq.getOrderCustOwnerName(),paidOrderReq.get, null);
+		custTransEntityRepo.updtCustPymntOrdList(paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderRefId());
 		
 		 long nanoTime = System.nanoTime();
 	     long uniqueNumber = nanoTime % 10_000_000_0;
@@ -378,13 +440,13 @@ public class OrderService {
 //			 }
 	     billingHistory.setCustDueAmt(remainAmt);
 	     if(remainAmt != 0) {
-	    	 shopCustDetailRepo.updateCustBlnDtlFlag("1", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
+	    	 shopCustDetailRepo.updateCustBlnDtlFlag("N", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
 	    	 orderRepo.updatecustPymntVerBill("N", formattedDate, paidOrderReq.getOrderCustRefId(),
 	    			paidOrderReq.getOrderCustCrtdDate() , paidOrderReq.getOrderRefId(), paidOrderReq.getOrderOwnerRefId());
 	    	 custOrdPlDtlRepo.updateCustPlcdOrderToBS(paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),
 	    			 paidOrderReq.getOrderCustCrtdDate(),paidOrderReq.getOrderCustPhoneNo(),paidOrderReq.getOrderCustRefId());
 	     }else {
-	    	 shopCustDetailRepo.updateCustBlnDtlFlag("0", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
+	    	 shopCustDetailRepo.updateCustBlnDtlFlag("Y", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
 	    	 orderRepo.updatecustPymntVerBill("Y", formattedDate, paidOrderReq.getOrderCustRefId(),
 		    			paidOrderReq.getOrderCustCrtdDate() , paidOrderReq.getOrderRefId(), paidOrderReq.getOrderOwnerRefId());
 	    	 custOrdPlDtlRepo.updateCustPlcdOrderToBS(paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),
@@ -393,6 +455,47 @@ public class OrderService {
 	     
 	     custOverallPymtStatusRepo.updateOwnerOverAllUpdate(paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderCustCrtdDate(),paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId());
 	     pdfService.generatePaidBillPdf(paidOrderReq, billingHistory);
+	     
+	     response.setResponse("success");
+	     response.setErrorMsg("success");
+	     response.setErrorCode("0");
+	     
+		return response;
+	}
+	
+	public BillingEntityRes custBalPaidVerifiedAmnt(OrderRequestDto paidOrderReq) {
+		BillingEntityRes response = new BillingEntityRes();
+		ShopCustBalanceDetails shopCustBlnDtls = new ShopCustBalanceDetails();
+		BillingHistory billingHistory = new BillingHistory();
+		//double remainAmt = paidOrderReq.getOrderCustTotalPrice() - paidOrderReq.getOrderFinalAmtPaid();
+		shopBlnRepo.updateCustBalPymtPaidStatus(paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),paidOrderReq.getOrderPymtRefId(),paidOrderReq.getOrderCustTotalPrice());
+		custTransEntityRepo.updBlnPymtListSuccess(paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderRefId());
+		 orderRepo.updateBalVerifyPymt(paidOrderReq.getOrderCustTotalPrice(), paidOrderReq.getOrderCustRefId(),
+	    			paidOrderReq.getOrderRefId() , paidOrderReq.getOrderOwnerRefId(), paidOrderReq.getOrderPymtRefId());
+		 orderRepo.deleteRemBalPaidAmt(paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderPymtRefId(),paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId());
+
+//		 long nanoTime = System.nanoTime();
+//	     long uniqueNumber = nanoTime % 10_000_000_0;
+//	     LocalDate currentDate = LocalDate.now();
+//	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//	        String formattedDate = currentDate.format(formatter);
+//	        for(int i=0;i<paidOrderReq.getOrderList().size();i++) {
+//				 orderDtlsRepo.updtCustPymntOrdList(paidOrderReq.getOrderCustCrtdDate(),
+//						paidOrderReq.getOrderRefId(), 
+//						 paidOrderReq.getOrderList().get(i).getOrderCustProdCmp(), 
+//						 paidOrderReq.getOrderList().get(i).getOrderCustProdType(),
+//						 paidOrderReq.getOrderList().get(i).getOrderCustProdName());
+//				 custOrdPlListRepo.updateCustPlcdDtlListBS(paidOrderReq.getOrderRefId(),paidOrderReq.getOrderCustCrtdDate(), 
+//						 paidOrderReq.getOrderList().get(i).getOrderCustProdCmp(), 
+//						 paidOrderReq.getOrderList().get(i).getOrderCustProdType(),
+//						 paidOrderReq.getOrderList().get(i).getOrderCustProdName());
+//			 }
+	    	 shopCustDetailRepo.updateCustBlnDtlFlag("Y", paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId());
+	     custOverallPymtStatusRepo.updateCustBalRemPaid(paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderCustTotalPrice(),paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),paidOrderReq.getOrderPymtRefId());
+	     billHistRepo.updateOwnerOverAllUpdate(paidOrderReq.getOrderCustTotalPrice(),paidOrderReq.getOrderCustRefId()
+	    		 ,paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),paidOrderReq.getOrderPymtRefId());
+	     //pdfService.generatePaidBillPdf(paidOrderReq, billingHistory);
+	     emailService.balancePaidAcknowledge(paidOrderReq);
 	     
 	     response.setResponse("success");
 	     response.setErrorMsg("success");
@@ -507,18 +610,18 @@ public class OrderService {
 	     if(remainAmt != 0) {
 	    	 billingHistory.setCustFullyPaidFlg("N");
 	    	 custOverallStatus.setFullPaymentFlg("N");
-	    	 shopCustDetailRepo.updateCustBlnDtlFlag("0",paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderOwnerRefId());
+	    	 shopCustDetailRepo.updateCustBlnDtlFlag("N",paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderOwnerRefId());
 	    	 orderRepo.updateCustConfPymtordStsBill("N", formattedDate, paidOrderReq.getOrderCustRefId(),
-	    			paidOrderReq.getOrderCustCrtdDate(), paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),pymtRefId);
+	    			paidOrderReq.getOrderCustCrtdDate(), paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),pymtRefId,paidOrderReq.getOrderFinalAmtPaid());
 	    	 custOrdPlDtlRepo.updateCustPlcdOrderToBSV(paidOrderReq.getOrderOwnerRefId(),
 	    			 paidOrderReq.getOrderCustCrtdDate(), paidOrderReq.getOrderCustPhoneNo(), paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderRefId(),pymtRefId);
 	    	 
 	     }else {
 	    	 billingHistory.setCustFullyPaidFlg("Y");
 	    	 custOverallStatus.setFullPaymentFlg("Y");
-	    	 shopCustDetailRepo.updateCustBlnDtlFlag("1",paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderOwnerRefId());
+	    	 shopCustDetailRepo.updateCustBlnDtlFlag("Y",paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderOwnerRefId());
 	    	 orderRepo.updateCustConfPymtordStsBill("Y", formattedDate, paidOrderReq.getOrderCustRefId(),
-		    			paidOrderReq.getOrderCustCrtdDate() , paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),pymtRefId);
+		    			paidOrderReq.getOrderCustCrtdDate() , paidOrderReq.getOrderOwnerRefId(),paidOrderReq.getOrderRefId(),pymtRefId,paidOrderReq.getOrderFinalAmtPaid());
 	    	 custOrdPlDtlRepo.updateCustPlcdOrderToBSV(paidOrderReq.getOrderOwnerRefId(),
 	    			 paidOrderReq.getOrderCustCrtdDate(), paidOrderReq.getOrderCustPhoneNo(), paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderRefId(),pymtRefId);
 	     }
@@ -554,6 +657,54 @@ public class OrderService {
 	     
 	     emailService.sendConfmCustPymtEmailBrevo(billingHistory.getCustEmailId(), paidOrderReq.getOrderCustName(), paidOrderReq.getOrderOwnerRefId());
 	    
+	     
+	     response.setResponse("success");
+	     response.setErrorMsg("success");
+	     response.setErrorCode("0");
+	     
+		return response;
+	}
+	
+	public BillingEntityRes custConfirmBalPaidAmount(OrderRequestDto paidOrderReq) {
+		BillingEntityRes response = new BillingEntityRes();
+		CustomerTransEntity custTransEntity = new CustomerTransEntity();
+		ShopCustBalanceDetails shopCustBlnDtls = new ShopCustBalanceDetails();
+		BillingHistory billingHistory = new BillingHistory();
+		CustOverallPymtStatus custOverallStatus = new CustOverallPymtStatus();
+		CustTransOrderList custTransOrder = new CustTransOrderList();
+		List<CustTransOrderList> custTransOrderList = new ArrayList<CustTransOrderList>();
+		double remainAmt = paidOrderReq.getOrderCustTotalPrice() - paidOrderReq.getOrderFinalAmtPaid();
+		
+		 long nanoTime = System.nanoTime();
+	     long uniqueNumber = nanoTime % 10_000_000_0;
+	     LocalDateTime currentDate = LocalDateTime.now();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	        String formattedDate = currentDate.format(formatter);
+	        String formattedTime = currentDate.format(timeFormatter);
+	        String custPayId = ownerPaymtDtlRepo.getOverAllPymtDetails(paidOrderReq.getOrderCustEmailId());
+	        OwnerPaymtDetails ownerPayId = ownerPaymtDtlRepo.getDealerPymtDetails(paidOrderReq.getOrderOwnerRefId());
+	        String pymtRefId = "PAY" +LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE) + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+	        orderRepo.updateRemStatusPaidCustRAP(paidOrderReq.getOrderOwnerRefId(), paidOrderReq.getOrderPymtRefId(), paidOrderReq.getOrderCustRefId(),paidOrderReq.getOrderRefId());
+	        custTransEntity.setPayeeNote(paidOrderReq.getNoteToPayer());
+	        custTransEntity.setPayeeUpiId(custPayId);
+	        custTransEntity.setPayerUpiId(ownerPayId.getPymtUpiId());
+	        custTransEntity.setTransActAmt(paidOrderReq.getOrderFinalAmtPaid());
+	        custTransEntity.setTransBlnAmt(remainAmt);
+	        custTransEntity.setTransCustRefId(paidOrderReq.getOrderCustRefId());
+	        custTransEntity.setTransOwnerRefId(paidOrderReq.getOrderOwnerRefId());
+	        custTransEntity.setTransPymtAmt(paidOrderReq.getOrderFinalAmtPaid());
+	        custTransEntity.setTransPymtDate(formattedDate);
+	        custTransEntity.setTransPymtTime(formattedDate+" "+formattedTime);
+	        custTransEntity.setTransPymtRefId(pymtRefId);
+	        custTransEntity.setPayeePhoneNo(paidOrderReq.getOrderCustPhoneNo());
+	        custTransEntity.setPayerPhoneNo(ownerPayId.getPymtPhNumber());
+	        custTransEntity.setTransCustOrderId(paidOrderReq.getOrderRefId());
+	        //custTransEntity.setPayerPhoneNo(paidOrderReq.get);
+	        custTransEntity.setTransPymtOrderStatus("RAP");
+	     //Cust Overall Status Update
+	     
+	    custTransEntityRepo.save(custTransEntity);
 	     
 	     response.setResponse("success");
 	     response.setErrorMsg("success");
@@ -654,6 +805,7 @@ public class OrderService {
     		 blnDtls.setCustBalOwnerRefId(custOrderDtls.getOrderOwnerRefId());
     		 blnDtls.setCustBalPhoneNo(custOrderDtls.getOrderCustPhoneNo());
     		 blnDtls.setCustBalPaidAmt(0);
+    		 blnDtls.setCustRemSentFlg(0);
     		 blnDtls.setCustBalStatus("BP");
     		 blnDtls.setCustBalOrderRefId(custOrderDtls.getOrderRefId());
     		 shopBlnRepo.save(blnDtls);
@@ -949,9 +1101,53 @@ public class OrderService {
 			orderReqDto.setOrderCustType(orderDetailList.get(i).getOrderProductCustType());
 			orderReqDto.setOrderCustRefId(orderDetailList.get(i).getOrderCustRefId());
 			orderReqDto.setOrderRefId(orderDetailList.get(i).getOrderRefId());
-			orderReqDto.setOrderFinalAmtPaid(orderDetailList.get(i).getOrderProdTotalAmt());
+			orderReqDto.setOrderFinalAmtPaid(orderDetailList.get(i).getOrderFinalAmtPaid());
 			orderReqDto.setOrderPymtRefId(orderDetailList.get(i).getOrderPymtRefId());
 			orderReqDto.setOrderReqStatus(orderDetailList.get(i).getOrderRequestStatus());
+//			orderReqDto.setOrderFinalAmtPaid(shopBlnRepo.custPaidAmt(orderDetailList.get(i).getOrderOwnerRefId(),
+//					orderDetailList.get(i).getOrderCustRefId(), orderDetailList.get(i).getOrderPlacedDate()));
+			List<ShopCustOrderDetails> custOrderList = orderDtlsRepo.getCustConfPymtList(orderReqDto.getOrderRefId(),orderReqDto.getOrderCustCrtdDate());
+			List<MilkOrderList> milkOrderList = new ArrayList<MilkOrderList>();
+			for(int j=0;j<custOrderList.size();j++) {
+				MilkOrderList milkList = new MilkOrderList();
+				milkList.setOrderCustProdCmp(custOrderList.get(j).getOrderCustProdCmp());
+				milkList.setOrderCustProdName(custOrderList.get(j).getOrderCustProdName());
+				milkList.setOrderCustProdPrice(custOrderList.get(j).getOrderCustProdPrice());
+				milkList.setOrderCustProdQty(custOrderList.get(j).getOrderCustProdQty());
+				milkList.setOrderCustProdType(custOrderList.get(j).getOrderCustProdType());
+				milkOrderList.add(milkList);
+			}
+			orderReqDto.setOrderList(milkOrderList);
+			finalOrderList.add(orderReqDto);
+			
+			
+		}
+		System.out.println("Customer Order Proccess List End");
+		return finalOrderList;
+	}
+	
+	public List<OrderRequestDto> getBalVerifyPymtList(String email){
+		List<OrderRequestDto> finalOrderList = new ArrayList<OrderRequestDto>();
+		List<OrderRequestDetails> orderDetailList = orderRepo.getBalVerifyPymtList(email);
+		
+		for(int i=0;i<orderDetailList.size();i++) {
+			OrderRequestDto orderReqDto = new OrderRequestDto();
+			CustomerTransEntity transEntity = custTransEntityRepo.getCustTransDetails(orderDetailList.get(i).getOrderOwnerRefId(), orderDetailList.get(i).getOrderCustRefId(),orderDetailList.get(i).getOrderRefId(),orderDetailList.get(i).getOrderPymtRefId());
+			OrderRequestDetails finalReqDetails = orderRepo.getCustInduvidualRequestDetails(orderDetailList.get(i).getOrderOwnerRefId(),orderDetailList.get(i).getOrderCustRefId(),orderDetailList.get(i).getOrderRefId(),orderDetailList.get(i).getorderPymtRefId());
+			ShopCustBalanceDetails shopCustBalanceDetails = shopBlnRepo.getCustBalByCust(finalReqDetails.getOrderOwnerRefId(),finalReqDetails.getOrderCustRefId(),finalReqDetails.getOrderRefId(),finalReqDetails.getOrderPymtRefId());
+			orderReqDto.setOrderCustCrtdDate(finalReqDetails.getOrderPlacedDate());
+			orderReqDto.setOrderCustEmailId(finalReqDetails.getOrderCustEmailId());
+			orderReqDto.setOrderCustName(finalReqDetails.getOrderProductCustName());
+			orderReqDto.setOrderOwnerRefId(finalReqDetails.getOrderOwnerRefId());
+			orderReqDto.setOrderCustPhoneNo(finalReqDetails.getOrderCustPhNo());
+			orderReqDto.setOrderCustTotalPrice(finalReqDetails.getOrderProdTotalAmt());
+			orderReqDto.setOrderCustType(finalReqDetails.getOrderProductCustType());
+			orderReqDto.setOrderCustRefId(finalReqDetails.getOrderCustRefId());
+			orderReqDto.setOrderRefId(finalReqDetails.getOrderRefId());
+			orderReqDto.setOrderFinalAmtPaid(shopCustBalanceDetails.getCustBalAmt());
+			orderReqDto.setOrderPymtRefId(finalReqDetails.getOrderPymtRefId());
+			orderReqDto.setOrderReqStatus(orderDetailList.get(i).getOrderRequestStatus());
+			orderReqDto.setNoteToPayer(transEntity.getPayeeNote());
 //			orderReqDto.setOrderFinalAmtPaid(shopBlnRepo.custPaidAmt(orderDetailList.get(i).getOrderOwnerRefId(),
 //					orderDetailList.get(i).getOrderCustRefId(), orderDetailList.get(i).getOrderPlacedDate()));
 			List<ShopCustOrderDetails> custOrderList = orderDtlsRepo.getCustConfPymtList(orderReqDto.getOrderRefId(),orderReqDto.getOrderCustCrtdDate());
@@ -989,6 +1185,45 @@ public class OrderService {
 			orderReqDto.setOrderCustType(orderDetailList.get(i).getOrderProductCustType());
 			orderReqDto.setOrderCustRefId(orderDetailList.get(i).getOrderCustRefId());
 			orderReqDto.setOrderRefId(orderDetailList.get(i).getOrderRefId());
+			List<ShopCustOrderDetails> custOrderList = orderDtlsRepo.getProcOrderList( orderReqDto.getOrderCustCrtdDate(),orderReqDto.getOrderRefId());
+			List<MilkOrderList> milkOrderList = new ArrayList<MilkOrderList>();
+			for(int j=0;j<custOrderList.size();j++) {
+				MilkOrderList milkList = new MilkOrderList();
+				milkList.setOrderCustProdCmp(custOrderList.get(j).getOrderCustProdCmp());
+				milkList.setOrderCustProdName(custOrderList.get(j).getOrderCustProdName());
+				milkList.setOrderCustProdPrice(custOrderList.get(j).getOrderCustProdPrice());
+				milkList.setOrderCustProdQty(custOrderList.get(j).getOrderCustProdQty());
+				milkList.setOrderCustProdType(custOrderList.get(j).getOrderCustProdType());
+				milkOrderList.add(milkList);
+			}
+			orderReqDto.setOrderList(milkOrderList);
+			finalOrderList.add(orderReqDto);
+		}
+		return finalOrderList;
+	}
+	
+	public List<OrderRequestDto> getCustRemainderRequest(String ownerEmail,String custMail){
+		List<OrderRequestDto> finalOrderList = new ArrayList<OrderRequestDto>();
+		System.out.println("Customer Order Proccess List");
+		List<OrderRequestDetails> orderDetailList = orderRepo.getCustRemainderRequest(ownerEmail,custMail);
+		for(int i=0;i<orderDetailList.size();i++) {
+			OrderRequestDto orderReqDto = new OrderRequestDto();
+			CustomerTransEntity transEntity = custTransEntityRepo.getCustTransDetails(orderDetailList.get(i).getOrderOwnerRefId(), orderDetailList.get(i).getOrderCustRefId(),orderDetailList.get(i).getOrderRefId(),orderDetailList.get(i).getOrderPymtRefId());
+			OrderRequestDetails finalReqDetails = orderRepo.getCustInduvidualRequestDetails(orderDetailList.get(i).getOrderOwnerRefId(),orderDetailList.get(i).getOrderCustRefId(),orderDetailList.get(i).getOrderRefId(),orderDetailList.get(i).getorderPymtRefId());
+			ShopCustBalanceDetails shopCustBalanceDetails = shopBlnRepo.getCustBalByCust(finalReqDetails.getOrderOwnerRefId(),finalReqDetails.getOrderCustRefId(),finalReqDetails.getOrderRefId(),finalReqDetails.getOrderPymtRefId());
+			orderReqDto.setOrderCustCrtdDate(finalReqDetails.getOrderPlacedDate());
+			orderReqDto.setOrderCustEmailId(finalReqDetails.getOrderCustEmailId());
+			orderReqDto.setOrderCustName(finalReqDetails.getOrderProductCustName());
+			orderReqDto.setOrderOwnerRefId(finalReqDetails.getOrderOwnerRefId());
+			orderReqDto.setOrderCustPhoneNo(finalReqDetails.getOrderCustPhNo());
+			orderReqDto.setOrderCustTotalPrice(finalReqDetails.getOrderProdTotalAmt());
+			orderReqDto.setOrderCustType(finalReqDetails.getOrderProductCustType());
+			orderReqDto.setOrderCustRefId(finalReqDetails.getOrderCustRefId());
+			orderReqDto.setOrderRefId(finalReqDetails.getOrderRefId());
+			orderReqDto.setOrderFinalAmtPaid(shopCustBalanceDetails.getCustBalAmt());
+			orderReqDto.setOrderReqStatus(orderDetailList.get(i).getOrderRequestStatus());
+			orderReqDto.setNoteToPayer(transEntity.getPayeeNote());
+			orderReqDto.setOrderPymtRefId(orderDetailList.get(i).getOrderPymtRefId());
 			List<ShopCustOrderDetails> custOrderList = orderDtlsRepo.getProcOrderList( orderReqDto.getOrderCustCrtdDate(),orderReqDto.getOrderRefId());
 			List<MilkOrderList> milkOrderList = new ArrayList<MilkOrderList>();
 			for(int j=0;j<custOrderList.size();j++) {

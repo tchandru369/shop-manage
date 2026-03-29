@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.merchant.management.dto.BillingHistoryRes;
 import com.merchant.management.dto.MerchantDetailRes;
+import com.merchant.management.dto.MyRequestNotifyDto;
 import com.merchant.management.dto.OrderRequestDto;
+import com.merchant.management.dto.OwnerRemResponseDto;
 import com.merchant.management.dto.TransactionDetailsDto;
 import com.merchant.management.entity.BillingEntity;
 import com.merchant.management.entity.BillingEntityRes;
@@ -106,6 +108,12 @@ public class BillingController {
 	       return ResponseEntity.ok(response);    
 	}
 	
+	@PostMapping("/owner/verifyBalPymt")
+	public ResponseEntity custBalPymtVerifyData(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.custBalPaidVerifiedAmnt(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
 	@PostMapping("/owner/notPaidCustPymt")
 	public ResponseEntity custNotVerifiedPymntDtls(@RequestBody OrderRequestDto custOrderDtls) {
 		     BillingEntityRes response  = orderService.ownerCustNotPaidConf(custOrderDtls);		   
@@ -126,6 +134,8 @@ public class BillingController {
 		return orderList;
 	}
 	
+	
+	
 	@GetMapping("/owner/getProcOrders")
 	public List<OrderRequestDto> getCustConfPymtOrders(@RequestParam String email) {
 		List<OrderRequestDto> orderList = orderService.getProcessedOrders(email);
@@ -135,6 +145,12 @@ public class BillingController {
 	@GetMapping("/cust/getProcOrders")
 	public List<OrderRequestDto> getCustProcessedOrders(@RequestParam String OwnerEmail,@RequestParam String custEmail) {
 		List<OrderRequestDto> orderList = orderService.getCustProcessedOrders(OwnerEmail,custEmail);
+		return orderList;
+	}
+	
+	@GetMapping("/cust/getRemReq")
+	public List<OrderRequestDto> getCustRemainderReq(@RequestParam String OwnerEmail,@RequestParam String custEmail) {
+		List<OrderRequestDto> orderList = orderService.getCustRemainderRequest(OwnerEmail,custEmail);
 		return orderList;
 	}
 	
@@ -150,9 +166,21 @@ public class BillingController {
 		return orderList;
 	}
 	
+	@GetMapping("/owner/getBalVerList")
+	public List<OrderRequestDto> getBalVerifyPymtList(@RequestParam String email) {
+		List<OrderRequestDto> orderList = orderService.getBalVerifyPymtList(email);
+		return orderList;
+	}
+	
 	@PostMapping("/deleteProcOrder")
 	public ResponseEntity deleteProcReq(@RequestBody OrderRequestDto custOrderDtls) {
 		     BillingEntityRes response  = orderService.deleteProcessOrderDetails(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/owner/sendRem")
+	public ResponseEntity sendBalanceRemainderToAll(@RequestParam String OwnerEmail,@RequestParam String custEmail) {
+		OwnerRemResponseDto response  = orderService.ownerSendRemToCustomer(OwnerEmail,custEmail);		   
 	       return ResponseEntity.ok(response);    
 	}
 	
@@ -173,6 +201,14 @@ public class BillingController {
 	@PostMapping("/cust/confirmPymnt")
 	public ResponseEntity confirmPaymentOrderReq(@RequestBody OrderRequestDto custOrderDtls) {
 		     BillingEntityRes response  = orderService.custConfirmRequest(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	
+	
+	@PostMapping("/cust/confirmBalPaid")
+	public ResponseEntity confirmBalPaid(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.custConfirmBalPaidAmount(custOrderDtls);		   
 	       return ResponseEntity.ok(response);    
 	}
 	

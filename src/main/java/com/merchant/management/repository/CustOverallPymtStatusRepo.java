@@ -20,6 +20,11 @@ public interface CustOverallPymtStatusRepo extends JpaRepository<CustOverallPymt
 	@Query(value = "UPDATE cust_overall_pymt_status SET over_all_order_status = 'BS' WHERE cust_ref_id=:custRefId AND bill_date=:billDate AND owner_ref_id=:ownerRefId AND cust_order_ref_id =:orderRefId AND over_all_order_status='BSV'", nativeQuery = true)
 	void updateOwnerOverAllUpdate(String custRefId,String billDate,String ownerRefId,String orderRefId);
 	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE cust_overall_pymt_status SET cust_paid_amount =:paidAmt, full_payment_flg ='Y', pymt_amount_balance = 0 WHERE cust_ref_id=:custRefId AND trans_pymt_ref_id=:pymtRefId AND owner_ref_id=:ownerRefId AND cust_order_ref_id =:orderRefId AND over_all_order_status='BS'", nativeQuery = true)
+	void updateCustBalRemPaid(String custRefId,double paidAmt,String ownerRefId,String orderRefId,String pymtRefId);
+	
 	@Query(value = "SELECT * FROM cust_overall_pymt_status WHERE cust_ref_id=:custRefId AND owner_ref_id=:ownerRefId", nativeQuery = true)
 	List<CustOverallPymtStatus> getCustOverAllStatusList(String custRefId,String ownerRefId);
 	

@@ -43,9 +43,17 @@ public class ShopCustBalanceDetails {
 	private String custBalPymtRefId;
 	@Column(name = "cust_bal_order_status")
 	private String custBalStatus;
+	@Column(name = "cust_rem_sent_flg")
+	private int custRemSentFlg;
 	
 	
 	
+	public int getCustRemSentFlg() {
+		return custRemSentFlg;
+	}
+	public void setCustRemSentFlg(int custRemSentFlg) {
+		this.custRemSentFlg = custRemSentFlg;
+	}
 	public String getCustBalOrderRefId() {
 		return custBalOrderRefId;
 	}

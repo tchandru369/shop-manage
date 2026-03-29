@@ -36,7 +36,6 @@ logging.level.org.hibernate.orm.mapping=TRACE
 logging.level.org.hibernate.boot.model=TRACE
 logging.level.org.hibernate.cfg=TRACE
 brevo.api.url=https://api.brevo.com/v3/smtp/email
-brevo.api.key=${BREVO_API_KEY}
 #spring.datasource.url=jdbc:postgresql://34.100.242.90:5432/merchantmng
 #spring.datasource.username=postgres
 #spring.datasource.password=TTC2017Eye

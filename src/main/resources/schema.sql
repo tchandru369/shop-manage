@@ -40,3 +40,4 @@ INSERT INTO CON_STATE_CITY(country_names,state_names,city_names) VALUES('INDIA',
 INSERT INTO CON_STATE_CITY(country_names,state_names,city_names) VALUES('INDIA','TAMIL NADU','DHARMAPURI');
 INSERT INTO CON_STATE_CITY(country_names,state_names,city_names) VALUES('INDIA','TAMIL NADU','VILUPURAM');
 INSERT INTO CON_STATE_CITY(country_names,state_names,city_names) VALUES('INDIA','TAMIL NADU','TINDIVANAM');
+INSERT INTO CON_STATE_CITY(country_names,state_names,city_names) VALUES('INDIA','TAMIL NADU','CHENNAI');

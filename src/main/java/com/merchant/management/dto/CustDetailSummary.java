@@ -13,8 +13,17 @@ public class CustDetailSummary {
 	private String custState;
 	private int custPincode;
 	private String custModifiedDate;
+	private String custRefId;
 	private List<UserCustBalDto> BalanceList;
 	private List<UserCustLastTransaction> transactionList;
+	
+	
+	public String getCustRefId() {
+		return custRefId;
+	}
+	public void setCustRefId(String custRefId) {
+		this.custRefId = custRefId;
+	}
 	public String getCustAddress() {
 		return custAddress;
 	}

@@ -32,6 +32,8 @@ public class OrderRequestDetails {
 	private String orderCustRefId;
 	@Column(name = "order_prod_total_amt")
 	private double orderProdTotalAmt;
+	@Column(name = "order_final_amt_paid")
+	private double orderFinalAmtPaid;
 	@Column(name = "order_placed_date")
 	private String orderPlacedDate;
 	@Column(name = "order_bill_pay_flg")
@@ -53,6 +55,12 @@ public class OrderRequestDetails {
 	
 	
 	
+	public double getOrderFinalAmtPaid() {
+		return orderFinalAmtPaid;
+	}
+	public void setOrderFinalAmtPaid(double orderFinalAmtPaid) {
+		this.orderFinalAmtPaid = orderFinalAmtPaid;
+	}
 	public String getOrderRefId() {
 		return orderRefId;
 	}

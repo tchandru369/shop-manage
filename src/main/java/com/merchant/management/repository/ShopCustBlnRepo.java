@@ -18,13 +18,24 @@ public interface ShopCustBlnRepo extends JpaRepository<ShopCustBalanceDetails, I
 			+ "cust_bal_cust_ref_id =:custRefId AND cust_bal_order_ref_id =:orderRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_date =:procDate AND cust_bal_order_status ='BP'", nativeQuery = true)
 	void updateCustBln(double amountPaid,double blanceAmt,String custRefId,String ownerRefId,String procDate,String orderRefId,String pymtRefId);
 	
-	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE customer_balance_details_tb SET cust_rem_sent_flg = 0", nativeQuery = true)
+	void updateCustRemSentFlg();
+
 	
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE customer_balance_details_tb SET cust_bal_paid_amt =:amountPaid,cust_bal_amt =:blanceAmt,cust_bal_order_status = 'BS' WHERE \r\n"
 			+ "cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_date =:procDate AND cust_bal_order_status ='BSV'", nativeQuery = true)
 	void updateCustpymtVerifiyBalance(double amountPaid,double blanceAmt,String custRefId,String ownerRefId,String procDate);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE customer_balance_details_tb SET cust_bal_paid_amt =:balAmt,cust_bal_amt =0 WHERE \r\n"
+			+ "cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_pymt_ref_id =:pymtRefId AND cust_bal_order_status ='BS' AND cust_bal_order_ref_id =:orderRefId ", nativeQuery = true)
+	void updateCustBalPymtPaidStatus(String custRefId,String ownerRefId,String orderRefId,String pymtRefId,double balAmt);
+
 	
 	@Modifying
 	@Transactional
@@ -48,7 +59,19 @@ public interface ShopCustBlnRepo extends JpaRepository<ShopCustBalanceDetails, I
 	@Query(value = "UPDATE customer_balance_details_tb SET cust_bal_paid_amt =:amountPaid,cust_bal_amt =:blanceAmt,cust_bal_order_status = 'BS' WHERE \r\n"
 			+ "cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_date =:procDate AND cust_bal_order_status ='BSV'", nativeQuery = true)
 	void updateOwnerCustPymtBln(double amountPaid,double blanceAmt,String custRefId,String ownerRefId,String procDate);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE customer_balance_details_tb SET cust_rem_sent_flg =:newValue WHERE \r\n"
+			+ "cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_order_ref_id =:orderRefId AND cust_bal_pymt_ref_id =:pymtRefId", nativeQuery = true)
+	void updateRemBalanceFlg(String pymtRefId,String custRefId,String ownerRefId,String orderRefId,int newValue);
 
+	
+	@Query(value = "SELECT * FROM customer_balance_details_tb WHERE cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_amt > 0", nativeQuery = true)
+	List<ShopCustBalanceDetails> getCustBalListByCustOwner(String ownerRefId,String custRefId);
+	
+	@Query(value = "SELECT * FROM customer_balance_details_tb WHERE cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId AND cust_bal_order_ref_id =:orderRefId AND cust_bal_pymt_ref_id =:pymtRefId", nativeQuery = true)
+	ShopCustBalanceDetails getCustBalByCust(String ownerRefId,String custRefId,String orderRefId,String pymtRefId);
 	
 	@Query(value = "SELECT * FROM customer_balance_details_tb WHERE cust_bal_cust_ref_id =:custRefId AND cust_bal_owner_ref_id =:ownerRefId", nativeQuery = true)
 	List<ShopCustBalanceDetails> getCustBalList(String ownerRefId,String custRefId);

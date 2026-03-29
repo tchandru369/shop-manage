@@ -24,6 +24,7 @@ import com.merchant.management.dto.CustDetailSummary;
 import com.merchant.management.dto.CustOverAllPymtStatusRes;
 import com.merchant.management.dto.CustProdPriceCount;
 import com.merchant.management.dto.CustomerGraphEntityRes;
+import com.merchant.management.dto.MyRequestNotifyDto;
 import com.merchant.management.dto.OrderRequestDto;
 import com.merchant.management.dto.UpdatePassReq;
 import com.merchant.management.dto.UserCustBalDto;
@@ -217,6 +218,12 @@ public class CustomerController {
 	public List<OrderRequestDto> getCustLastOrderDetails(@RequestParam String custEmail,@RequestParam String ownerEmail) {
 		List<OrderRequestDto> custPymtList = customerService.getLastOrderStatus(custEmail,ownerEmail);
 		return custPymtList;
+	}
+	@GetMapping("/owner/getReqCount")
+	public ResponseEntity<MyRequestNotifyDto> getReqNotifyDto(@RequestParam String email) {
+		MyRequestNotifyDto myCount = new MyRequestNotifyDto();
+		myCount = customerService.myRequestNotifyDto(email);
+		return ResponseEntity.ok(myCount);
 	}
 	
 	
