@@ -120,6 +120,12 @@ public class BillingController {
 	       return ResponseEntity.ok(response);    
 	}
 	
+	@PostMapping("/owner/custNotPaidBln")
+	public ResponseEntity custBalNotPaidBln(@RequestBody OrderRequestDto custOrderDtls) {
+		     BillingEntityRes response  = orderService.custBalNotPaidConfirm(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
 	
 	
 	@GetMapping("/getOrderReq")

@@ -21,7 +21,7 @@ public interface OrderReqRepo extends JpaRepository<OrderRequestDetails, Integer
 	@Query(value = "SELECT * FROM order_request_details ea WHERE ea.order_request_status ='BP' AND ea.order_owner_ref_id =:ownerRefId AND ea.order_request_status NOT IN ('RA', 'RAP', 'RAV')", nativeQuery = true)
 	List<OrderRequestDetails> getProcessedOrders(String ownerRefId);
 	
-	@Query(value = "SELECT COUNT(CASE WHEN ea.order_request_status = 'OPA' THEN 1 END) AS recentReqCount,COUNT(CASE WHEN ea.order_request_status = 'BP' THEN 1 END) AS processOdrCount,COUNT(CASE WHEN ea.order_request_status = 'BSV' THEN 1 END) AS custVerCount,(SELECT COUNT(*)  FROM cust_order_placed_tb   WHERE cust_order_owner_ref_id =:ownerRefId AND cust_order_req_status = 'OP') AS custReqCount FROM  order_request_details ea WHERE  ea.order_owner_ref_id =:ownerRefId", nativeQuery = true)
+	@Query(value = "SELECT COUNT(CASE WHEN ea.order_request_status = 'OPA' THEN 1 END) AS recentReqCount,COUNT(CASE WHEN ea.order_request_status = 'BP' THEN 1 END) AS processOdrCount,COUNT(CASE WHEN ea.order_request_status = 'RAP' THEN 1 END) AS balCustPaidCount,COUNT(CASE WHEN ea.order_request_status = 'BSV' THEN 1 END) AS custVerCount,(SELECT COUNT(*)  FROM cust_order_placed_tb   WHERE cust_order_owner_ref_id =:ownerRefId AND cust_order_req_status = 'OP') AS custReqCount FROM  order_request_details ea WHERE  ea.order_owner_ref_id =:ownerRefId", nativeQuery = true)
 	List<Object[]> getNotifyCount(String ownerRefId);
 	
 	@Query(value = "SELECT * FROM order_request_details ea WHERE ea.order_request_status ='BSV' AND ea.order_owner_ref_id =:ownerRefId AND ea.order_request_status NOT IN ('RA', 'RAP', 'RAV')", nativeQuery = true)
@@ -93,6 +93,13 @@ public interface OrderReqRepo extends JpaRepository<OrderRequestDetails, Integer
 	@Transactional
 	@Query(value = "UPDATE order_request_details SET order_request_status ='RAP'  WHERE order_owner_ref_id =:ownerRefId AND order_cust_ref_id =:custRefId AND order_ref_id=:orderRefId AND order_request_status ='RA' AND order_pymt_ref_id =:pymtRefId", nativeQuery = true)
 	void updateRemStatusPaidCustRAP(String ownerRefId,String pymtRefId,String custRefId,String orderRefId);
+	
+
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE order_request_details SET order_request_status ='RA'  WHERE order_owner_ref_id =:ownerRefId AND order_cust_ref_id =:custRefId AND order_ref_id=:orderRefId AND order_request_status ='RAP' AND order_pymt_ref_id =:pymtRefId", nativeQuery = true)
+	void updateRemStatusPaidCustRA(String ownerRefId,String pymtRefId,String custRefId,String orderRefId);
+
 	
 	@Modifying
 	@Transactional

@@ -158,8 +158,9 @@ public class CustomerService {
 	        return new MyRequestNotifyDto(
 	            row[0].toString(),
 	            row[1].toString(),
-	            row[3].toString(),
-	            row[2].toString()
+	            row[2].toString(),
+	            row[4].toString(),
+	            row[3].toString()
 	        );
 	}
 	

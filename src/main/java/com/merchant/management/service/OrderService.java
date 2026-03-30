@@ -548,6 +548,17 @@ public class OrderService {
 		return response;
 	}
 	
+	public BillingEntityRes custBalNotPaidConfirm(OrderRequestDto paidOrderReq) {
+		BillingEntityRes response = new BillingEntityRes();
+		 orderRepo.updateRemStatusPaidCustRA(paidOrderReq.getOrderOwnerRefId(), paidOrderReq.getOrderPymtRefId(),paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderRefId());
+		 custTransEntityRepo.deleteTransEntityForBalPymt(paidOrderReq.getOrderCustRefId(), paidOrderReq.getOrderOwnerRefId(), paidOrderReq.getOrderRefId());
+	     response.setResponse("success");
+	     response.setErrorMsg("success");
+	     response.setErrorCode("0");
+	     
+		return response;
+	}
+	
 	public BillingEntityRes custConfirmRequest(OrderRequestDto paidOrderReq) {
 		BillingEntityRes response = new BillingEntityRes();
 		CustomerTransEntity custTransEntity = new CustomerTransEntity();
