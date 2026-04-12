@@ -24,6 +24,15 @@ public interface OrderReqRepo extends JpaRepository<OrderRequestDetails, Integer
 	@Query(value = "SELECT COUNT(CASE WHEN ea.order_request_status = 'OPA' THEN 1 END) AS recentReqCount,COUNT(CASE WHEN ea.order_request_status = 'BP' THEN 1 END) AS processOdrCount,COUNT(CASE WHEN ea.order_request_status = 'RAP' THEN 1 END) AS balCustPaidCount,COUNT(CASE WHEN ea.order_request_status = 'BSV' THEN 1 END) AS custVerCount,(SELECT COUNT(*)  FROM cust_order_placed_tb   WHERE cust_order_owner_ref_id =:ownerRefId AND cust_order_req_status = 'OP') AS custReqCount FROM  order_request_details ea WHERE  ea.order_owner_ref_id =:ownerRefId", nativeQuery = true)
 	List<Object[]> getNotifyCount(String ownerRefId);
 	
+	@Query(value = "SELECT COUNT(DISTINCT ord.order_ref_id) AS numOrders, COALESCE(SUM(prod.order_cust_prod_price), 0) AS totalPrice FROM order_request_details ord JOIN order_details_tb prod ON ord.order_ref_id = prod.order_cust_ref_id WHERE ord.order_owner_ref_id =:ownerRefId AND TO_DATE(ord.order_bill_pay_date, 'DD-MM-YYYY') >= NOW()", nativeQuery = true)
+	List<Object[]> getUserDashCltOdrPrcNow(String ownerRefId);
+	
+	@Query(value = "SELECT COUNT(DISTINCT ord.order_ref_id) AS numOrders, COALESCE(SUM(prod.order_cust_prod_price), 0) AS totalPrice FROM order_request_details ord JOIN order_details_tb prod ON ord.order_ref_id = prod.order_cust_ref_id WHERE ord.order_owner_ref_id =:ownerRefId AND TO_DATE(ord.order_bill_pay_date, 'DD-MM-YYYY') >= NOW() - INTERVAL '7 days'", nativeQuery = true)
+	List<Object[]> getUserDashCltOdrPrcLSDays(String ownerRefId);
+	
+	@Query(value = "SELECT COUNT(DISTINCT ord.order_ref_id) AS numOrders, COALESCE(SUM(prod.order_cust_prod_price), 0) AS totalPrice FROM order_request_details ord JOIN order_details_tb prod ON ord.order_ref_id = prod.order_cust_ref_id WHERE ord.order_owner_ref_id =:ownerRefId AND TO_DATE(ord.order_bill_pay_date, 'DD-MM-YYYY') >= DATE_TRUNC('month', NOW())", nativeQuery = true)
+	List<Object[]> getUserDashCltOdrPrcNMonth(String ownerRefId);
+	
 	@Query(value = "SELECT * FROM order_request_details ea WHERE ea.order_request_status ='BSV' AND ea.order_owner_ref_id =:ownerRefId AND ea.order_request_status NOT IN ('RA', 'RAP', 'RAV')", nativeQuery = true)
 	List<OrderRequestDetails> getCustPymtConfirmOrders(String ownerRefId);
 	

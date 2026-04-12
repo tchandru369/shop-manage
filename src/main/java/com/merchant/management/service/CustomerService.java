@@ -25,6 +25,7 @@ import com.merchant.management.dto.UserCustBalDto;
 import com.merchant.management.dto.UserCustDetailsReq;
 import com.merchant.management.dto.UserCustDetailsRes;
 import com.merchant.management.dto.UserCustLastTransaction;
+import com.merchant.management.dto.UserDashEntityDto;
 import com.merchant.management.entity.BillingHistory;
 import com.merchant.management.entity.ComProdDtls;
 import com.merchant.management.entity.CustOrderDtlList;
@@ -33,6 +34,7 @@ import com.merchant.management.entity.CustOverallPymtStatus;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.MerchantDetails;
+import com.merchant.management.entity.MilkProductEntity;
 import com.merchant.management.entity.OrderRequestDetails;
 import com.merchant.management.entity.Role;
 import com.merchant.management.entity.ShopCustBalanceDetails;
@@ -43,6 +45,7 @@ import com.merchant.management.repository.CustOrderPlDtlRepo;
 import com.merchant.management.repository.CustOverallPymtStatusRepo;
 import com.merchant.management.repository.CustomerRepository;
 import com.merchant.management.repository.MerchantRepository;
+import com.merchant.management.repository.MilkProductRepo;
 import com.merchant.management.repository.OrderReqDetailRepo;
 import com.merchant.management.repository.OrderReqRepo;
 import com.merchant.management.repository.ShopCustBlnRepo;
@@ -71,6 +74,9 @@ public class CustomerService {
 	
 	@Autowired
 	private CustOrderPlDtlRepo custPlacedRepo;
+	
+	@Autowired
+	private MilkProductRepo milkProdRepo;
 	
 	@Autowired
 	private CustOrdPlDtlsListRepo custPlacdOrderListRepo;
@@ -162,6 +168,43 @@ public class CustomerService {
 	            row[4].toString(),
 	            row[3].toString()
 	        );
+	}
+	
+	public UserDashEntityDto userDashEntityDto(String email) {
+		UserDashEntityDto dashEntityDto = new UserDashEntityDto();
+		int customerCount,custPlacedReqCount,custPymtReqCount,totalOdrWeek,totalOdrMonth,totalOdrNow = 0;
+		double totalCltWeek,totalCltMonth,totalCltNow = 0;
+        customerCount = shopCustRepo.getCustCountRepToOwner(email);
+		List<MilkProductEntity> productDetails = milkProdRepo.getDemandMilkProdEntity(email);
+		List<Object[]> results = orderReqRepo.getNotifyCount(email);
+		Object[] row = results.get(0);
+		MyRequestNotifyDto myReq = new MyRequestNotifyDto(row[0].toString(),
+	            row[1].toString(),
+	            row[2].toString(),
+	            row[4].toString(),
+	            row[3].toString());
+		
+		custPlacedReqCount = Integer.valueOf(myReq.getCustReqCount());
+		List<Object[]> nowCount = orderReqRepo.getUserDashCltOdrPrcNow(email);
+		Object[] nowCountSep = nowCount.get(0);
+		List<Object[]> SevenCount = orderReqRepo.getUserDashCltOdrPrcLSDays(email);
+		Object[] sevenCountSep = SevenCount.get(0);
+		List<Object[]> CurMonCount = orderReqRepo.getUserDashCltOdrPrcNMonth(email);
+		Object[] curMonCountSep = CurMonCount.get(0);
+		custPymtReqCount = Integer.valueOf(myReq.getCustVerCount())+Integer.valueOf(myReq.getBalCustPaidCount());
+		dashEntityDto.setCustomerCount(customerCount);
+		dashEntityDto.setCustOrdReqCount(custPlacedReqCount);
+		dashEntityDto.setCustPymtReqCount(custPymtReqCount);
+		dashEntityDto.setTotalClctNow(Double.parseDouble(nowCountSep[1].toString()));
+		dashEntityDto.setTotalClctWeek(Double.parseDouble(sevenCountSep[1].toString()));
+		dashEntityDto.setTotalClctMonth(Double.parseDouble(curMonCountSep[1].toString()));
+		dashEntityDto.setTotalOrderNow(Integer.valueOf(nowCountSep[0].toString()));
+		dashEntityDto.setTotalOrderWeek(Integer.valueOf(sevenCountSep[0].toString()));
+		dashEntityDto.setTotalOrderMonth(Integer.valueOf(curMonCountSep[0].toString()));
+		dashEntityDto.setMilkProdList(productDetails);
+		
+		
+		return dashEntityDto;
 	}
 	
 	public ResponseEntity<CustomerDetailsRes> saveShopCustomer( ShopCustomerDetails customerDetails) {

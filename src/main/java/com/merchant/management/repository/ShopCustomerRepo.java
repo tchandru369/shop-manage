@@ -63,6 +63,9 @@ public interface ShopCustomerRepo extends JpaRepository<ShopCustomerDetails, Int
 	@Query(value = "SELECT * FROM shop_customer_details_tb WHERE cust_owner_ref_id =:custEmail", nativeQuery = true)
 	List<ShopCustomerDetails> getShopCustDtlsByOwnerE(String custEmail);
 	
+	@Query(value = "SELECT COUNT(*) FROM shop_customer_details_tb WHERE cust_owner_ref_id =:custEmail AND (cust_type='I' OR cust_type='S')", nativeQuery = true)
+	int getCustCountRepToOwner(String custEmail);
+	
 	
 
 	

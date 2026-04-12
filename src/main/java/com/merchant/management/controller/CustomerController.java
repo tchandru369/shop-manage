@@ -30,6 +30,7 @@ import com.merchant.management.dto.UpdatePassReq;
 import com.merchant.management.dto.UserCustBalDto;
 import com.merchant.management.dto.UserCustDetailsRes;
 import com.merchant.management.dto.UserCustLastTransaction;
+import com.merchant.management.dto.UserDashEntityDto;
 import com.merchant.management.entity.BillingEntityRes;
 import com.merchant.management.entity.CustomerDetails;
 import com.merchant.management.entity.CustomerDetailsRes;
@@ -223,6 +224,13 @@ public class CustomerController {
 	public ResponseEntity<MyRequestNotifyDto> getReqNotifyDto(@RequestParam String email) {
 		MyRequestNotifyDto myCount = new MyRequestNotifyDto();
 		myCount = customerService.myRequestNotifyDto(email);
+		return ResponseEntity.ok(myCount);
+	}
+	
+	@GetMapping("/owner/getUserDash")
+	public ResponseEntity<UserDashEntityDto> getUserDashBoardDto(@RequestParam String email) {
+		UserDashEntityDto myCount = new UserDashEntityDto();
+		myCount = customerService.userDashEntityDto(email);
 		return ResponseEntity.ok(myCount);
 	}
 	
