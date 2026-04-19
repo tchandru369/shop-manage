@@ -1,10 +1,10 @@
 server:
   port: 8083
-  ssl:
-    key-store: /app/resources/merchantapp.p12
-    key-store-password: ${SSL_CERT_PASSWORD}
-    key-store-type: PKCS12
-    key-alias: 1
+#  ssl:
+#    key-store: /app/resources/output.p12
+#    key-store-password: chan2017
+#    key-store-type: PKCS12
+#    key-alias: 1
 spring:
   application:
     name: management-app
@@ -13,9 +13,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:postgresql://dpg-d722d0ffte5s73e4p6a0-a:5432/postgres_persistance_storage_7xqu
+    username: postgres_persistance_storage_7xqu_user
+    password: t4ivMkjF2cxR2CJVohqc8nVJjX2xfAWo
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -31,7 +31,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: chanper369@gmail.com
-    password: ${SMTP_MAIL_PASSWORD}
+    password: nywvlmdtczcthjhx
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -44,7 +44,7 @@ security:
   basic:
     enabled: false
   jwt:
-    secret-key: ${JWT_KEY_VALUE}
+    secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
     expiration-time: 3600000  # 1 hour in milliseconds
 
 billreport:

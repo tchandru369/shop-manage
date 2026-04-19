@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    env_file:
+      - app-secrets.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - merchant-network
+
+  backend:
+    build: .
+    container_name: merchantapp-backend
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - app-secrets.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      BREVO_API_KEY: ${BREVO_API_KEY}
+      SSL_CERT_PASSWORD: ${SSL_CERT_PASSWORD}
+      SMTP_MAIL_PASSWORD: ${SMTP_MAIL_PASSWORD}
+      JWT_KEY_VALUE: ${JWT_KEY_VALUE}
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./merchantapp.p12:/app/resources/merchantapp.p12
+      - ./storage:/app/storage
+    networks:
+      - merchant-network
+
+volumes:
+  postgres_data:
+
+networks:
+  merchant-network:
