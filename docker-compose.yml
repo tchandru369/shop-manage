@@ -27,13 +27,7 @@ services:
     env_file:
       - app-secrets.env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      BREVO_API_KEY: ${BREVO_API_KEY}
-      SSL_CERT_PASSWORD: ${SSL_CERT_PASSWORD}
-      SMTP_MAIL_PASSWORD: ${SMTP_MAIL_PASSWORD}
-      JWT_KEY_VALUE: ${JWT_KEY_VALUE}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/merchantapp
     ports:
       - "8083:8083"
     volumes:
