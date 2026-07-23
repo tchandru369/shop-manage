@@ -30,6 +30,7 @@ import com.merchant.management.entity.OwnerPaymtDetails;
 import com.merchant.management.entity.ShopCustBalanceDetails;
 import com.merchant.management.entity.ShopCustOrderDetails;
 import com.merchant.management.entity.ShopCustomerDetails;
+import com.merchant.management.entity.UserRewardPoints;
 import com.merchant.management.repository.BillingHistoryRepo;
 import com.merchant.management.repository.CustOrdPlDtlsListRepo;
 import com.merchant.management.repository.CustOrderPlDtlRepo;
@@ -99,6 +100,11 @@ public class OrderService {
 		this.billHistRepo = billHistRepo;
 		this.custOrdPlDtlRepo = custOrdPlDtlRepo;
 		this.custOrdPlListRepo = custOrdPlListRepo; 
+	}
+	
+	public BillingEntityRes updateUserRewardPoints(UserRewardPoints userRewardPoints) {
+		
+		return null;
 	}
 	
 	public BillingEntityRes saveCustOrderDetails(OrderRequestDto custOrderDtls) {

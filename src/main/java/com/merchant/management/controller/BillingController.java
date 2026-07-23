@@ -29,6 +29,7 @@ import com.merchant.management.entity.CustomerDetailsRes;
 import com.merchant.management.entity.MerchantDetails;
 import com.merchant.management.entity.ProductDetails;
 import com.merchant.management.entity.ShopCustOrderDetails;
+import com.merchant.management.entity.UserRewardPoints;
 import com.merchant.management.service.BillingService;
 import com.merchant.management.service.OrderService;
 import com.merchant.management.service.PaymentService;
@@ -81,6 +82,12 @@ public class BillingController {
 	@PostMapping("/addOrderReq")
 	public ResponseEntity addReq(@RequestBody OrderRequestDto custOrderDtls) {
 		     BillingEntityRes response  = orderService.saveCustOrderDetails(custOrderDtls);		   
+	       return ResponseEntity.ok(response);    
+	}
+	
+	@PostMapping("/userRewards")
+	public ResponseEntity userRewardRequest(@RequestBody UserRewardPoints userRewardPoints) {
+		     BillingEntityRes response  = orderService.updateUserRewardPoints(userRewardPoints);		   
 	       return ResponseEntity.ok(response);    
 	}
 	
